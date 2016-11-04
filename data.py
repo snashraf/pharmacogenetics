@@ -39,10 +39,22 @@ class Data:
         for record in self.reader:
             # check for non-None positions, these have changed
             if "[None]" not in str(record.ALT):
+                for sample in record.samples:
+                    call = str(sample['GT'])
+                    if "/" in call:
+                        self.isPhased = False
+                        c = call.count("1")
+                        if c == 1:
+                            mutType = "het"
+                        elif c == 2:
+                            mutType = "hom"
+                        print mutType
+                    elif "|" in call:
+                        self.isPhased = True
                 try:
                     # match position to rs # and add rs to storage
                     rs = self.contab[record.POS]
-                    self.rss.append((rs, record.ALT))
+                    self.rss.append((rs, record.ALT, mutType))
                 except KeyError:
                     # if no match is found, let user know
                     print "couldn't match", record.POS

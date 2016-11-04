@@ -83,7 +83,8 @@ class Haplotyper(Data):
                 haplotype = preamble + "[" + ";".join([str(pos)+posMap[pos] for pos in positions]) + "]"
                 self.haplotypes.append((gene, haplotype))
         elif mode == 'rs':
-            pass
+            for gene, snps in self.data.items():
+                print gene, snps
 
     def GetKnownHaps(self):
         pass
