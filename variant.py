@@ -5,6 +5,7 @@ from lxml import etree
 import urllib2
 from wikitools import wiki, page
 
+# -------------------------------------------------------------------------
 
 class Variant:
     """

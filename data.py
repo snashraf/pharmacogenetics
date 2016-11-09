@@ -6,7 +6,11 @@ import pprint
 from variant import Variant
 from gene import Gene
 import numpy as np
+import pickle
 import pymongo
+import json
+
+# -------------------------------------------------------------------------
 
 def Convert(dict):
     n = {}
@@ -31,6 +35,10 @@ def Convert(dict):
         print n
     return n
 
+def Pickle( dict, name):
+    print "Exporting pickle file..."
+    with open(name+".pickle", "wb") as file:
+        pickle.dump(dict, file)
 
 def toMongo(collection, dict):
     print "Exporting to MongoDB..."
@@ -41,11 +49,13 @@ def toMongo(collection, dict):
             n = Convert(item)
             collection.insert(n)
 
+# --------------------------------------------------------------------------------------
+
 class DataCollector:
     '''
     This class imports a design VCF and an input VCF.
     '''
-    def __init__(self, f):
+    def __init__(self,f):
         """
         f = given VCF input file
         GetDesign imports the test design and matches rs values to positions
@@ -55,31 +65,34 @@ class DataCollector:
         self.f = f
         self.variants = []
         self.genes = []
+        self.chemicals = []
         self.geneids = []
         self.genenames=[]
         self.nohap = []
         self.data = {}
         self.changes = {}
-        client = pymongo.MongoClient()
-        db = client.pgx
-        self.varcol = db.variants
-        self.genecol = db.genes
         print "Importing VCF..."
         self.GetVCFData()
+
+        '''
         print "Collecting data on variants..."
         self.GetVarData()
         print "Collecting data on gene haplotypes..."
         self.GetGeneData()
+        print "Getting data on connected chemicals..."
+        self.GetChemData()
         #self.toMongo()
+        '''
 
     def GetVCFData(self):
         # change design source file here
-        filename = "config/design.vcf"
+        filename = self.f
         # dictionary of pos-to-rs values
         self.contab = {}
         self.reader = vcf.Reader(open(filename, 'r'))
         # create a dictionary for this
         for record in self.reader:
+            self.contab[record.POS] = record.ID
             for sample in record.samples:
                 call = str(sample['GT'])
             self.variants.append({"hg19pos":record.POS, "rsid":record.ID, "call":{"num": call, "ref":record.REF, "alt":record.ALT}})
@@ -106,15 +119,10 @@ class DataCollector:
                     doc["alias"]["rsid"].append(name)
                 else:
                     pass
-        for var in self.variants:
-            try:
-                toMongo(self.varcol, var)
-            except:
-                print "converting..."
-                n = Convert(var)
-                toMongo(self.varcol, n)
+        Pickle(self.variants, "variants")
 
     def GetGeneData(self):
+        self.GetPairs()
         genes = {"pgkb":[], "other":[]}
         gid_sym = {}
         for doc in self.variants:
@@ -127,31 +135,42 @@ class DataCollector:
                 elif "PA" not in gid and gid not in genes["other"]:
                     genes["other"].append(gid)
         for gid in genes["pgkb"]:
+            print gid
+            g = Gene(gid, 'pharmgkb')
             try:
-                print gid
-                g = Gene(gid, 'pharmgkb')
-                self.genes.append({"symbol":gid_sym[gid], "id":gid, "alleles":g.alleles})
+                drugs = self.giddid[gid]
             except:
-                raise
-        for gene in self.genes:
-            try:
-                toMongo(self.genecol, gene)
-            except:
-                print "converting..."
-                n = Convert(gene)
-                toMongo(self.genecol, n)
+                drugs = []
+            self.genes.append({"symbol":gid_sym[gid],"id":gid, "alleles":g.alleles, "drugs":drugs})
 
+        Pickle(self.genes, "genes")
 
-pp = pprint.PrettyPrinter(indent=4)
-vcf = DataCollector('data/hpc/test.vcf')
+    def GetPairs(self):
+        self.giddid = {}
+        self.druglist = []
+        uri = \
+                'https://api.pharmgkb.org/v1/report/selectPairs'
+            # get data and read in this json file
+        data = urllib2.urlopen(uri)
+        self.json = json.load(data)
+        for doc in self.json:
+            gid = doc["gene"]["id"]
+            did = doc["chemical"]["id"]
+            self.druglist.append(did)
+            if gid in self.giddid.keys():
+                self.giddid[gid].append(did)
+            else:
+                self.giddid[gid] = [did]
 
-# use hapID to find more data
-"""
-db.haplotypes ->
-{
-"id":"PA...",
-"name":
-    {"starname":..., "hgvs":...}
-"drugsAssociated":... b
-}
-"""
+    def GetChemData(self):
+        for did in self.druglist:
+            print did
+            uri = \
+                'https://api.pharmgkb.org/v1/data/chemical/%s?view=max' %did
+            # get data and read in this json file
+            data = urllib2.urlopen(uri)
+            self.json = json.load(data)
+            name = self.json["name"]
+            terms = self.json["terms"]
+            self.chemicals.append({"id":did, "name":name, "terms":terms})
+        Pickle(self.chemicals, "chemicals")

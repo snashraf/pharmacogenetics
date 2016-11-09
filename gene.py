@@ -6,6 +6,8 @@ import urllib2
 from collections import Counter
 import re
 
+# -------------------------------------------------------------------------
+
 class Gene:
     """
 This class gets information on a given gene based on gene ID. Can use either PharmGKB or Entrez.
@@ -73,7 +75,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                             rsids.append(rsid)
                         except:
                             continue
-                        all = {"starname":starname, "hgvs":hgvs, "id":hapid, "copynum":copynum, "rsids":rsids}
-                        self.alleles.append(all)
+                    all = {"starname":starname, "hgvs":hgvs, "id":hapid, "copynum":copynum, "rsids":rsids}
+                    self.alleles.append(all)
             except:
                 return
