@@ -28,10 +28,6 @@ class Variant:
             # get data and read in this json file
             data = urllib2.urlopen(uri)
             self.json = json.load(data)[0]
-        elif self.mode == 'snpedia':
-            # not used for now...
-            site = wiki.Wiki('http://bots.snpedia.com/api.php')
-            pagehandle = page.Page(site, self.rs)
         elif self.mode == 'entrez':
             uri = \
                 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=snp&id=%i&report=XML' \
@@ -55,14 +51,6 @@ class Variant:
                     self.genename = elem.attrib['symbol']
                     self.geneid = elem.attrib['geneId']
 
-    def GetType(self):
-        # get mutation type (still need to do entrez side)
-        if self.mode == 'pharmgkb':
-            self.type = (self.json['changeClass'],
-                         self.json['clinicalSignificance'])
-        elif self.mode == 'entrez':
-            pass
-
     def GetAlias(self):
         # get HGVS alias' for variant, depending on mode again (use later)
         if self.mode == 'pharmgkb':
@@ -71,4 +59,4 @@ class Variant:
             self.names = []
             for elem in self.tree.iter():
                 if 'hgvs' in elem.tag:
-                    self.names.append(elem.text)
+                    self.names.append(unicode(elem.text))

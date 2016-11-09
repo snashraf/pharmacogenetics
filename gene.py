@@ -10,24 +10,27 @@ class Gene:
     """
 This class gets information on a given gene based on gene ID. Can use either PharmGKB or Entrez.
     """
-    def __init__(self, geneid):
+    def __init__(self, geneid, mode):
         # initialize with geneID
-        self.geneid = geneid
+        self.gid = geneid
+        self.mode = mode
+        self.alleles = []
+        self.genes = []
         self.Load()  # loads data on gene
-        self.GetDrugs()  # loads info on associated drugs
-        self.GetDesc()  # gets summary of gene
+        #self.GetDrugs()  # loads info on associated drugs
+        #self.GetDesc()  # gets summary of gene
+        self.GetHaps()
 
     def Load(self):
-        if 'PA' in self.geneid:
+        if self.mode == "pharmgkb":
             uri = 'https://api.pharmgkb.org/v1/data/gene/%s?view=max' \
-                % self.geneid
+                % self.gid
             data = urllib2.urlopen(uri)
-            self.json = json.load(data)[0]
-        elif 'PA' not in self.geneid and 'placeholder' \
-            not in self.geneid:
+            self.json = json.load(data)
+        elif self.mode == "entrez":
             uri = \
                 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=%i&retmode=XML' \
-                % int(self.geneid)
+                % int(self.gid)
             f = urllib2.urlopen(uri)
             data = f.read()
             f.close()
@@ -37,25 +40,40 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                     self.name = elem.text
 
     def GetDesc(self):
-        for elem in self.tree[0].iter():
-            if 'summary' in elem.tag:
-                self.desc = elem.text
-
-    def GetDrugs(self):
-        self.drugs = []
-        for elem in self.tree[0].iter():
-            if 'Gene-commentary_text' in elem.tag:
-                c = Counter(re.findall(r"\w+", elem.text))
-                if 'interacts with' in elem.text and c[self.name] == 1:
-                    cut = elem.text.split(' ')
-                    drug = cut[len(cut) - 1].strip('.')
-                    self.drugs.append(drug)
-        print self.drugs
+        if self.mode == "pharmgkb":
+            print self.json
+        elif self.mode == "entrez":
+            for elem in self.tree[0].iter():
+                if 'summary' in elem.tag:
+                    self.desc = elem.text
 
     def GetHaps(self):
+        if self.mode == "entrez":
+            return
+        else:
         # get a list of known haplotype IDs from gene ID
-        uri = \
-            'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId=%s&view=max' \
-            % self.geneid
-        self.haps = []
-
+            uri = \
+                'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId=%s&view=max' \
+                % self.gid
+            try:
+                data = urllib2.urlopen(uri)
+                self.json = json.load(data)
+                self.haps = []
+                for doc in self.json:
+                    starname = doc['name']
+                    hgvs = doc['hgvs']
+                    alleles = doc['alleles']
+                    hapid = doc['id']
+                    copynum = doc['copyNumber']
+                    rsids = []
+                    for allele in alleles:
+                        try:
+                            change = allele['allele']
+                            rsid = allele['location']['displayName']
+                            rsids.append(rsid)
+                        except:
+                            continue
+                        all = {"starname":starname, "hgvs":hgvs, "id":hapid, "copynum":copynum, "rsids":rsids}
+                        self.alleles.append(all)
+            except:
+                return

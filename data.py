@@ -1,9 +1,47 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import vcf
+import urllib2
+import pprint
+from variant import Variant
+from gene import Gene
+import numpy as np
+import pymongo
+
+def Convert(dict):
+    n = {}
+    for k, v in dict.items():
+        if isinstance(k, unicode):
+            for i in ['utf-8', 'iso-8859-1']:
+                try:
+                    k = k.encode(i)
+                except (UnicodeEncodeError, UnicodeDecodeError):
+                    continue
+        if isinstance(v, np.int64):
+            print("k is %s , v is %s" % (k, v))
+            v = int(v)
+            print("V is %s" % v)
+        if isinstance(v, unicode):
+            for i in ['utf-8', 'iso-8859-1']:
+                try:
+                    v = v.encode(i)
+                except (UnicodeEncodeError, UnicodeDecodeError):
+                    continue
+        n[k] = v
+        print n
+    return n
 
 
-class Data:
+def toMongo(collection, dict):
+    print "Exporting to MongoDB..."
+    for item in dict:
+        try:
+            collection.insert_one(item)
+        except pymongo.errors.InvalidDocument:
+            n = Convert(item)
+            collection.insert(n)
+
+class DataCollector:
     '''
     This class imports a design VCF and an input VCF.
     '''
@@ -15,15 +53,26 @@ class Data:
         GetIDs finds changed positions and matches them to the design.
         """
         self.f = f
-        self.GetDesign()
-        self.Import()
-        self.GetIDs()
+        self.variants = []
+        self.genes = []
+        self.geneids = []
+        self.genenames=[]
+        self.nohap = []
+        self.data = {}
+        self.changes = {}
+        client = pymongo.MongoClient()
+        db = client.pgx
+        self.varcol = db.variants
+        self.genecol = db.genes
+        print "Importing VCF..."
+        self.GetVCFData()
+        print "Collecting data on variants..."
+        self.GetVarData()
+        print "Collecting data on gene haplotypes..."
+        self.GetGeneData()
+        #self.toMongo()
 
-    def Import(self):
-        # import file with the pyvcf module"
-        self.reader = vcf.Reader(open(self.f, 'r'))
-
-    def GetDesign(self):
+    def GetVCFData(self):
         # change design source file here
         filename = "config/design.vcf"
         # dictionary of pos-to-rs values
@@ -31,31 +80,78 @@ class Data:
         self.reader = vcf.Reader(open(filename, 'r'))
         # create a dictionary for this
         for record in self.reader:
-            self.contab[record.POS] = record.ID
+            for sample in record.samples:
+                call = str(sample['GT'])
+            self.variants.append({"hg19pos":record.POS, "rsid":record.ID, "call":{"num": call, "ref":record.REF, "alt":record.ALT}})
 
-    def GetIDs(self):
-        # create list for storing changed positions / rs#s
-        self.rss = []
-        for record in self.reader:
-            # check for non-None positions, these have changed
-            if "[None]" not in str(record.ALT):
-                for sample in record.samples:
-                    call = str(sample['GT'])
-                    if "/" in call:
-                        self.isPhased = False
-                        c = call.count("1")
-                        if c == 1:
-                            mutType = "het"
-                        elif c == 2:
-                            mutType = "hom"
-                        print mutType
-                    elif "|" in call:
-                        self.isPhased = True
-                try:
-                    # match position to rs # and add rs to storage
-                    rs = self.contab[record.POS]
-                    self.rss.append((rs, record.ALT, mutType))
-                except KeyError:
-                    # if no match is found, let user know
-                    print "couldn't match", record.POS
+    def GetVarData(self):
+        for doc in self.variants:
+            print doc["rsid"]
+            try:
+                v = Variant(doc["rsid"], 'pharmgkb')
+            except urllib2.HTTPError:
+                    v = Variant(doc["rsid"], 'entrez')
+            doc["gene"]={"symbol":v.genename, "id":v.geneid}
+            doc["alias"] = {"genomic":[],"coding":[],"protein":[],"nucleotide":[], "rsid":[]}
+            for name in v.names:
+                if "g." in name:
+                    doc["alias"]["genomic"].append(name)
+                elif "c." in name:
+                    doc["alias"]["coding"].append(name)
+                elif "p." in name:
+                    doc["alias"]["protein"].append(name)
+                elif "n." in name:
+                    doc["alias"]["nucleotide"].append(name)
+                elif "rs" in name:
+                    doc["alias"]["rsid"].append(name)
+                else:
                     pass
+        for var in self.variants:
+            try:
+                toMongo(self.varcol, var)
+            except:
+                print "converting..."
+                n = Convert(var)
+                toMongo(self.varcol, n)
+
+    def GetGeneData(self):
+        genes = {"pgkb":[], "other":[]}
+        gid_sym = {}
+        for doc in self.variants:
+            sym = doc["gene"]["symbol"]
+            gid = doc["gene"]["id"]
+            gid_sym[gid] = sym
+            if gid not in genes:
+                if "PA" in gid and gid not in genes["pgkb"]:
+                    genes["pgkb"].append(gid)
+                elif "PA" not in gid and gid not in genes["other"]:
+                    genes["other"].append(gid)
+        for gid in genes["pgkb"]:
+            try:
+                print gid
+                g = Gene(gid, 'pharmgkb')
+                self.genes.append({"symbol":gid_sym[gid], "id":gid, "alleles":g.alleles})
+            except:
+                raise
+        for gene in self.genes:
+            try:
+                toMongo(self.genecol, gene)
+            except:
+                print "converting..."
+                n = Convert(gene)
+                toMongo(self.genecol, n)
+
+
+pp = pprint.PrettyPrinter(indent=4)
+vcf = DataCollector('data/hpc/test.vcf')
+
+# use hapID to find more data
+"""
+db.haplotypes ->
+{
+"id":"PA...",
+"name":
+    {"starname":..., "hgvs":...}
+"drugsAssociated":... b
+}
+"""
