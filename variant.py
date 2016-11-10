@@ -29,6 +29,7 @@ class Variant:
             # get data and read in this json file
             data = urllib2.urlopen(uri)
             self.json = json.load(data)[0]
+            return
         elif self.mode == 'entrez':
             uri = \
                 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=snp&id=%i&report=XML' \
@@ -38,26 +39,41 @@ class Variant:
             f.close()
             # create xml tree from downloaded file
             self.tree = etree.XML(data)
+            return
+        elif self.mode == "clinvar":
+            cvid = self.rs.split("cv")[1]
+            uri = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=clinvar&id=%s&retmode=json" %cvid
+            data = urllib2.urlopen(uri)
+            self.json = json.load(data)
+            return
 
     def GetGene(self):
         # again check for which mode is used'
         if self.mode == 'pharmgkb':
             # get gene name and PHARMGKB gene Id
-            self.genename = self.json['relatedGenes'][0]['symbol']
-            self.geneid = self.json['relatedGenes'][0]['id']
+            self.nameid = [(doc['symbol'],doc['id']) for doc in self.json["relatedGenes"]]
         elif self.mode == 'entrez':
             # get gene name and ENTREZ gene id (only used if pharmgkb fails)
             for elem in self.tree.iter('*'):
                 if 'symbol' in elem.attrib:
-                    self.genename = elem.attrib['symbol']
-                    self.geneid = elem.attrib['geneId']
+                    name = elem.attrib['symbol']
+                    gid = elem.attrib['geneId']
+                    self.nameid=[(name, gid)]
+        elif self.mode == 'clinvar':
+            self.nameid = [("BCHE", "PA25294")]
 
     def GetAlias(self):
         # get HGVS alias' for variant, depending on mode again (use later)
         if self.mode == 'pharmgkb':
             self.names = self.json['altNames']['synonym']
+            print self.names
+            return
         elif self.mode == 'entrez':
             self.names = []
             for elem in self.tree.iter():
                 if 'hgvs' in elem.tag:
                     self.names.append(unicode(elem.text))
+            return
+        elif self.mode == 'clinvar':
+            self.names = []
+            return
