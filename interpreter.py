@@ -1,4 +1,5 @@
-from patient import Patient
+from patient import Patient, Find
+from data import DataCollector
 import json
 import requests
 from requests_oauthlib import OAuth2Session
@@ -9,6 +10,7 @@ import ast
 # -------------------------------------------------------------------------
 
 def Authenticate():
+    print "Authenticating..."
     req = ""
     with open("config/auth.txt", "r") as f:
         req = json.load(f)
@@ -31,32 +33,21 @@ def getJson(uri, client):
 
 # -------------------------------------------------------------------------
 
-class Interpreter(Patient):
+class Interpreter:
 
     def __init__(self, f):
-        Patient.__init__(self, f)
-        self.alleles = {}
-
-    def GetAlleles(self):
-        for var in self.patientvars:
-            allele = ""
-            rsid = var["rsid"]
-            call = var["call"]["num"]
-            ref = var["call"]["ref"]
-            alt =  var["call"]["alt"]
-            if call == "0/1" or call == "1/0":
-                allele = ref + str(alt[0])
-            elif call == "1/1":
-                allele = str(alt[0]) * 2
-            self.alleles[rsid] = allele
-
-    def GetHaplotypes(self):
-        pass
+        self.p = Patient(f)
+        print "Loading patient:", f
+        self.adviceperdrug={}
+        self.p.Load()
+        self.DrugAdvice("rsid")
 
     def DrugAdvice(self, mode):
         c = Authenticate()
+        prev_rsid = ""
+        prev_did = ""
         if mode == "rsid":
-            for k, v in self.rsdrugs:
+            for k, v in self.p.rsdrugs:
                 for rsid in k:
                     for did in v:
                         uri = "https://api.pharmgkb.org/v1/report/pair/%s/%s/clinicalAnnotation"  %(rsid, did)
@@ -64,15 +55,24 @@ class Interpreter(Patient):
                         if result is not None:
                             for doc in result:
                                 for phen in doc['allelePhenotypes']:
-                                    if self.alleles[rsid] in phen['allele']:
-                                        print "---", rsid, self.alleles[rsid], "---"
-                                        print phen['phenotype']
+                                    if self.p.alleles[rsid] in phen['allele']:
+                                        matches = Find(self.p.chemicals, "id", did)
+                                        name = matches[0]['name']
+                                        key = str((did,name))
+                                        if did not in self.adviceperdrug.keys():
+                                            self.adviceperdrug[key] = [phen['phenotype']]
+                                        elif did in self.adviceperdrug.keys():
+                                            self.adviceperdrug[key].append(phen['phenotype'])
+                                        prev_rsid = rsid
+                                        prev_did = did
                                         break
                         else:
                             continue
         elif mode == "haplotype":
             pass
 
+    def PerDrug(self):
+        pass
+
 tom = Interpreter('data/hpc/test.vcf')
-tom.GetAlleles()
-tom.DrugAdvice("rsid")
+print tom.adviceperdrug

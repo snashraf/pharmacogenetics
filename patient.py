@@ -6,9 +6,14 @@ from data import DataCollector
 
 #-------------------------------------------------------------------------
 
-def Find(dict, k, v):
-    match = (item for item in dict if item[k] == v).next()
-    return match
+def Find(lst, k, v):
+    matches = []
+    for dct in lst:
+        matches += [item for item in lst if item[k] == v]
+    if len(matches) > 0:
+        return matches
+    else:
+        return None
 
 #-------------------------------------------------------------------------
 
@@ -25,20 +30,26 @@ class Patient:
         GetIDs finds changed positions and matches them to the design.
         """
         self.f = f
+        self.reader = vcf.Reader(open(f, 'r'))
         self.patientvars = []
         self.patientgenes = {}
-        self.reader = vcf.Reader(open(f, 'r'))
-        self.data = DataCollector('config/design.vcf')
-        self.data.GetVCFData()
-        self.contab = self.data.contab
         self.giddrugs = {}
         self.rsdrugs= []
+        self.alleles={}
+        print "Initiating patient..."
+
+    def Load(self):
+        self.d =DataCollector('config/corrected_design.vcf')
+        self.d.GetVCFData()
         self.GetIDs()
         self.ImportData()
         self.GetGenes()
         self.GetChems()
+        self.GetAlleles()
+        #self.Hapmaker()
 
     def ImportData(self):
+        print "Trying to import database..."
         try:
             with open("variants.pickle", "rb") as f:
                 self.variants = pickle.load(f)
@@ -48,15 +59,10 @@ class Patient:
                 self.chemicals = pickle.load(f)
         except:
             "Redownloading data..."
-            print "Collecting data on variants..."
-            data.GetVarData()
-            print "Collecting data on gene haplotypes..."
-            data.GetGeneData()
-            print "Getting data on connected chemicals..."
-            data.GetChemData()
-            self.ImportData()
+            self.Update()
 
     def GetIDs(self):
+        print "Reading patient variants..."
         # create list for storing changed positions / rs#s
         for record in self.reader:
             # check for non-None positions, these have changed
@@ -67,7 +73,8 @@ class Patient:
                     call = str(sample['GT'])
                 try:
                     # match position to rs # and add rs to storage
-                    rs = self.contab[record.POS]
+                    rs = self.d.contab[record.POS]
+                    print rs
                     self.patientvars.append({"pos":record.POS,"rsid":rs,"call":{"num":call,"ref":ref,"alt":alt}})
                 except KeyError:
                     # if no match is found, let user know
@@ -75,23 +82,69 @@ class Patient:
                     pass
 
     def GetGenes(self):
+        print "Finding associated genes..."
         for var in self.patientvars:
             rsid = var['rsid']
-            match = Find(self.variants, "rsid", rsid)
-            gene = match["gene"]["id"]
-            if gene in self.patientgenes.keys():
-                self.patientgenes[gene].append(rsid)
-            elif gene not in self.patientgenes.keys():
-                self.patientgenes[gene] = [rsid]
+            matches = Find(self.variants, "rsid", rsid)
+            for match in matches:
+                for gene in match['genes']:
+                    gid = gene["id"]
+                    if gid in self.patientgenes.keys():
+                        if rsid not in self.patientgenes[gid]:
+                            self.patientgenes[gid].append(rsid)
+                        else:
+                            pass
+                    elif gid not in self.patientgenes.keys():
+                        self.patientgenes[gid] = [rsid]
 
     def GetChems(self):
+        print "Finding matching drugs..."
         for gid, values in self.patientgenes.items():
-            match = ""
-            try:
-                match = Find(self.genes, "id", gid)
-                match = match['drugs']
-            except:
-                print "Gene %s not found!" %gid
+            match = Find(self.genes, "id", gid)
+            if match is not None:
+                match = match[0]['drugs']
+            else:
+                continue
             if len(match) > 0:
                 self.giddrugs[gid] = match
                 self.rsdrugs.append((self.patientgenes[gid], match))
+
+    def GetAlleles(self):
+        print "Determining patient alleles..."
+        for var in self.patientvars:
+            allele = ""
+            rsid = var["rsid"]
+            call = var["call"]["num"]
+            ref = var["call"]["ref"]
+            alt =  var["call"]["alt"]
+            if "/" in call:
+                if call == "0/1" or call == "1/0":
+                    allele = ref + str(alt[0])
+                elif call == "1/1":
+                    allele = str(alt[0]) * 2
+            elif "|" in call:
+                pass
+            self.alleles[rsid] = allele
+
+    def Hapmaker(self):
+        hapdictionary = {}
+        for var in self.patientvars:
+            filt_names = []
+            rsid = var["rsid"]
+            alt = var["call"]["alt"]
+            matches = Find(self.variants, "rsid", rsid)
+            names = matches[0]["alias"]
+            gen_names = names["genomic"]
+            for name in gen_names:
+                if "NC" in name:
+                    for nucl in alt:
+                        if (">"+str(nucl)) in name:
+                            filt_names.append(name)
+            hapdictionary[rsid] = filt_names
+        for gene, rsids in self.patientgenes.items():
+            print gene, rsids
+
+
+tom = Patient('data/hpc/test.vcf')
+tom.Load()
+tom.Hapmaker()
