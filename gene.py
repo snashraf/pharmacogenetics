@@ -37,6 +37,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                 % self.gid
             data = urllib2.urlopen(uri)
             self.json = json.load(data)
+            self.name = self.json["symbol"]
         elif self.mode == 'entrez':
             uri = \
                 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=%i&retmode=XML' \

@@ -87,7 +87,6 @@ class Variant:
 
         if self.mode == 'pharmgkb':
             self.names = self.json['altNames']['synonym']
-            print self.names
             return
         elif self.mode == 'entrez':
             self.names = []

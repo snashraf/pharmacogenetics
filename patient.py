@@ -2,21 +2,56 @@
 # -*- coding: utf-8 -*-
 
 import vcf
-import pickle
+import sqlite3
+import json
+import requests
+from requests_oauthlib import OAuth2Session
+import urllib
+import urllib2
+import ast
 from data import DataCollector
 
 
 # -------------------------------------------------------------------------
 
-def Find(lst, k, v):
-    matches = []
-    for dct in lst:
-        matches += [item for item in lst if item[k] == v]
-    if len(matches) > 0:
-        return matches
-    else:
-        return None
+def Authenticate():
+    print 'Authenticating...'
+    req = ''
+    with open('config/auth.txt', 'r') as f:
+        req = json.load(f)
+    url = 'https://api.pharmgkb.org/v1/auth/oauthSignIn'
+    data = urllib.urlencode(req)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req)
+    str_response = response.read()
+    token = ast.literal_eval(str_response)
+    client = OAuth2Session(token=token)
+    return client
 
+def getJson(uri, client):
+    r = client.get(uri)
+    data = r.json()
+    if type(data) == dict:
+        return None
+    elif type(data) == list:
+        return data
+
+def PGKB_connect(authobj, mode, a, did):
+    uri = \
+        'https://api.pharmgkb.org/v1/report/pair/%s/%s/clinicalAnnotation' \
+        % (a, did)
+    result = getJson(uri, authobj)
+    results = []
+    if result is not None:
+        for doc in result:
+            for phen in doc['allelePhenotypes']:
+                if mode == "rsid":
+                    results.append(phen)
+                elif mode == "haplotype":
+                    pass
+    else:
+        return
+    return results
 
 # -------------------------------------------------------------------------
 
@@ -33,38 +68,33 @@ class Patient:
         Import imports the input vcf
         GetIDs finds changed positions and matches them to the design.
         """
-
         self.f = f
         self.reader = vcf.Reader(open(f, 'r'))
-        self.patientvars = []
-        self.patientgenes = {}
+        self.vars = []
+        self.genes = {}
         self.giddrugs = {}
-        self.rsdrugs = []
         self.alleles = {}
+        self.adviceperdrug = []
+        self.Load()
         print 'Initiating patient...'
 
     def Load(self):
         self.d = DataCollector('config/corrected_design.vcf')
-        self.d.GetVCFData()
-        self.GetIDs()
         self.ImportData()
-        self.GetGenes()
-        self.GetChems()
-        self.GetAlleles()
-
+        self.GetIDs()
         # self.Hapmaker()
 
     def ImportData(self):
         print 'Trying to import database...'
         try:
-            with open('variants.pickle', 'rb') as f:
-                self.variants = pickle.load(f)
-            with open('genes.pickle', 'rb') as f:
-                self.genes = pickle.load(f)
-            with open('chemicals.pickle', 'rb') as f:
-                self.chemicals = pickle.load(f)
+            self.conn = sqlite3.connect('pharmacogenetics.db')
+            self.sql = self.conn.cursor()
+            self.sql.execute('''DROP TABLE IF EXISTS patientvars''')
+            self.sql.execute('''CREATE TABLE patientvars
+                                                (pos int PRIMARY KEY, num text, ref text, alt text, allele text)''')
         except:
-            self.Update()
+            raise
+            #self.d.Update()
 
     def GetIDs(self):
         print 'Reading patient variants...'
@@ -81,14 +111,17 @@ class Patient:
                 for sample in record.samples:
                     call = str(sample['GT'])
                 try:
-
                     # match position to rs # and add rs to storage
+                    if '/' in call:
+                        if call == '0/1' or call == '1/0':
+                            allele = ref + str(alt[0])
+                        elif call == '1/1':
+                            allele = str(alt[0]) * 2
+                    elif '|' in call:
+                        pass
+                    item = (record.POS, call, record.REF, str(alt[0]), allele)
+                    self.sql.execute('''INSERT INTO patientvars VALUES(?,?,?,?,?)''', item)
 
-                    rs = self.d.contab[record.POS]
-                    print rs
-                    self.patientvars.append({'pos': record.POS,
-                            'rsid': rs, 'call': {'num': call,
-                            'ref': ref, 'alt': alt}})
                 except KeyError:
 
                     # if no match is found, let user know
@@ -96,76 +129,76 @@ class Patient:
                     print "couldn't match", record.POS
                     pass
 
-    def GetGenes(self):
-        print 'Finding associated genes...'
-        for var in self.patientvars:
-            rsid = var['rsid']
-            matches = Find(self.variants, 'rsid', rsid)
-            for match in matches:
-                for gene in match['genes']:
-                    gid = gene['id']
-                    if gid in self.patientgenes.keys():
-                        if rsid not in self.patientgenes[gid]:
-                            self.patientgenes[gid].append(rsid)
-                        else:
-                            pass
-                    elif gid not in self.patientgenes.keys():
-                        self.patientgenes[gid] = [rsid]
-
-    def GetChems(self):
-        print 'Finding matching drugs...'
-        for (gid, values) in self.patientgenes.items():
-            match = Find(self.genes, 'id', gid)
-            if match is not None:
-                match = match[0]['drugs']
-            else:
-                continue
-            if len(match) > 0:
-                self.giddrugs[gid] = match
-                self.rsdrugs.append((self.patientgenes[gid], match))
-
-    def GetAlleles(self):
-        print 'Determining patient alleles...'
-        for var in self.patientvars:
-            allele = ''
-            rsid = var['rsid']
-            call = var['call']['num']
-            ref = var['call']['ref']
-            alt = var['call']['alt']
-            if '/' in call:
-                if call == '0/1' or call == '1/0':
-                    allele = ref + str(alt[0])
-                elif call == '1/1':
-                    allele = str(alt[0]) * 2
-            elif '|' in call:
-                pass
-            self.alleles[rsid] = allele
-
     def Hapmaker(self):
-        hapdictionary = {}
-        for var in self.patientvars:
-            filt_names = []
+        self.sql.execute("SELECT pos, rsid FROM variants AS V JOIN patientvars as P ON V.rsid=P.rsid")
+        for result in self.sql.fetchall():
+            print result
+            pos = result[0]
+            self.sql.execute("SELECT rsid FROM design WHERE pos = ?", (pos,))
             rsid = var['rsid']
             alt = var['call']['alt']
-            matches = Find(self.variants, 'rsid', rsid)
-            names = matches[0]['alias']
-            gen_names = names['genomic']
-            for name in gen_names:
-                if 'NC' in name:
+            self.sql.execute("SELECT alias FROM alias WHERE rsid = ?", (rsid,))
+            for result in self.sql.fetchall():
+                alias = result[0]
+                if 'NC' in alias and "g." in alias:
                     for nucl in alt:
-                        if '>' + str(nucl) in name:
-                            filt_names.append(name)
-            hapdictionary[rsid] = filt_names
-        for (gene, rsids) in self.patientgenes.items():
+                        if '>' + str(nucl) in alias:
+                            pass
+        for (gene, rsids) in self.genes.items():
             print 'Haplotype for %s:' % gene
             for rsid in rsids:
-                print rsid
-                print hapdictionary[rsid]
+                pass
 
     def Hapmatcher(self):
+        genes = []
+        self.sql.execute("SELECT pos, allele FROM patientvars")
+        self.sql.execute("SELECT rsid, hapid, allele FROM alleles AS A JOIN patientvars AS P ON V.pos=P.pos")
+        for result in self.sql.fetchall():
+            print result
+            rsid = result[0]
+            self.sql.execute("SELECT DISTINCT gid FROM variants WHERE rsid = ?", (rsid,))
+            for result in self.sql.fetchall():
+                gid = result[0]
+                genes.append(gid)
+        for gid in genes:
+            self.sql.execute("SELECT DISTINCT hapid FROM alleles WHERE gid = ?", (gid,))
+            haplotypes = self.sql.fetchall()
+            if len(haplotypes) > 0:
+                for hap in haplotypes:
+                    if "*1" not in hap[0]:
+                        print hap
+
+
+    def DrugAdvice(self, mode):
+        authobj = Authenticate()
+        if mode == "rsid":
+            self.sql.execute("SELECT rsid, allele FROM patientvars")
+            for result in self.sql.fetchall():
+                rsid = result[0]
+                allele = result[1]
+                self.sql.execute("SELECT DISTINCT gid FROM variants WHERE rsid = ?", (rsid,))
+                for result in self.sql.fetchall():
+                    gid = result[0]
+                    self.sql.execute("SELECT DISTINCT did FROM drugpairs WHERE gid = ?", (gid, ))
+                    for result in self.sql.fetchall():
+                        did = result[0]
+                        results = PGKB_connect(authobj, mode, rsid, did)
+                        if results is not None:
+                            for phen in results:
+                                if allele in phen['allele']:
+                                    entry = {
+                                        'did': did,
+                                        'rsid': rsid,
+                                        'phenotype': phen['phenotype'],
+                                    }
+                                    self.adviceperdrug.append(entry)
+        elif mode == "haplotype":
+            self.Hapmatcher()
+            pass
+    def PerDrug(self):
         pass
 
-
 tom = Patient('data/hpc/test.vcf')
-tom.Load()
-tom.Hapmaker()
+#tom.DrugAdvice("haplotype")
+#print tom.adviceperdrug
+

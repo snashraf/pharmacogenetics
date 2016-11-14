@@ -3,23 +3,10 @@
 
 import vcf
 import urllib2
-import pprint
 from variant import Variant
 from gene import Gene
-import numpy as np
-import pickle
-import pymongo
+import sqlite3
 import json
-
-
-# -------------------------------------------------------------------------
-
-def Pickle(dict, name):
-    print 'Exporting pickle file...'
-    with open(name + '.pickle', 'wb') as file:
-        pickle.dump(dict, file)
-
-# --------------------------------------------------------------------------------------
 
 class DataCollector:
 
@@ -44,6 +31,8 @@ class DataCollector:
         self.nohap = []
         self.data = {}
         self.changes = {}
+        self.conn = sqlite3.connect('pharmacogenetics.db')
+        self.sql = self.conn.cursor()
 
     def Update(self):
         self.GetVCFData()
@@ -53,7 +42,9 @@ class DataCollector:
 
     def GetVCFData(self):
         print 'Importing VCF...'
-
+        self.sql.execute('''DROP TABLE IF EXISTS design''')
+        self.sql.execute('''CREATE TABLE design
+                            (pos int, rsid int, num text, ref text, alt text,UNIQUE(pos, rsid) ON CONFLICT REPLACE)''')
         # change design source file here
 
         filename = self.f
@@ -70,79 +61,66 @@ class DataCollector:
             for sample in record.samples:
                 call = str(sample['GT'])
                 break
-            self.variants.append({'hg19pos': record.POS,
-                                 'rsid': record.ID,
-                                 'call': {'num': call,
-                                 'ref': record.REF, 'alt': record.ALT}})
+            for alt in record.ALT:
+                item = (record.POS, record.ID, call, record.REF, str(alt))
+                self.sql.execute('''INSERT INTO design VALUES(?,?,?,?,?)''', item)
 
     def GetVarData(self):
         print 'Getting variant data...'
-        for doc in self.variants:
-            print doc['rsid']
+        self.sql.execute('''DROP TABLE IF EXISTS variants''')
+        self.sql.execute('''CREATE TABLE variants
+                                    (rsid text, gid text, UNIQUE(rsid,gid) ON CONFLICT REPLACE)''')
+        self.sql.execute('''DROP TABLE IF EXISTS alias''')
+        self.sql.execute('''CREATE TABLE alias
+                                            (rsid text, alias varchar(255) PRIMARY KEY)''')
+        self.sql.execute("SELECT DISTINCT rsid FROM design")
+        for result in self.sql.fetchall():
+            rsid = result[0]
+            print rsid
             try:
-                if 'rs' in doc['rsid']:
-                    v = Variant(doc['rsid'], 'pharmgkb')
-                elif 'cv' in doc['rsid']:
-                    v = Variant(doc['rsid'], 'clinvar')
+                if 'rs' in rsid:
+                    v = Variant(rsid, 'pharmgkb')
+                elif 'cv' in rsid:
+                    v = Variant(rsid, 'clinvar')
             except urllib2.HTTPError:
-                v = Variant(doc['rsid'], 'entrez')
-            doc['genes'] = []
+                v = Variant(rsid, 'entrez')
             for tup in v.nameid:
-                pair = {'symbol': tup[0], 'id': tup[1]}
-                doc['genes'].append(pair)
-            doc['alias'] = {
-                'genomic': [],
-                'coding': [],
-                'protein': [],
-                'nucleotide': [],
-                'rsid': [],
-                }
-            for name in v.names:
-                if ':g.' in name:
-                    doc['alias']['genomic'].append(name)
-                elif ':c.' in name:
-                    doc['alias']['coding'].append(name)
-                elif ':p.' in name:
-                    doc['alias']['protein'].append(name)
-                elif ':n.' in name:
-                    doc['alias']['nucleotide'].append(name)
-                elif 'rs' in name:
-                    doc['alias']['rsid'].append(name)
-                else:
-                    pass
-        Pickle(self.variants, 'variants')
+                symbol = tup[0]
+                gid = tup[1]
+                self.sql.execute('''INSERT INTO variants VALUES(?,?)''', (rsid, gid))
+                for alias in v.names:
+                    try:
+                        self.sql.execute('''INSERT INTO alias VALUES(?,?)''', (rsid, alias))
+                    except sqlite3.IntegrityError:
+                        pass
 
     def GetGeneData(self):
-        self.GetPairs()
         print 'Getting gene data...'
+        self.sql.execute('''DROP TABLE IF EXISTS genes''')
+        self.sql.execute('''CREATE TABLE genes
+                                            (gid text UNIQUE, symbol text)''')
+        self.sql.execute('''DROP TABLE IF EXISTS alleles''')
+        self.sql.execute('''CREATE TABLE alleles
+                                            (hapid text, gid text, starname text, hgvs text, rsid text, UNIQUE(hapid, rsid) ON CONFLICT REPLACE)''')
+        self.GetPairs()
         genes = {'pgkb': [], 'other': []}
-        gid_sym = {}
-        for doc in self.variants:
-            genelist = doc['genes']
-            for subdoc in genelist:
-                sym = subdoc['symbol']
-                gid = subdoc['id']
-                gid_sym[gid] = sym
-            if 'PA' in gid and gid not in genes['pgkb']:
-                genes['pgkb'].append(gid)
-            elif 'PA' not in gid and gid not in genes['other']:
-                genes['other'].append(gid)
-        for gid in genes['pgkb']:
+        self.sql.execute("SELECT DISTINCT gid FROM variants")
+        for result in self.sql.fetchall():
+            gid = result[0]
             print gid
-            g = Gene(gid, 'pharmgkb')
-            try:
-                drugs = self.giddid[gid]
-            except:
-                drugs = []
-            self.genes.append({
-                'symbol': gid_sym[gid],
-                'id': gid,
-                'alleles': g.alleles,
-                'drugs': drugs,
-                })
-        Pickle(self.genes, 'genes')
+            if "PA" in gid:
+                g = Gene(gid, 'pharmgkb')
+                self.sql.execute('''INSERT INTO genes VALUES(?,?)''', (gid, g.name))
+                for allele in g.alleles:
+                    for rsid in allele['rsids']:
+                        self.sql.execute('''INSERT INTO alleles VALUES(?,?,?,?,?)''', (allele['id'], gid, allele['starname'], allele['hgvs'], rsid))
+        else:
+            pass
 
     def GetPairs(self):
+        self.sql.execute('''DROP TABLE IF EXISTS drugpairs''')
+        self.sql.execute('''CREATE TABLE drugpairs
+                        (did text, gid text, UNIQUE(did, gid) ON CONFLICT REPLACE)''')
         print 'Getting gene-drug pairs...'
         self.giddid = {}
         self.druglist = []
@@ -155,18 +133,18 @@ class DataCollector:
         for doc in self.json:
             gid = doc['gene']['id']
             did = doc['chemical']['id']
-            self.druglist.append(did)
-            if gid in self.giddid.keys():
-                self.giddid[gid].append(did)
-            else:
-                self.giddid[gid] = [did]
+            self.sql.execute('''INSERT INTO drugpairs VALUES(?,?)''', (did, gid))
         pairs = len(self.json)
         print '%i annotated pairs found!' % pairs
 
     def GetChemData(self):
         print 'Getting drug data...'
-        for did in self.druglist:
-            print did
+        self.sql.execute('''DROP TABLE IF EXISTS chemicals''')
+        self.sql.execute('''CREATE TABLE chemicals
+                                (did text, name text, terms varchar(255), UNIQUE(did, terms) ON CONFLICT REPLACE)''')
+        self.sql.execute("SELECT DISTINCT did FROM drugpairs")
+        for result in self.sql.fetchall():
+            did = result[0]
             uri = \
                 'https://api.pharmgkb.org/v1/data/chemical/%s?view=max' \
                 % did
@@ -177,9 +155,10 @@ class DataCollector:
             self.json = json.load(data)
             name = self.json['name']
             terms = self.json['terms']
-            self.chemicals.append({'id': did, 'name': name,
-                                  'terms': terms})
-        Pickle(self.chemicals, 'chemicals')
+            for item in terms:
+                term = item['term']
+                if name not in term.lower():
+                    self.sql.execute('''INSERT INTO chemicals VALUES(?,?,?)''', (did, str(name), term))
 
 
 if __name__ == '__main__':
