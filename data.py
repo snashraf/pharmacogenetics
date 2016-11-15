@@ -39,6 +39,7 @@ class DataCollector:
         self.GetVarData()
         self.GetGeneData()
         self.GetChemData()
+        self.conn.commit()
 
     def GetVCFData(self):
         print 'Importing VCF...'
@@ -141,7 +142,7 @@ class DataCollector:
         print 'Getting drug data...'
         self.sql.execute('''DROP TABLE IF EXISTS chemicals''')
         self.sql.execute('''CREATE TABLE chemicals
-                                (did text, name text, terms varchar(255), UNIQUE(did, terms) ON CONFLICT REPLACE)''')
+                                (did text, name text, terms text)''')
         self.sql.execute("SELECT DISTINCT did FROM drugpairs")
         for result in self.sql.fetchall():
             did = result[0]
@@ -158,7 +159,10 @@ class DataCollector:
             for item in terms:
                 term = item['term']
                 if name not in term.lower():
-                    self.sql.execute('''INSERT INTO chemicals VALUES(?,?,?)''', (did, str(name), term))
+                    prev_term = term
+                    item = (did, str(name), term)
+                    print item
+                    self.sql.execute('''INSERT INTO chemicals VALUES(?,?,?)''', item)
 
 
 if __name__ == '__main__':

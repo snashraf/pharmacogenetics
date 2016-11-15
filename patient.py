@@ -9,6 +9,7 @@ from requests_oauthlib import OAuth2Session
 import urllib
 import urllib2
 import ast
+from operator import itemgetter
 from data import DataCollector
 
 
@@ -82,6 +83,7 @@ class Patient:
         self.d = DataCollector('config/corrected_design.vcf')
         self.ImportData()
         self.GetIDs()
+        self.conn.commit()
         # self.Hapmaker()
 
     def ImportData(self):
@@ -130,13 +132,10 @@ class Patient:
                     pass
 
     def Hapmaker(self):
-        self.sql.execute("SELECT pos, rsid FROM variants AS V JOIN patientvars as P ON V.rsid=P.rsid")
+        self.sql.execute("SELECT pos, rsid from variants AS V JOIN patientvars as P ON V.rsid=P.rsid")
         for result in self.sql.fetchall():
-            print result
             pos = result[0]
             self.sql.execute("SELECT rsid FROM design WHERE pos = ?", (pos,))
-            rsid = var['rsid']
-            alt = var['call']['alt']
             self.sql.execute("SELECT alias FROM alias WHERE rsid = ?", (rsid,))
             for result in self.sql.fetchall():
                 alias = result[0]
@@ -150,33 +149,80 @@ class Patient:
                 pass
 
     def Hapmatcher(self):
-        genes = []
-        self.sql.execute("SELECT pos, allele FROM patientvars")
-        self.sql.execute("SELECT rsid, hapid, allele FROM alleles AS A JOIN patientvars AS P ON V.pos=P.pos")
-        for result in self.sql.fetchall():
-            print result
-            rsid = result[0]
-            self.sql.execute("SELECT DISTINCT gid FROM variants WHERE rsid = ?", (rsid,))
-            for result in self.sql.fetchall():
-                gid = result[0]
-                genes.append(gid)
-        for gid in genes:
-            self.sql.execute("SELECT DISTINCT hapid FROM alleles WHERE gid = ?", (gid,))
-            haplotypes = self.sql.fetchall()
-            if len(haplotypes) > 0:
-                for hap in haplotypes:
-                    if "*1" not in hap[0]:
-                        print hap
+        self.sql.execute("SELECT DISTINCT gid FROM variants, patientvars WHERE pos=pos")
+        genes = self.sql.fetchall()
+        patienthaps = {}
+        self.nohaps = []
+        for result in genes:
+            gid = result[0]
+            if "PA" not in gid:
+                self.nohaps.append(gid)
+                continue
+            self.sql.execute("SELECT symbol FROM genes WHERE gid = ?", (gid,))
+            patienthaps[gid] = []
+            self.sql.execute("SELECT DISTINCT rsid,allele FROM patientvars,variants WHERE pos=pos AND gid = ?", (gid,))
+            patientrsids = self.sql.fetchall()
+            self.sql.execute("SELECT DISTINCT hapid, starname FROM alleles WHERE gid = ?", (gid,))
+            haps = self.sql.fetchall()
+            for hap in haps:
+                hapid = hap[0]
+                starname = hap[1]
+                if "*1" not in starname:
+                    # get rsids for haplotype
+                    self.sql.execute("SELECT DISTINCT rsid FROM alleles WHERE hapid = ?", (hapid,))
+                    # USE HAPLOTYPE FUNCTION
+                    haprsids = self.sql.fetchall()
+                    # compare patient with rsidlist
+                    comparison = set(patientrsids) & set(haprsids)
+                    match_score = float(len(comparison))/len(haprsids)
+                    if match_score == 1.0:
+                        result = (hapid, starname, len(haprsids))
+                        if result not in patienthaps[gid]:
+                            patienthaps[gid] . append(result)
+                elif "*1" in starname:
+                    reference = hapid
+                else:
+                    self.nohaps.append(gid)
+        self.haplotypes = []
 
+        for gid, result in patienthaps.items():
+            if len(result) > 0:
+                highest_hit = max(result,key=itemgetter(2))
+                hapid = highest_hit[0]
+                self.haplotypes.append(hapid)
+        self.nohaps = list(set(self.nohaps))
 
-    def DrugAdvice(self, mode):
-        authobj = Authenticate()
+    def Profiler(self, mode):
+        self.authobj = Authenticate()
+        self.Hapmatcher()
+        output = []
         if mode == "rsid":
             self.sql.execute("SELECT rsid, allele FROM patientvars")
-            for result in self.sql.fetchall():
-                rsid = result[0]
-                allele = result[1]
-                self.sql.execute("SELECT DISTINCT gid FROM variants WHERE rsid = ?", (rsid,))
+            output = self.sql.fetchall()
+        elif mode == "haplotype":
+            output += self.haplotypes
+            for gid in self.nohaps:
+                self.sql.execute("SELECT DISTINCT rsid FROM variants WHERE gid = ?", (gid,))
+                for result in self.sql.fetchall():
+                    rsid = result[0]
+                    self.sql.execute("SELECT pos FROM design WHERE rsid = ?", (rsid,))
+                    pos = self.sql.fetchone()[0]
+                    self.sql.execute("SELECT allele FROM patientvars WHERE pos = ?", (pos,))
+                    allele = self.sql.fetchall()
+                    print allele
+                    output += rsid
+        print mode, output
+        #self.Drugadvice(output)
+
+    def DrugAdvice(self, input):
+            for var in input:
+                if type(var) == tuple:
+                    rsid = result[0]
+                    allele = result[1]
+                if mode == "haplotype":
+                    self.sql.execute("SELECT DISTINCT gid FROM alleles WHERE hapid = ?", (var,))
+                elif mode == "rsid":
+                    self.sql.execute("SELECT DISTINCT gid FROM variants WHERE rsid = ?", (rsid,))
                 for result in self.sql.fetchall():
                     gid = result[0]
                     self.sql.execute("SELECT DISTINCT did FROM drugpairs WHERE gid = ?", (gid, ))
@@ -192,13 +238,12 @@ class Patient:
                                         'phenotype': phen['phenotype'],
                                     }
                                     self.adviceperdrug.append(entry)
-        elif mode == "haplotype":
-            self.Hapmatcher()
-            pass
+
     def PerDrug(self):
         pass
 
 tom = Patient('data/hpc/test.vcf')
-#tom.DrugAdvice("haplotype")
+tom.Profiler("haplotype")
+
 #print tom.adviceperdrug
 
