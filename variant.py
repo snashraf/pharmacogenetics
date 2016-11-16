@@ -69,6 +69,7 @@ class Variant:
 
             self.nameid = [(doc['symbol'], doc['id']) for doc in
                            self.json['relatedGenes']]
+
         elif self.mode == 'entrez':
 
             # get gene name and ENTREZ gene id (only used if pharmgkb fails)
@@ -78,6 +79,7 @@ class Variant:
                     name = elem.attrib['symbol']
                     gid = elem.attrib['geneId']
                     self.nameid = [(name, gid)]
+
         elif self.mode == 'clinvar':
             self.nameid = [('BCHE', 'PA25294')]
 

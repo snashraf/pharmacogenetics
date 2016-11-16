@@ -1,11 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import json
 from lxml import etree
 import urllib2
-from collections import Counter
-import re
+import json
 
 
 # -------------------------------------------------------------------------
@@ -28,8 +26,10 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
         # self.GetDrugs()  # loads info on associated drugs
         # self.GetDesc()  # gets summary of gene
-
-        self.GetHaps()
+        try:
+            self.GetHaps()
+        except urllib2.HTTPError:
+            pass
 
     def Load(self):
         if self.mode == 'pharmgkb':
@@ -50,14 +50,6 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                 if 'ref_locus' in elem.tag:
                     self.name = elem.text
 
-    def GetDesc(self):
-        if self.mode == 'pharmgkb':
-            print self.json
-        elif self.mode == 'entrez':
-            for elem in self.tree[0].iter():
-                if 'summary' in elem.tag:
-                    self.desc = elem.text
-
     def GetHaps(self):
         if self.mode == 'entrez':
             return
@@ -68,31 +60,41 @@ This class gets information on a given gene based on gene ID. Can use either Pha
             uri = \
                 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId=%s&view=max' \
                 % self.gid
-            try:
-                data = urllib2.urlopen(uri)
-                self.json = json.load(data)
-                self.haps = []
-                for doc in self.json:
-                    starname = doc['name']
+
+            data = urllib2.urlopen(uri)
+            response = json.load(data)
+            for doc in response:
+
+                # get various attributes from resulting json file
+
+                starname = doc['name']
+
+                try:
                     hgvs = doc['hgvs']
-                    alleles = doc['alleles']
-                    hapid = doc['id']
-                    copynum = doc['copyNumber']
-                    rsids = []
-                    for allele in alleles:
-                        try:
-                            change = allele['allele']
-                            rsid = allele['location']['displayName']
-                            rsids.append(rsid)
-                        except:
-                            continue
-                    all = {
-                        'starname': starname,
-                        'hgvs': hgvs,
-                        'id': hapid,
-                        'copynum': copynum,
-                        'rsids': rsids,
-                        }
-                    self.alleles.append(all)
-            except:
-                return
+                except KeyError:
+                    hgvs = None
+                alleles = doc['alleles']
+                hapid = doc['id']
+                copynum = doc['copyNumber']
+                rsids = []
+
+                # get all the involved rsids
+
+                for allele in alleles:
+                    try:
+                        rsid = allele['location']['displayName']
+                        alt = allele['allele']
+                        rsids.append((rsid, alt))
+                    except KeyError:
+                        continue
+
+                # add to alleles dictionary
+                all = {
+                    'starname': starname,
+                    'hgvs': hgvs,
+                    'id': hapid,
+                    'copynum': copynum,
+                    'rsids': rsids,
+                    }
+                self.alleles.append(all)
+
