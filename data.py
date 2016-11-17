@@ -5,9 +5,9 @@ import vcf
 import urllib2
 from variant import Variant
 from gene import Gene
-from haplotype import Haplotype
 import sqlite3
 import json
+
 
 class DataCollector:
 
@@ -23,15 +23,17 @@ class DataCollector:
         GetIDs finds changed positions and matches them to the design.
         All of this is exported
         """
-        self.f = f # filename of design
-        self.conn = sqlite3.connect('pharmacogenetics.db') # connect to db- if it doesn't exist, create it
-        self.sql = self.conn.cursor() # cursor for sqlite3, used to do things in database
+
+        self.f = f  # filename of design
+        self.conn = sqlite3.connect('pharmacogenetics.db')  # connect to db- if it doesn't exist, create it
+        self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
     def Update(self):
         """
         This function rebuilds the database, use for updating the db periodically?
         :return:
         """
+
         self.GetVCFData()
         self.GetVarData()
         self.GetGeneData()
@@ -43,6 +45,7 @@ class DataCollector:
         This function imports the design VCF
         :return:
         """
+
         print 'Importing VCF...'
 
         # create sql table if it doesn't exist yet, otherwise recreate it
@@ -53,7 +56,9 @@ class DataCollector:
         # the combination of position and rsid should be unique.
 
         self.sql.execute('''CREATE TABLE design
-                            (pos int, rsid int, num text, ref text, alt text,UNIQUE(pos, rsid) ON CONFLICT REPLACE)''')
+                            (pos int, rsid int, num text, ref text, alt text,UNIQUE(pos, rsid) ON CONFLICT REPLACE)'''
+                         )
+
         # f is the filename of the design, given when creating the datacollector object
 
         filename = self.f
@@ -66,11 +71,13 @@ class DataCollector:
 
         for record in self.reader:
             for sample in record.samples:
-                call = str(sample['GT']) # call is the 1/1 or 1|1 value showing zygosity
+                call = str(sample['GT'])  # call is the 1/1 or 1|1 value showing zygosity
                 break
             for alt in record.ALT:
-                item = (record.POS, record.ID, call, record.REF, str(alt)) # create an item to insert into sql table with relevant information
-                self.sql.execute('''INSERT INTO design VALUES(?,?,?,?,?)''', item)
+                item = (record.POS, record.ID, call, record.REF,
+                        str(alt))  # create an item to insert into sql table with relevant information
+                self.sql.execute('''INSERT INTO design VALUES(?,?,?,?,?)'''
+                                 , item)
 
     def GetVarData(self):
         """
@@ -78,6 +85,7 @@ class DataCollector:
         if not available uses the Entrez servers, possibilities are limited for now.
         :return:
         """
+
         print '--- Getting variant data ---'
 
         # drop tables if they exist already to reset them
@@ -89,13 +97,17 @@ class DataCollector:
         # and alias should be unique in the alias table.
 
         self.sql.execute('''CREATE TABLE variants
-                                    (rsid text, gid text, UNIQUE(rsid,gid) ON CONFLICT REPLACE)''')
+                                    (rsid text, gid text,
+                                    UNIQUE(rsid,gid)
+                                    ON CONFLICT REPLACE)'''
+                         )
         self.sql.execute('''CREATE TABLE alias
-                                            (rsid text, alias varchar(255) PRIMARY KEY)''')
+                                            (rsid text, alias varchar(255) PRIMARY KEY)'''
+                         )
 
         # get all rsids in the design vcf
 
-        self.sql.execute("SELECT DISTINCT rsid FROM design")
+        self.sql.execute('SELECT DISTINCT rsid FROM design')
 
         # rotate through rsids and create variant objects to fetch information
 
@@ -118,17 +130,19 @@ class DataCollector:
 
                 # use this tuple to fill sql insertion
 
-                self.sql.execute('''INSERT INTO variants VALUES(?,?)''', (rsid, gid))
+                self.sql.execute('''INSERT INTO variants VALUES(?,?)'''
+                                 , (rsid, gid))
 
                 # go through aliases, ignore duplicates and put in alias table
 
                 for alias in v.names:
                     try:
-                        self.sql.execute('''INSERT INTO alias VALUES(?,?)''', (rsid, alias))
+                        self.sql.execute('''INSERT INTO alias VALUES(?,?)'''
+                                , (rsid, alias))
+                    except sqlite3.IntegrityError:
 
                     # on duplicate, ignore
 
-                    except sqlite3.IntegrityError:
                         continue
 
     def GetGeneData(self):
@@ -136,6 +150,7 @@ class DataCollector:
         Fetches data on given gene IDs.
         :return:
         '''
+
         print '--- Getting gene data ---'
 
         # drop already existing tables genes and alleles
@@ -146,30 +161,45 @@ class DataCollector:
         # (re)create tables in database
 
         self.sql.execute('''CREATE TABLE genes
-                                            (gid text UNIQUE, symbol text)''')
+                                            (gid text UNIQUE, symbol text)'''
+                         )
         self.sql.execute('''CREATE TABLE alleles
-                                            (hapid text, gid text, starname text, hgvs text, rsid text, alt text, UNIQUE(hapid, rsid) ON CONFLICT REPLACE)''')
+                                            (hapid text, gid text, starname text,
+                                            hgvs text, rsid text, alt text,
+                                            UNIQUE(hapid, rsid)
+                                            ON CONFLICT REPLACE)'''
+                         )
 
         # get all unique gene ids from the variant table
 
-        self.sql.execute("SELECT DISTINCT gid FROM variants")
+        self.sql.execute('SELECT DISTINCT gid FROM variants')
         genes = [tup[0] for tup in self.sql.fetchall()]
         genes = list(set(genes))
+
         # go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
 
         for gid in genes:
             print gid
-            if "PA" in gid:
+            if 'PA' in gid:
 
                 g = Gene(gid, 'pharmgkb')
 
                 # insert the resulting name and alleles into sql table
 
-                self.sql.execute('''INSERT INTO genes VALUES(?,?)''', (gid, g.name))
+                self.sql.execute('''INSERT INTO genes VALUES(?,?)''',
+                                 (gid, g.name))
 
                 for allele in g.alleles:
                     for (rsid, alt) in allele['rsids']:
-                        self.sql.execute('''INSERT INTO alleles VALUES(?,?,?,?,?,?)''', (allele['id'], gid, allele['starname'], allele['hgvs'], rsid, alt))
+                        self.sql.execute('''INSERT INTO alleles VALUES(?,?,?,?,?,?)'''
+                                , (
+                            allele['id'],
+                            gid,
+                            allele['starname'],
+                            allele['hgvs'],
+                            rsid,
+                            alt,
+                            ))
         else:
             pass
 
@@ -178,9 +208,11 @@ class DataCollector:
         Create table for drug-gene pairs, to be used later to fetch drug data
         :return:
         """
+
         self.sql.execute('''DROP TABLE IF EXISTS drugpairs''')
         self.sql.execute('''CREATE TABLE drugpairs
-                        (did text, gid text, UNIQUE(did, gid) ON CONFLICT REPLACE)''')
+                        (did text, gid text, UNIQUE(did, gid)
+                        ON CONFLICT REPLACE)''' )
         print 'Getting gene-drug pairs...'
 
         # get the uri for finding well-annotated pairs (given by pharmgkb)
@@ -197,7 +229,8 @@ class DataCollector:
 
             # insert results in table drugpairs
 
-            self.sql.execute('''INSERT INTO drugpairs VALUES(?,?)''', (did, gid))
+            self.sql.execute('''INSERT INTO drugpairs VALUES(?,?)''',
+                             (did, gid))
 
     def GetChemData(self):
         """
@@ -205,18 +238,20 @@ class DataCollector:
         terms give info on what the drug does
         :return:
         """
+
         print '--- Getting drug data ---'
 
         # drop and re-create table chemicals
 
         self.sql.execute('''DROP TABLE IF EXISTS chemicals''')
         self.sql.execute('''CREATE TABLE chemicals
-                                (did text, name text, terms text)''')
+                                (did text, name text, terms text)'''
+                         )
 
         # get all the important drug ids (dids) from
         # the known gene-drug connections table
 
-        self.sql.execute("SELECT DISTINCT did FROM drugpairs")
+        self.sql.execute('SELECT DISTINCT did FROM drugpairs')
 
         # fetch matching did and use to create uri for query
 
@@ -244,7 +279,8 @@ class DataCollector:
 
                     # insert into chemicals table
 
-                    self.sql.execute('''INSERT INTO chemicals VALUES(?,?,?)''', item)
+                    self.sql.execute('''INSERT INTO chemicals VALUES(?,?,?)'''
+                            , item)
 
 
 if __name__ == '__main__':

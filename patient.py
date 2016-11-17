@@ -15,101 +15,10 @@ from data import DataCollector
 
 # -------------------------------------------------------------------------
 
-def Authenticate():
-    """
-    This function creates an authenticating object for use in pharmgkb.
-    Necessary for accessing clinical annotations and recommendations!
-    :return:
-    """
-    print 'Authenticating...'
-    req = ''
-
-    # load file with authenticating info, use to request a key
-
-    with open('config/auth.txt', 'r') as f:
-        req = json.load(f)
-
-    # uri for authenticating with this file
-
-    url = 'https://api.pharmgkb.org/v1/auth/oauthSignIn'
-
-    # encode request including user info
-
-    data = urllib.urlencode(req)
-
-    # send request to specified url
-
-    req = urllib2.Request(url, data)
-
-    # read response
-
-    response = urllib2.urlopen(req)
-    str_response = response.read()
-
-    # convert token to something that
-    # can be used for authentication
-    token = ast.literal_eval(str_response)
-
-    # create an authorized session and
-    # return this session
-
-    client = OAuth2Session(token=token)
-    return client
-
-
-def getJson(uri, client):
-    """
-    Uses uri and given authenticated client to get json data.
-    :param uri: filled in uri refining query
-    :param client: result of Authenticate()
-    :return:
-    """
-    r = client.get(uri)
-    data = r.json()
-
-    # if there is just a dict and not a list it is an error message
-
-    if type(data) == dict:
-        return None
-
-    # otherwise return valid results
-
-    elif type(data) == list:
-        return data
-
-
-def PGKB_connect(authobj, a, did):
-    """
-    Find connections between two pharmgkb objects.
-    Usually a haplotype or rsid compared with a drug id.
-    :param authobj: authentication session resulting from Authenticate()
-    :param a: object 1 to compare
-    :param did: object 2 to compare, usually a drug id
-    :return:
-    """
-    uri = \
-        'https://api.pharmgkb.org/v1/report/pair/%s/%s/clinicalAnnotation' \
-        % (a, did)
-
-    # get json file from filled in uri, use authentication client
-
-    result = getJson(uri, authobj)
-    results = []
-
-    # collect matching results
-
-    if result is not None:
-        for doc in result:
-            for phen in doc['allelePhenotypes']:
-                results.append(phen)
-    else:
-        return
-    return results
-
-
 # -------------------------------------------------------------------------
 
 class Patient:
+
     '''
     This class imports a design VCF and an input VCF.
     '''
@@ -121,11 +30,11 @@ class Patient:
         Import imports the input vcf
         GetIDs finds changed positions and matches them to the design.
         """
+
         self.f = f
         self.reader = vcf.Reader(open(f, 'r'))
         self.genes = {}
         self.haplotypes = []
-        self.advice = {}
         self.starhaps = {}
         self.Load()
         print 'Initiating patient...'
@@ -135,9 +44,13 @@ class Patient:
         Function for loading the most important startup functions
         :return:
         """
+
         self.d = DataCollector('config/corrected_design.vcf')
         self.ImportData()
         self.GetIDs()  # commit db changes
+        self.conn.commit()
+        self.Hapmaker()
+        self.Hapmatcher()
         self.conn.commit()
 
     def ImportData(self):
@@ -146,6 +59,7 @@ class Patient:
         create patientvars tables.
         :return:
         """
+
         print 'Trying to import database...'
         try:
 
@@ -164,10 +78,11 @@ class Patient:
             # patienthaps focuses on calculated haplotype storage
 
             self.sql.execute('''CREATE TABLE patientvars
-                                                (pos int PRIMARY KEY, num text, chr1 text, chr2 text)''')
+                                                (pos int PRIMARY KEY, num text, chr1 text, chr2 text)'''
+                             )
             self.sql.execute('''CREATE TABLE patienthaps
-                                                (gid text PRIMARY KEY, hapid1, hapid2, starname1, starname2)''')
-
+                                                (gid text PRIMARY KEY, hgvs text, hapid text, starhap text)'''
+                             )
         except:
 
             # if error in db, reload db (testing purposes...)
@@ -180,6 +95,7 @@ class Patient:
         Gets patient variables, reads into patientvars table
         :return:
         """
+
         print 'Reading patient variants...'
 
         # create list for storing changed positions / rs#s
@@ -213,8 +129,8 @@ class Patient:
                     # create sql entry from these variables
 
                     item = (record.POS, call, chr1, chr2)
-                    self.sql.execute('''INSERT INTO patientvars VALUES(?,?,?,?)''', item)
-
+                    self.sql.execute('''INSERT INTO patientvars VALUES(?,?,?,?)'''
+                            , item)
                 except KeyError:
 
                     # if no match is found, let user know
@@ -234,8 +150,7 @@ class Patient:
 
         self.sql.execute("""SELECT DISTINCT v.gid from variants v
                             JOIN design d ON v.rsid = d.rsid
-                            JOIN patientvars p ON d.pos = p.pos"""
-                         )
+                            JOIN patientvars p ON d.pos = p.pos""")
 
         # make an easy usuable list for later on, remove tuples
 
@@ -244,7 +159,6 @@ class Patient:
         # loop through gids
 
         for gid in gids:
-            print gid
 
             # get rsid, alias for that rsid, and bases at this position in chr1 and 2
 
@@ -253,19 +167,19 @@ class Patient:
                                 JOIN design d ON d.pos = p.pos
                                 JOIN variants v ON d.rsid = v.rsid
                                 JOIN alias a ON a.rsid = v.rsid
-                                WHERE v.gid = ?;''', (gid,))
+                                WHERE v.gid = ?;''',
+                             (gid, ))
 
             results = self.sql.fetchall()
 
             # create dictionary for storing genomic positions, amb is for unphased variants
 
-            pos = {"amb": [], "chr1": [], "chr2": []}
+            pos = {'amb': [], 'chr1': [], 'chr2': []}
 
             # find the version of the alias notation that is the highest by using counter and max
 
-            counts = Counter(elem[1].split(".")[1] \
-                             for elem in results \
-                             if 'NC' in elem[1] and "g." in elem[1])
+            counts = Counter(elem[1].split('.')[1] for elem in results
+                             if 'NC' in elem[1] and 'g.' in elem[1])
             chosen_ver = str(max(counts.keys()))
 
             # loop through results
@@ -274,36 +188,43 @@ class Patient:
 
                 # select on "NC" and genomic position
 
-                if 'NC' in alias and "g." in alias:
+                if 'NC' in alias and 'g.' in alias:
                     if '>' + chr2 in alias and chosen_ver in alias:
-                        seq_id = alias.split(".")[0]
-                        gen_pos = alias.split(".")[2]
+                        seq_id = alias.split('.')[0]
+                        gen_pos = alias.split('.')[2]
 
-                        if "|" in num:
-                            if "|1" in num:
+                        if '|' in num:
+                            if '|1' in num:
                                 pos['chr2'].append(gen_pos)
-                            if "1|" in num:
+                            if '1|' in num:
                                 pos['chr1'].append(gen_pos)
-                        elif "/" in num:
+                        elif '/' in num:
                             pos['amb'].append(gen_pos)
 
             # check for unchanged positions - make these "=" as hgvs reccs
 
-            for k, v in pos.items():
+            for (k, v) in pos.items():
                 if len(v) == 0:
-                    v = ["="]
+                    pos[k] = ['=']
                 else:
 
                     # sort based on genomic position (split the genomic position on base change, leaving the number)
 
-                    v.sort(key=lambda x: x.split("ACTG")[0])
+                    v.sort(key=lambda x: x.split('ACTG')[0])
 
             # check if the haplotype notation should be the phased version or not
 
-            if "/" in num:
-                haplotype = "%s%s.%s" % (seq_id, chosen_ver, ";".join(pos['amb']))
-            elif "|" in num:
-                haplotype = "%s%s.[%s];[%s]" % (seq_id, chosen_ver, ";".join(pos['chr1']), ";".join(pos['chr2']))
+            if '/' in num:
+                haplotype = '%s.%s.%s' % (seq_id, chosen_ver,
+                        ';'.join(pos['amb']))
+            elif '|' in num:
+                haplotype = '%s%s.[%s];[%s]' % (seq_id, chosen_ver,
+                        ';'.join(pos['chr1']), ';'.join(pos['chr2']))
+
+            item = (gid, haplotype, 'N/A', 'N/A')
+
+            self.sql.execute('''INSERT INTO patienthaps VALUES(?,?,?,?)'''
+                             , item)
 
     def Hapmatcher(self):
         """
@@ -326,7 +247,7 @@ class Patient:
 
             # check for searchability in pharmgkb, if not skip for now (should put an else later)
 
-            if "PA" not in gid:
+            if 'PA' not in gid:
                 continue
 
             # get rsids and bases @ location for this gene that are present in patient,
@@ -336,13 +257,14 @@ class Patient:
                                 FROM patientvars p
                                 JOIN design d ON d.pos = p.pos
                                 JOIN variants v ON d.rsid = v.rsid
-                                WHERE v.gid = ?;''', (gid,))
+                                WHERE v.gid = ?;''',
+                             (gid, ))
 
             results = self.sql.fetchall()
 
             # storage for rsids per chromosome
 
-            patient_rsids = {"chr1": [], "chr2": []}
+            patient_rsids = {'chr1': [], 'chr2': []}
 
             # sort rsids in right chromosome list
 
@@ -357,39 +279,52 @@ class Patient:
                 # include alt base in comparison, will lower results but is more accurate perhaps
 
                 if '1/' in num or '1|' in num:
-                    patient_rsids['chr1'].append((rsid, chr1))
+                    patient_rsids['chr1'].append(rsid)
 
                 if '/1' in num or '|1' in num:
-                    patient_rsids['chr2'].append((rsid, chr2))
+                    patient_rsids['chr2'].append(rsid)
 
             # for given gid, find the known haplotypes (pharmgkb id and "star name" nomenclature)
 
-            self.sql.execute("SELECT DISTINCT hapid, starname FROM alleles WHERE gid = ?", (gid,))
+            self.sql.execute('SELECT DISTINCT hapid, starname FROM alleles WHERE gid = ?'
+                             , (gid, ))
             haps = self.sql.fetchall()
 
             # loop through these haplotypes, they will be compared to patient
 
             chr_matches = ([], [])
 
-            for hap in haps:
+            for (i, hap) in enumerate(haps):
 
                 hapid = hap[0]  # haplotype pharmgkb id
                 starname = hap[1]  # star or other name, general name
 
                 # check if it is not reference allele (should add a check for "normal activity" names)
 
-                if "*1" not in starname:
+                if i == 0:
+                    self.sql.execute('SELECT rsid, alt FROM alleles WHERE hapid = ?'
+                            , (hapid, ))
+                    refrsids = self.sql.fetchall()
+                    refrsids = [tup[0] for tup in refrsids]
+                elif i >= 1:
 
                     # get rsids for haplotype
 
-                    self.sql.execute("SELECT rsid, alt FROM alleles WHERE hapid = ?", (hapid,))
+                    self.sql.execute('SELECT rsid, alt FROM alleles WHERE hapid = ?'
+                            , (hapid, ))
                     haprsids = self.sql.fetchall()
-                    haprsids = [(tup[0:2]) for tup in haprsids]
+                    haprsids = [tup[0] for tup in haprsids]
+
+                    for (k, v) in patient_rsids.items():
+                        preselect = list(set(v) & set(refrsids))
+                        v = preselect
 
                     # compare patient with rsidlist and calculate match score per chromosome
 
-                    comparison_chr1 = set(patient_rsids['chr1']) & set(haprsids)
-                    comparison_chr2 = set(patient_rsids['chr2']) & set(haprsids)
+                    comparison_chr1 = set(patient_rsids['chr1']) \
+                        & set(haprsids)
+                    comparison_chr2 = set(patient_rsids['chr2']) \
+                        & set(haprsids)
 
                     # store these comparisons for use in a loop later on
 
@@ -397,11 +332,12 @@ class Patient:
 
                     # go through the two comparisons, calculate match score
 
-                    for i, comparison in enumerate(comparisons):
+                    for (i, comparison) in enumerate(comparisons):
 
                         # calculate match score
 
-                        match_score = float(len(comparison)) / len(haprsids)
+                        match_score = float(len(comparison)) \
+                            / len(haprsids)
 
                         # with a full match, save to corresponding list in dictionary
 
@@ -418,7 +354,7 @@ class Patient:
 
                                 # to do here... ref to hapmaker perhaps? can use two modes, one for starname and one for new HGVS
 
-            for i, result in enumerate(chr_matches):
+            for (i, result) in enumerate(chr_matches):
 
                 # get non-empty results
 
@@ -431,79 +367,18 @@ class Patient:
                 hapid = highest_hit[0]
                 star_alt = highest_hit[1]
 
-                if "rs" not in star_alt:
-                    self.starhaps[hapid] = num.replace("1", star_alt).replace("0", "*1")
-                elif "rs" in star_alt:
-                    self.starhaps[hapid] = star_alt
+                if 'rs' not in star_alt:
+                    starhap = num.replace('1', star_alt).replace('0',
+                            '*1')
+                elif 'rs' in star_alt:
+                    numlist = num.split('/|')
+                    starhap = num.replace('1', star_alt)
 
                 # get haplotype pharmgkb id for this hit
 
                 hapid = highest_hit[0]
-
-                self.haplotypes.append(hapid)
-
-    def DrugAdvice(self):
-
-        authobj = Authenticate()
-
-        # from haplotypes = [PA..., PA...]
-        # from rsids = [rs..., rs..., rs...]
-
-        self.sql.execute('''SELECT d.rsid, p.chr1, p.chr2
-                            FROM patientvars p
-                            JOIN design d ON d.pos = p.pos
-                            JOIN variants v ON d.rsid = v.rsid''')
-
-        var_alleles = {rsid:(chr1+chr2) for(rsid, chr1, chr2) in self.sql.fetchall()}
-
-        input = self.haplotypes + var_alleles.keys()
-
-        for var in input:
-
-            # check for haplotype or rs nomenclature
-
-            if "PA" in var:
-                self.sql.execute("SELECT DISTINCT gid FROM alleles WHERE hapid = ?", (var,))
-                var_alleles[var] = self.starhaps[var]
-
-            elif "rs" in var:
-                self.sql.execute("SELECT DISTINCT gid FROM variants WHERE rsid = ?", (var,))
-
-            gids = [tup[0] for tup in self.sql.fetchall()]
-
-            # find gene ids associated with this variant or haplotype
-
-            for gid in gids:
-
-                print "gene", gid
-
-                # for each gene, find associated drugs
-
-                self.sql.execute("SELECT DISTINCT did FROM drugpairs WHERE gid = ?", (gid,))
-
-                dids = [tup[0] for tup in self.sql.fetchall()]
-
-                for did in dids:
-
-                    print did
-
-                    # for each drug, search for a connection
-
-                    results = PGKB_connect(authobj, var, did)
-
-                    if results is not None:
-
-                        for phen in results:
-
-                            if var_alleles[var] in phen['allele']:
-
-                                print phen['phenotype']
-
-                                self.advice.setdefault(did, []).append((var, phen['phenotype']))
-
-tom = Patient('data/hpc/test.vcf')
-# tom.Hapmaker()
-tom.Hapmatcher()
-tom.DrugAdvice()
-
-print tom.advice
+                self.sql.execute('''SELECT DISTINCT gid FROM alleles WHERE hapid = ?'''
+                                 , (hapid, ))
+                gid = self.sql.fetchone()[0]
+                self.sql.execute('UPDATE patienthaps SET hapid = ?, starhap = ? WHERE gid = ?'
+                                 , (hapid, starhap, gid))

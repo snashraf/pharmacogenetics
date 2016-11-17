@@ -26,6 +26,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
         # self.GetDrugs()  # loads info on associated drugs
         # self.GetDesc()  # gets summary of gene
+
         try:
             self.GetHaps()
         except urllib2.HTTPError:
@@ -37,7 +38,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                 % self.gid
             data = urllib2.urlopen(uri)
             self.json = json.load(data)
-            self.name = self.json["symbol"]
+            self.name = self.json['symbol']
         elif self.mode == 'entrez':
             uri = \
                 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=%i&retmode=XML' \
@@ -89,6 +90,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                         continue
 
                 # add to alleles dictionary
+
                 all = {
                     'starname': starname,
                     'hgvs': hgvs,
@@ -97,4 +99,3 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                     'rsids': rsids,
                     }
                 self.alleles.append(all)
-
