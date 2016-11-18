@@ -172,7 +172,7 @@ class DataCollector:
 
         # get all unique gene ids from the variant table
 
-        self.sql.execute('SELECT DISTINCT gid FROM variants')
+        self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
         genes = [tup[0] for tup in self.sql.fetchall()]
         genes = list(set(genes))
 
@@ -284,7 +284,7 @@ class DataCollector:
 
 
 if __name__ == '__main__':
-    data = DataCollector('config/corrected_design.vcf')
+    data = DataCollector('config/design.vcf')
     data.Update()
 else:
     pass

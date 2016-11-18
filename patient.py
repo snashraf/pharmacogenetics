@@ -305,7 +305,8 @@ class Patient:
                     self.sql.execute('SELECT rsid, alt FROM alleles WHERE hapid = ?'
                             , (hapid, ))
                     refrsids = self.sql.fetchall()
-                    refrsids = [tup[0] for tup in refrsids]
+                    refrsids = [tup[0] for tup in refrsids if "rs" in tup[0]]
+
                 elif i >= 1:
 
                     # get rsids for haplotype
@@ -313,7 +314,10 @@ class Patient:
                     self.sql.execute('SELECT rsid, alt FROM alleles WHERE hapid = ?'
                             , (hapid, ))
                     haprsids = self.sql.fetchall()
-                    haprsids = [tup[0] for tup in haprsids]
+                    haprsids = [tup[0] for tup in haprsids if "rs" in tup[0]]
+
+                    if len(haprsids) == 0:
+                        continue
 
                     for (k, v) in patient_rsids.items():
                         preselect = list(set(v) & set(refrsids))
@@ -332,12 +336,19 @@ class Patient:
 
                     # go through the two comparisons, calculate match score
 
-                    for (i, comparison) in enumerate(comparisons):
+                    for i in range(len(patient_rsids.keys())):
+
+                        rsids = patient_rsids['chr%s' %(str(i+1))]
+
+                        if len(rsids) == 0:
+                            continue
+
+                        comparison = set(rsids) & set(haprsids)
 
                         # calculate match score
 
                         match_score = float(len(comparison)) \
-                            / len(haprsids)
+                            / len(rsids)
 
                         # with a full match, save to corresponding list in dictionary
 

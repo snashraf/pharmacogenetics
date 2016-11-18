@@ -170,7 +170,7 @@ class Interpreter:
 
                                 self.advice.setdefault(did, []).append((var, phen['phenotype']))
 
-tom = Patient('data/hpc/STE0097_WGS_PharmacoGenomics.vcf')
+tom = Patient('data/hpc/STE100_WGS_PharmacoGenomics.vcf')
 app = Interpreter(tom)
 app.DrugAdvice()
 print app.advice

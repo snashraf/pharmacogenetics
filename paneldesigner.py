@@ -4,7 +4,7 @@ from variant import Variant
 
 rsids = []
 
-with open('config/more_rsids.txt', 'r') as f:
+with open('config/rsidlist', 'r') as f:
     for line in f:
         rsids.append(line.strip())
 
@@ -19,11 +19,16 @@ info = 'DP=30'
 form = 'GT:GQ'
 test = '0/1:99'
 
-with open('config/new_design.vcf', 'w') as f:
 
-    recs = []
+with open('config/new_design.vcf', 'w') as a, open('config/new_design_indels.vcf','w') as b:
 
-    f.write(header)
+    recs_a = []
+    recs_b = []
+    recs_x = []
+    recs_y = []
+
+    a.write(header)
+    b.write(header)
 
     for rsid in rsids:
         try:
@@ -33,29 +38,44 @@ with open('config/new_design.vcf', 'w') as f:
             continue
         v.GetLocation()
 
+        print rsid
         try:
-            if '-' in v.ref or '-' in v.alt:
-                continue
-
+            rec = [
+                str(v.chrom),
+                str(v.begin),
+                rsid,
+                v.ref,
+                v.alt,
+                qual,
+                filt,
+                info,
+                form,
+                test
+                ]
         except:
             continue
 
-        print rsid
-
-        rec = [
-            str(v.chrom),
-            str(v.begin),
-            rsid,
-            v.ref,
-            v.alt,
-            qual,
-            filt,
-            info,
-            form,
-            test
-            ]
         rec_tab = '\t'.join(rec) + "\n"
-        recs.append(rec_tab)
 
-    recs.sort(key=lambda x: int(x.split('\t')[0]))
-    f.writelines(recs)
+        if '-' in v.ref or "(" in v.alt or'-' in v.alt:
+                recs_b.append(rec_tab)
+                continue
+        if v.chrom == "X":
+            recs_x.append(rec_tab)
+        elif v.chrom == "Y":
+            recs_y.append(rec_tab)
+        else:
+            recs_a.append(rec_tab)
+
+    lsts = [recs_a, recs_x, recs_y]
+
+    for lst in lsts:
+        try:
+            lst.sort(key=lambda x: (int(x.split('\t')[0]), int(x.split('\t')[1])))
+        except ValueError:
+            lst.sort(key=lambda x: (int(x.split('\t')[1])))
+
+        a.writelines(lst)
+
+    # make pretty later
+        b.writelines(recs_b)
