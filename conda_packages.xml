@@ -79,7 +79,7 @@
         <entry key="cligj" value="0.4.0" />
         <entry key="cloudpickle" value="0.2.1" />
         <entry key="clyent" value="1.2.2" />
-        <entry key="cmake" value="3.3.1" />
+        <entry key="cmake" value="3.6.3" />
         <entry key="colander" value="1.2" />
         <entry key="colorama" value="0.3.7" />
         <entry key="comtypes" value="1.1.2" />
@@ -184,7 +184,7 @@
         <entry key="handlebars_static" value="4.0.5" />
         <entry key="happiness" value="1.0" />
         <entry key="hdf4" value="4.2.12" />
-        <entry key="hdf5" value="1.8.16" />
+        <entry key="hdf5" value="1.8.17" />
         <entry key="heapdict" value="1.0.0" />
         <entry key="holoviews" value="1.6.2" />
         <entry key="html5lib" value="0.999" />
@@ -1459,6 +1459,7 @@
             <list>
               <option value="3.3.1" />
               <option value="3.2.3" />
+              <option value="3.6.3" />
             </list>
           </value>
         </entry>
@@ -2724,6 +2725,7 @@
               <option value="1.8.9" />
               <option value="1.8.16" />
               <option value="1.8.13" />
+              <option value="1.8.17" />
             </list>
           </value>
         </entry>
@@ -6632,6 +6634,6 @@
     <option name="CONDA_CHANNELS">
       <set />
     </option>
-    <option name="LAST_TIME_CHECKED" value="1479682579595" />
+    <option name="LAST_TIME_CHECKED" value="1479804321813" />
   </component>
 </application>
