@@ -4,7 +4,7 @@ from variant import Variant
 
 rsids = []
 
-with open('config/rsidlist', 'r') as f:
+with open('config/variants.txt', 'r') as f:
     for line in f:
         rsids.append(line.strip())
 
@@ -79,3 +79,4 @@ with open('config/new_design.vcf', 'w') as a, open('config/new_design_indels.vcf
 
     # make pretty later
         b.writelines(recs_b)
+

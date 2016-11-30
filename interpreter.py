@@ -4,7 +4,7 @@ from patient import Patient
 from data import DataCollector
 import json
 import sqlite3
-import requests
+import pprint
 from requests_oauthlib import OAuth2Session
 import urllib
 import urllib2
@@ -62,13 +62,20 @@ def getJson(uri, client):
     :param client: result of Authenticate()
     :return:
     """
-    r = client.get(uri)
+    try:
+        r = client.get(uri)
+    except:
+        return None
+
     data = r.json()
 
     # if there is just a dict and not a list it is an error message
 
     if type(data) == dict:
-        return None
+        if "errors" not in str(data):
+            return data
+        else:
+            return None
 
     # otherwise return valid results
 
@@ -76,7 +83,7 @@ def getJson(uri, client):
         return data
 
 
-def PGKB_connect(authobj, a, did):
+def PGKB_connect(authobj, mode, a, did):
     """
     Find connections between two pharmgkb objects.
     Usually a haplotype or rsid compared with a drug id.
@@ -85,9 +92,10 @@ def PGKB_connect(authobj, a, did):
     :param did: object 2 to compare, usually a drug id
     :return:
     """
-    uri = \
-        'https://api.pharmgkb.org/v1/report/pair/%s/%s/clinicalAnnotation' \
-        % (a, did)
+    if mode == "clinAnno":
+        uri = \
+            'https://api.pharmgkb.org/v1/report/pair/%s/%s/clinicalAnnotation' \
+            % (a, did)
 
     # get json file from filled in uri, use authentication client
 
@@ -95,11 +103,17 @@ def PGKB_connect(authobj, a, did):
     results = []
 
     # collect matching results
-
     if result is not None:
         for doc in result:
-            for phen in doc['allelePhenotypes']:
-                results.append(phen)
+            if mode == "clinAnno":
+
+                for phen in doc['allelePhenotypes']:
+                    results.append(phen)
+
+            elif mode =="clinGuide":
+
+                for item in doc:
+                    print doc
     else:
         return
     return results
@@ -114,10 +128,17 @@ class Interpreter:
         self.advice = {}
         self.conn = sqlite3.connect('pharmacogenetics.db')
         self.sql = self.conn.cursor()
+        #self.DrugAnnotations()
+        self.conn.commit()
 
-    def DrugAdvice(self):
+    def DrugAnnotations(self):
 
+        self.sql.execute("DROP TABLE IF EXISTS patientadvice")
+        self.sql.execute('''CREATE TABLE patientadvice
+                                            (did text, gid text, varid text, allele text, advice text, dose text)''')
         authobj = Authenticate()
+
+        self.hapdrug = {}
 
         # from haplotypes = [PA..., PA...]
         # from rsids = [rs..., rs..., rs...]
@@ -128,18 +149,23 @@ class Interpreter:
                             JOIN variants v ON d.rsid = v.rsid''')
 
         var_alleles = {rsid:( chr1 + chr2 )
-        for( rsid, chr1, chr2 )
-        in self.sql.fetchall() }
+                    for( rsid, chr1, chr2 )
+                    in self.sql.fetchall() }
 
-        input = self.p.haplotypes + var_alleles.keys()
+        self.sql.execute("SELECT DISTINCT hapid FROM patienthaps")
+
+        self.haplotypes = [tup[0] for tup in self.sql.fetchall()]
+
+        input = self.haplotypes + var_alleles.keys()
 
         for var in input:
 
             # check for haplotype or rs nomenclature
 
             if "PA" in var:
+                self.sql.execute("SELECT starhap FROM patienthaps WHERE hapid = ?", (var,))
+                var_alleles[var] = self.sql.fetchone()[0]
                 self.sql.execute("SELECT DISTINCT gid FROM alleles WHERE hapid = ?", (var,))
-                var_alleles[var] = self.p.starhaps[var]
 
             elif "rs" in var:
                 self.sql.execute("SELECT DISTINCT gid FROM variants WHERE rsid = ?", (var,))
@@ -160,17 +186,86 @@ class Interpreter:
 
                     # for each drug, search for a connection
 
-                    results = PGKB_connect(authobj, var, did)
+                    results = PGKB_connect(authobj, "clinAnno", var, did)
 
                     if results is not None:
 
                         for phen in results:
 
-                            if var_alleles[var] in phen['allele']:
+                            allele = var_alleles[var]
 
-                                self.advice.setdefault(did, []).append((var, phen['phenotype']))
+                            if allele in phen['allele']:
 
-tom = Patient('data/hpc/STE100_WGS_PharmacoGenomics.vcf')
+                                advice = phen['phenotype']
+
+                                item = (did, gid, var, allele, advice, "N/A") # tuple with 5 items
+
+                                self.sql.execute('''INSERT INTO patientadvice VALUES(?,?,?,?,?,?)''', item)
+
+    def DoseGuide(self):
+        authobj = Authenticate()
+        # input: haplotypes and drug matches
+        self.sql.execute('SELECT gid,did,allele FROM patientadvice WHERE varid LIKE "%PA%"')
+        results = self.sql.fetchall()
+        sources = ["cpic", "dpwg", "pro"]
+        for (gid, did, allele) in results:
+            for source in sources:
+                uri = "https://api.pharmgkb.org/v1/data/guideline?source=%s&relatedChemicals.accessionId=%s&relatedGenes.accessionId=%s&view=max" \
+                        % (source, did, gid)
+                guidelines = getJson(uri, authobj)
+                if guidelines is not None:
+                    for doc in guidelines:
+                        if doc["objCls"] == "Guideline":
+                            guid = doc["id"]
+                        else:
+                            break
+                    uri = "https://api.pharmgkb.org/v1/report/guideline/%s/options" \
+                        % guid
+                    doseOptions = getJson(uri, authobj)
+                    uri = 'https://api.pharmgkb.org/v1/data/guideline/%s?view=max'\
+                        % guid
+                    doseInfo = getJson(uri, authobj)
+                    pp = pprint.PrettyPrinter()
+                    pp.pprint(doseInfo)
+                    if len(doseOptions["data"]) > 0:
+                        for choice in doseOptions["data"]:
+                            gene = choice['symbol']
+                            options = choice['options']
+                            score = 0
+                            haps = allele.split("/")
+                            for chr in haps:
+                                if chr in options:
+                                    score += 1
+                            if score == 2:
+                                uri = "https://api.pharmgkb.org/v1/report/guideline/%s/annotations?genes=%s&alleles=%s&alleles=%s" \
+                                    % (guid, gene, haps[0], haps[1])
+                                doseGuide = getJson(uri, authobj)
+                                if doseGuide is not None:
+                                    print doseGuide
+
+tom = Patient('data/hpc/test.vcf')
 app = Interpreter(tom)
-app.DrugAdvice()
-print app.advice
+app.DoseGuide()
+
+"""
+NOTE TO SELF: USE THIS
+
+steps to take:
+HAPLOTYPE PROPERLY ;W;
+find the remaining variants... check the github repos i dled for some tables
+and convert the rest back, hopefully
+
+find a guideline for gene-drug pairsA
+https://api.pharmgkb.org/v1/data/guideline?source=cpic&relatedChemicals.accessionId=PA449088&relatedGenes.accessionId=PA128&view=max
+
+get options:
+https://api.pharmgkb.org/v1/report/guideline/PA166114461/options
+
+find match and corresponding advice in options (after haplotype assignment)
+https://api.pharmgkb.org/v1/report/guideline/PA166114461/annotations?genes=CFTR&alleles=G1244E&alleles=G1244E
+
+tadaa!
+
+also check these people did something similar:
+http://www.sustc-genome.org.cn/vp/
+"""

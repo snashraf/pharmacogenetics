@@ -79,6 +79,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                 copynum = doc['copyNumber']
                 rsids = []
 
+                dic = {}
                 # get all the involved rsids
 
                 for allele in alleles:
@@ -87,6 +88,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                         alt = allele['allele']
                         rsids.append((rsid, alt))
                     except KeyError:
+
                         continue
 
                 # add to alleles dictionary

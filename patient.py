@@ -15,8 +15,6 @@ from data import DataCollector
 
 # -------------------------------------------------------------------------
 
-# -------------------------------------------------------------------------
-
 class Patient:
 
     '''
@@ -30,14 +28,14 @@ class Patient:
         Import imports the input vcf
         GetIDs finds changed positions and matches them to the design.
         """
-
+        print 'Initiating patient...'
         self.f = f
         self.reader = vcf.Reader(open(f, 'r'))
         self.genes = {}
         self.haplotypes = []
         self.starhaps = {}
+        print "Loading patient data..."
         self.Load()
-        print 'Initiating patient...'
 
     def Load(self):
         """
@@ -47,7 +45,7 @@ class Patient:
 
         self.d = DataCollector('config/corrected_design.vcf')
         self.ImportData()
-        self.GetIDs()  # commit db changes
+        self.GetIDs()
         self.conn.commit()
         self.Hapmaker()
         self.Hapmatcher()
@@ -83,6 +81,7 @@ class Patient:
             self.sql.execute('''CREATE TABLE patienthaps
                                                 (gid text PRIMARY KEY, hgvs text, hapid text, starhap text)'''
                              )
+
         except:
 
             # if error in db, reload db (testing purposes...)
@@ -129,8 +128,10 @@ class Patient:
                     # create sql entry from these variables
 
                     item = (record.POS, call, chr1, chr2)
+
                     self.sql.execute('''INSERT INTO patientvars VALUES(?,?,?,?)'''
                             , item)
+
                 except KeyError:
 
                     # if no match is found, let user know
@@ -185,11 +186,11 @@ class Patient:
             # loop through results
 
             for (rsid, alias, chr2, num) in results:
-
                 # select on "NC" and genomic position
 
                 if 'NC' in alias and 'g.' in alias:
-                    if '>' + chr2 in alias and chosen_ver in alias:
+                    if '>' in alias and chosen_ver in alias:
+
                         seq_id = alias.split('.')[0]
                         gen_pos = alias.split('.')[2]
 
@@ -203,9 +204,12 @@ class Patient:
 
             # check for unchanged positions - make these "=" as hgvs reccs
 
+
             for (k, v) in pos.items():
+
                 if len(v) == 0:
                     pos[k] = ['=']
+
                 else:
 
                     # sort based on genomic position (split the genomic position on base change, leaving the number)
@@ -217,6 +221,7 @@ class Patient:
             if '/' in num:
                 haplotype = '%s.%s.%s' % (seq_id, chosen_ver,
                         ';'.join(pos['amb']))
+
             elif '|' in num:
                 haplotype = '%s%s.[%s];[%s]' % (seq_id, chosen_ver,
                         ';'.join(pos['chr1']), ';'.join(pos['chr2']))
@@ -264,7 +269,7 @@ class Patient:
 
             # storage for rsids per chromosome
 
-            patient_rsids = {'chr1': [], 'chr2': []}
+            patient_rsids = {'chr1': [], 'chr2': [], "amb":[]}
 
             # sort rsids in right chromosome list
 
@@ -278,67 +283,57 @@ class Patient:
                 # sort rsids based on phased-ness (phasing assumed here, as used in pharmgkb star typing)
                 # include alt base in comparison, will lower results but is more accurate perhaps
 
-                if '1/' in num or '1|' in num:
+                if '1|' in num:
                     patient_rsids['chr1'].append(rsid)
 
-                if '/1' in num or '|1' in num:
+                if '|1' in num:
                     patient_rsids['chr2'].append(rsid)
+
+                if "/" in num:
+                    patient_rsids['amb'].append(rsid)
 
             # for given gid, find the known haplotypes (pharmgkb id and "star name" nomenclature)
 
-            self.sql.execute('SELECT DISTINCT hapid, starname FROM alleles WHERE gid = ?'
+
+            self.sql.execute('SELECT DISTINCT hapid, hgvs, starname FROM alleles WHERE gid = ?'
                              , (gid, ))
+
             haps = self.sql.fetchall()
 
             # loop through these haplotypes, they will be compared to patient
 
-            chr_matches = ([], [])
+            chr_matches = {}
 
-            for (i, hap) in enumerate(haps):
-
-                hapid = hap[0]  # haplotype pharmgkb id
-                starname = hap[1]  # star or other name, general name
+            for i, (hapid, hgvs, starname) in enumerate(haps):
 
                 # check if it is not reference allele (should add a check for "normal activity" names)
 
-                if i == 0:
+                if "=" in hgvs:
                     self.sql.execute('SELECT rsid, alt FROM alleles WHERE hapid = ?'
                             , (hapid, ))
                     refrsids = self.sql.fetchall()
                     refrsids = [tup[0] for tup in refrsids if "rs" in tup[0]]
 
-                elif i >= 1:
+                elif "[0]" in hgvs:
 
+                    print "deletion haplotype, skipping..."
+                    continue
+
+                else:
                     # get rsids for haplotype
 
                     self.sql.execute('SELECT rsid, alt FROM alleles WHERE hapid = ?'
                             , (hapid, ))
                     haprsids = self.sql.fetchall()
+
                     haprsids = [tup[0] for tup in haprsids if "rs" in tup[0]]
 
                     if len(haprsids) == 0:
                         continue
 
-                    for (k, v) in patient_rsids.items():
-                        preselect = list(set(v) & set(refrsids))
-                        v = preselect
-
                     # compare patient with rsidlist and calculate match score per chromosome
 
-                    comparison_chr1 = set(patient_rsids['chr1']) \
-                        & set(haprsids)
-                    comparison_chr2 = set(patient_rsids['chr2']) \
-                        & set(haprsids)
-
-                    # store these comparisons for use in a loop later on
-
-                    comparisons = (comparison_chr1, comparison_chr2)
-
-                    # go through the two comparisons, calculate match score
-
-                    for i in range(len(patient_rsids.keys())):
-
-                        rsids = patient_rsids['chr%s' %(str(i+1))]
+                    for chr, rsids in patient_rsids.items():
 
                         if len(rsids) == 0:
                             continue
@@ -348,7 +343,7 @@ class Patient:
                         # calculate match score
 
                         match_score = float(len(comparison)) \
-                            / len(rsids)
+                            / len(haprsids)
 
                         # with a full match, save to corresponding list in dictionary
 
@@ -360,36 +355,41 @@ class Patient:
 
                             # check if results are already present, if not add
 
-                            if result not in chr_matches[i]:
-                                chr_matches[i].append(result)
+                            chr_matches.setdefault(chr, []).append(result)
 
-                                # to do here... ref to hapmaker perhaps? can use two modes, one for starname and one for new HGVS
+                            # to do here... ref to hapmaker perhaps? can use two modes, one for starname and one for new HGVS
 
-            for (i, result) in enumerate(chr_matches):
+            for chr, rsids in chr_matches.items():
 
                 # get non-empty results
 
-                if len(result) == 0:
+                if len(rsids) == 0:
                     continue
 
                 # find longest matching haplotype
 
-                highest_hit = max(result, key=itemgetter(2))
-                hapid = highest_hit[0]
-                star_alt = highest_hit[1]
+                highest_hit = max(rsids, key=itemgetter(2))
+
+                star_alt = highest_hit[1].split("(")[0]
 
                 if 'rs' not in star_alt:
+
                     starhap = num.replace('1', star_alt).replace('0',
                             '*1')
+
                 elif 'rs' in star_alt:
-                    numlist = num.split('/|')
+
                     starhap = num.replace('1', star_alt)
+
 
                 # get haplotype pharmgkb id for this hit
 
                 hapid = highest_hit[0]
+
                 self.sql.execute('''SELECT DISTINCT gid FROM alleles WHERE hapid = ?'''
                                  , (hapid, ))
+
                 gid = self.sql.fetchone()[0]
+
                 self.sql.execute('UPDATE patienthaps SET hapid = ?, starhap = ? WHERE gid = ?'
                                  , (hapid, starhap, gid))

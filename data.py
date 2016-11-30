@@ -198,7 +198,7 @@ class DataCollector:
                             allele['starname'],
                             allele['hgvs'],
                             rsid,
-                            alt,
+                            alt
                             ))
         else:
             pass
@@ -286,5 +286,4 @@ class DataCollector:
 if __name__ == '__main__':
     data = DataCollector('config/design.vcf')
     data.Update()
-else:
     pass
