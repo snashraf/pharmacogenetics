@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import json
-from lxml import etree
 import urllib2
 
 
@@ -22,7 +21,7 @@ class Variant:
         self.mode = mode  # mode of variant search
         self.rs = rs  # rs number of variant
         self.Load()  # load data (either json, wikitools orxml)
-        self.GetGene()  # get gene matching the rs#
+        self.GetLocation()
         self.GetAlias()  # get HGVS alias'
 
     def Load(self):
@@ -38,6 +37,7 @@ class Variant:
 
             data = urllib2.urlopen(uri)
             self.json = json.load(data)[0]
+            self.id = self.json['id']
             return
         elif self.mode == 'entrez':
             uri = \
@@ -60,42 +60,23 @@ class Variant:
             self.json = json.load(data)
             return
 
-    def GetGene(self):
-
-        # again check for which mode is used'
-
-        if self.mode == 'pharmgkb':
-
-            # get gene name and PHARMGKB gene Id
-
-            self.nameid = [(doc['symbol'], doc['id']) for doc in
-                           self.json['relatedGenes']]
-        elif self.mode == 'entrez':
-
-            # get gene name and ENTREZ gene id (only used if pharmgkb fails)
-
-            for elem in self.tree.iter('*'):
-                if 'symbol' in elem.attrib:
-                    name = elem.attrib['symbol']
-                    gid = elem.attrib['geneId']
-                    self.nameid = [(name, gid)]
-        elif self.mode == 'clinvar':
-
-            self.nameid = [('BCHE', 'PA25294')]
-
     def GetLocation(self):
         if self.mode == 'pharmgkb':
             try:
                 if 'GRCh37' in self.json['location']['name']:
-                    self.chrom = self.json['location']['name'].split(']'
+                    self.chr = self.json['location']['name'].split(']'
                             )[1].split(':')[0].strip('chr')
                     self.begin = self.json['location']['begin']
                     self.end = self.json['location']['end']
                     self.ref = self.json['location']['reference']
-                    self.alt = ','.join(self.json['location']['variants'
-                            ])
+                    self.alt = ','.join(self.json['location']['variants'])
             except:
                 print 'cant find location for', self.rs
+                self.begin = 0
+                self.end = 0
+                self.chr = "nan"
+                self.ref = "nan"
+                self.alt = "nan"
         elif self.mode == 'entrez':
 
             return

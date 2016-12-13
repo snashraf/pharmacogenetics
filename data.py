@@ -3,14 +3,17 @@
 
 import vcf
 import urllib2
+import json
 from variant import Variant
 from gene import Gene
 import sqlite3
-import json
+from pgkb_functions import *
+import requests
 
+
+# ---------------------------------------------------------------------
 
 class DataCollector:
-
     '''
     This class imports a design VCF and creates a database with these positions, using PharmGKB.
     '''
@@ -34,116 +37,73 @@ class DataCollector:
         :return:
         """
 
-        self.GetVCFData()
-        self.GetVarData()
+        self.GetPairs()
+        self.conn.commit()
         self.GetGeneData()
+        self.conn.commit()
+        self.GetVarData()
+        self.conn.commit()
         self.GetChemData()
         self.conn.commit()
 
-    def GetVCFData(self):
+    def GetPairs(self):
         """
-        This function imports the design VCF
+        Create table for drug-gene pairs, to be used later to fetch drug data
         :return:
         """
+        authobj = Authenticate()
 
-        print 'Importing VCF...'
+        self.sql.execute('''DROP TABLE IF EXISTS drugpairs''')
+        self.sql.execute('''CREATE TABLE drugpairs(did text, gid text, guid text, starhaps text, rsids text)''')
 
-        # create sql table if it doesn't exist yet, otherwise recreate it
+        print 'Getting gene-drug pairs...'
 
-        self.sql.execute('''DROP TABLE IF EXISTS design''')
+        # get the uri for finding well-annotated pairs (given by pharmgkb)
 
-        # this can be used to pair positions to rsids - essential for patient analysis later on
-        # the combination of position and rsid should be unique.
+        uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
 
-        self.sql.execute('''CREATE TABLE design
-                            (pos int, rsid int, num text, ref text, alt text,UNIQUE(pos, rsid) ON CONFLICT REPLACE)'''
-                         )
+        # get data and read in this json file
 
-        # f is the filename of the design, given when creating the datacollector object
-
-        filename = self.f
-
-        # create a VCF reader object, using the pyvcf module. Open file for reading.
-
-        self.reader = vcf.Reader(open(filename, 'r'))
-
-        # fetch data from the columns - if you want to add more data do that here.
-
-        for record in self.reader:
-            for sample in record.samples:
-                call = str(sample['GT'])  # call is the 1/1 or 1|1 value showing zygosity
-                break
-            for alt in record.ALT:
-                item = (record.POS, record.ID, call, record.REF,
-                        str(alt))  # create an item to insert into sql table with relevant information
-                self.sql.execute('''INSERT INTO design VALUES(?,?,?,?,?)'''
-                                 , item)
-
-    def GetVarData(self):
-        """
-        Using Variant objects, this function fetches data on variants from the PharmGKB servers,
-        if not available uses the Entrez servers, possibilities are limited for now.
-        :return:
-        """
-
-        print '--- Getting variant data ---'
-
-        # drop tables if they exist already to reset them
-
-        self.sql.execute('''DROP TABLE IF EXISTS variants''')
-        self.sql.execute('''DROP TABLE IF EXISTS alias''')
-
-        # create variant and alias table. Variant should have an unique combo of rsid and gid,
-        # and alias should be unique in the alias table.
-
-        self.sql.execute('''CREATE TABLE variants
-                                    (rsid text, gid text,
-                                    UNIQUE(rsid,gid)
-                                    ON CONFLICT REPLACE)'''
-                         )
-        self.sql.execute('''CREATE TABLE alias
-                                            (rsid text, alias varchar(255) PRIMARY KEY)'''
-                         )
-
-        # get all rsids in the design vcf
-
-        self.sql.execute('SELECT DISTINCT rsid FROM design')
-
-        # rotate through rsids and create variant objects to fetch information
-
-        for result in self.sql.fetchall():
-            rsid = result[0]
-            print rsid
-
-            # create variant instances with the given rsid.
-            # if there is no pgkb id, try entrez instead.
-
-            try:
-                v = Variant(rsid, 'pharmgkb')
-            except urllib2.HTTPError:
-                v = Variant(rsid, 'entrez')
-
-            # this results in a combination tuple of rsid and gid and aliases
-
-            for tup in v.nameid:
-                gid = tup[1]
-
-                # use this tuple to fill sql insertion
-
-                self.sql.execute('''INSERT INTO variants VALUES(?,?)'''
-                                 , (rsid, gid))
-
-                # go through aliases, ignore duplicates and put in alias table
-
-                for alias in v.names:
-                    try:
-                        self.sql.execute('''INSERT INTO alias VALUES(?,?)'''
-                                , (rsid, alias))
-                    except sqlite3.IntegrityError:
-
-                    # on duplicate, ignore
-
-                        continue
+        data = urllib2.urlopen(uri)
+        self.json = json.load(data)
+        guid = "nan"
+        options = "nan"
+        
+        for doc in self.json:
+            gid = doc['gene']['id']
+            symbol = doc['gene']['symbol']
+            did = doc['chemical']['id']
+            # get annotated variants first
+            results = PGKB_connect(authobj, "clinAnno", did, gid)
+            varids = "nan"
+        
+            if results is not None:
+                varids = []
+                for doc in results:
+                    rsid = doc["location"]["displayName"]
+        
+                    varids.append(rsid)
+            if type(varids) == list:
+                varids = ",".join(list(set(varids)))
+            results = PGKB_connect(authobj, "clinGuide", did, gid)
+            
+            if results is not None:
+                guid=results['guid']
+                optionlist = results['options']
+                if optionlist == None:
+                    options = "nan"
+                else:
+                    for gene in optionlist['data']:
+                        if symbol in gene['symbol']:
+                            options = gene['options']
+            
+            if type(options) is list:
+                options = ",".join(options)
+            item = (did, gid, str(guid), options, varids)
+            # insert results in table drugpairs
+            self.sql.execute('''INSERT INTO drugpairs VALUES(?,?,?,?,?)''',
+                                 item)
+        self.conn.commit()
 
     def GetGeneData(self):
         '''
@@ -161,7 +121,7 @@ class DataCollector:
         # (re)create tables in database
 
         self.sql.execute('''CREATE TABLE genes
-                                            (gid text UNIQUE, symbol text)'''
+                                            (gid text UNIQUE, symbol text, chr text, start text, stop text)'''
                          )
         self.sql.execute('''CREATE TABLE alleles
                                             (hapid text, gid text, starname text,
@@ -173,64 +133,112 @@ class DataCollector:
         # get all unique gene ids from the variant table
 
         self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
+        
         genes = [tup[0] for tup in self.sql.fetchall()]
+        
         genes = list(set(genes))
 
         # go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
 
         for gid in genes:
+        
             print gid
+        
             if 'PA' in gid:
 
                 g = Gene(gid, 'pharmgkb')
 
                 # insert the resulting name and alleles into sql table
 
-                self.sql.execute('''INSERT INTO genes VALUES(?,?)''',
-                                 (gid, g.name))
+                self.sql.execute('''INSERT INTO genes VALUES(?,?,?,?,?)''',
+                                 (gid, g.name, g.chr, g.start, g.stop))
 
                 for allele in g.alleles:
+        
                     for (rsid, alt) in allele['rsids']:
+        
                         self.sql.execute('''INSERT INTO alleles VALUES(?,?,?,?,?,?)'''
-                                , (
-                            allele['id'],
-                            gid,
-                            allele['starname'],
-                            allele['hgvs'],
-                            rsid,
-                            alt
-                            ))
+                                         , (
+                                             allele['id'],
+                                             gid,
+                                             allele['starname'],
+                                             allele['hgvs'],
+                                             rsid,
+                                             alt
+                                         ))
         else:
+        
             pass
 
-    def GetPairs(self):
+    def GetVarData(self):
         """
-        Create table for drug-gene pairs, to be used later to fetch drug data
+        Using Variant objects, this function fetches data on variants from the PharmGKB servers,
+        if not available uses the Entrez servers, possibilities are limited for now.
         :return:
         """
 
-        self.sql.execute('''DROP TABLE IF EXISTS drugpairs''')
-        self.sql.execute('''CREATE TABLE drugpairs
-                        (did text, gid text, UNIQUE(did, gid)
-                        ON CONFLICT REPLACE)''' )
-        print 'Getting gene-drug pairs...'
+        print '--- Getting variant data ---'
 
-        # get the uri for finding well-annotated pairs (given by pharmgkb)
+        # drop tables if they exist already to reset them
 
-        uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
+        self.sql.execute('''DROP TABLE IF EXISTS variants''')
+        
+        self.sql.execute('''DROP TABLE IF EXISTS alias''')
 
-        # get data and read in this json file
+        # create variant and alias table. Variant should have an unique combo of rsid and gid,
+        # and alias should be unique in the alias table.
 
-        data = urllib2.urlopen(uri)
-        self.json = json.load(data)
-        for doc in self.json:
-            gid = doc['gene']['id']
-            did = doc['chemical']['id']
+        self.sql.execute('''CREATE TABLE variants
+                                    (rsid text, varid text, gid text, chr text, start int, end int, ref text, alt text,
+                                    UNIQUE(rsid,gid)
+                                    ON CONFLICT REPLACE)'''
+                         )
+        
+        self.sql.execute('''CREATE TABLE alias
+                                            (rsid text, alias varchar(255) PRIMARY KEY)'''
+                         )
 
-            # insert results in table drugpairs
+        # get all rsids in the design vcf
 
-            self.sql.execute('''INSERT INTO drugpairs VALUES(?,?)''',
-                             (did, gid))
+        self.sql.execute('SELECT DISTINCT rsid, gid FROM alleles WHERE rsid LIKE "rs%"')
+
+        # rotate through rsids and create variant objects to fetch information
+
+        for (rsid, gid) in self.sql.fetchall():
+        
+            print rsid
+
+            # create variant instances with the given rsid.
+            # if there is no pgkb id, try entrez instead.
+
+            try:
+        
+                v = Variant(rsid, 'pharmgkb')
+        
+            except urllib2.HTTPError:
+        
+                v = Variant(rsid, 'entrez')
+
+            # this results in a combination tuple of rsid and gid and aliases
+        
+            item = (rsid, v.id, gid, v.chr, v.begin, v.end, v.ref, v.alt)
+        
+            self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?)'''
+                             , item)
+
+            # go through aliases, ignore duplicates and put in alias table
+
+            for alias in v.names:
+        
+                try:
+                    self.sql.execute('''INSERT INTO alias VALUES(?,?)'''
+                                     , (rsid, alias))
+
+                except sqlite3.IntegrityError:
+
+                    # on duplicate, ignore
+
+                    continue
 
     def GetChemData(self):
         """
@@ -244,6 +252,7 @@ class DataCollector:
         # drop and re-create table chemicals
 
         self.sql.execute('''DROP TABLE IF EXISTS chemicals''')
+        
         self.sql.execute('''CREATE TABLE chemicals
                                 (did text, name text, terms text)'''
                          )
@@ -256,8 +265,11 @@ class DataCollector:
         # fetch matching did and use to create uri for query
 
         for result in self.sql.fetchall():
+        
             did = result[0]
+        
             print did
+        
             uri = \
                 'https://api.pharmgkb.org/v1/data/chemical/%s?view=max' \
                 % did
@@ -265,10 +277,15 @@ class DataCollector:
             # get data and read in this json file
 
             data = urllib2.urlopen(uri)
+
             self.json = json.load(data)
+
             name = self.json['name']
+
             terms = self.json['terms']
+
             for item in terms:
+
                 term = item['term']
 
                 # check for duplicates with chemical name
@@ -280,10 +297,24 @@ class DataCollector:
                     # insert into chemicals table
 
                     self.sql.execute('''INSERT INTO chemicals VALUES(?,?,?)'''
-                            , item)
+                                     , item)
 
+    def BedFile(self):
+
+        # creates bed file for subsetting .BAM files.
+
+        self.sql.execute("SELECT chr, start, stop, symbol FROM genes ORDER BY length(chr), chr")
+
+        with open("PharmacogenomicGenes_PGKB.bed", "w") as bed:
+
+            for tup in self.sql.fetchall():
+
+                bed.write("\t".join(map(str, tup)) + "\n")
 
 if __name__ == '__main__':
-    data = DataCollector('config/design.vcf')
+
+    data = DataCollector('config/curr_designs/design.vcf')
+
     data.Update()
+
     pass

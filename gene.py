@@ -1,10 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from lxml import etree
 import urllib2
 import json
-
+import pgkb_functions
 
 # -------------------------------------------------------------------------
 
@@ -39,6 +38,10 @@ This class gets information on a given gene based on gene ID. Can use either Pha
             data = urllib2.urlopen(uri)
             self.json = json.load(data)
             self.name = self.json['symbol']
+            self.chr = self.json['chr']['name'].lstrip("chr")
+            self.start = self.json['chrStart']
+            self.stop = self.json['chrStop']
+            print self.chr, self.start, self.stop
         elif self.mode == 'entrez':
             uri = \
                 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=%i&retmode=XML' \
@@ -91,6 +94,10 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
                         continue
 
+                guideline=False
+
+
+
                 # add to alleles dictionary
 
                 all = {
@@ -99,5 +106,6 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                     'id': hapid,
                     'copynum': copynum,
                     'rsids': rsids,
+                    'guideine':guideline
                     }
                 self.alleles.append(all)
