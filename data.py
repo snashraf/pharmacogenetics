@@ -3,7 +3,7 @@
 
 import vcf
 import urllib2
-import json
+import json 
 from variant import Variant
 from gene import Gene
 import sqlite3

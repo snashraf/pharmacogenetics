@@ -3,6 +3,7 @@
 
 import requests
 from requests_oauthlib import OAuth2Session
+import getpass
 import urllib
 import urllib2
 import ast
@@ -16,14 +17,22 @@ def Authenticate():
     :return:
     """
     print 'Authenticating...'
+    
     username = raw_input("PGKB user name: ")
+    
     email = raw_input("PGKB e-mail address: ")
-    password = raw_input("Password: ")
+    
+    password =getpass.getpass()
+    
     req = {
+    
         "username": username,
+    
         "email": email,
+    
         "password": password
     }
+    
     # uri for authenticating with this file
 
     url = 'https://api.pharmgkb.org/v1/auth/oauthSignIn'
@@ -39,16 +48,19 @@ def Authenticate():
     # read response
 
     response = urllib2.urlopen(req)
+    
     str_response = response.read()
 
     # convert token to something that
     # can be used for authentication
+    
     token = ast.literal_eval(str_response)
 
     # create an authorized session and
     # return this session
 
     client = OAuth2Session(token=token)
+    
     return client
 
 
@@ -60,16 +72,23 @@ def getJson(uri, client):
     :return:
     """
     resp = requests.head(uri)
+
     status = resp.status_code
-    print status
+
     if status == 200:
+
         r = client.get(uri)
+
         data = r.json()
+
         return data
+
     else:
+
         return None
 
 def PGKB_connect(authobj, mode, a, b):
+	
     """
     Find connections between two pharmgkb objects.
     Usually a haplotype or rsid compared with a drug id.
@@ -78,31 +97,55 @@ def PGKB_connect(authobj, mode, a, b):
     :param did: object 2 to compare, usually a drug id
     :return:
     """
+    
     if mode == "clinAnno":
+ 
         uri = \
             'https://api.pharmgkb.org/v1/report/pair/%s/%s/clinicalAnnotation?view=base' \
             % (a, b)
+ 
         result = getJson(uri, authobj)
+ 
         return result
 
     elif mode == "clinGuide":
+
         sources = ["cpic", "dpwg", "pro"]
+
         for source in sources:
+			
+			# uses did and gid
+
             uri = "https://api.pharmgkb.org/v1/data/guideline?source=%s&relatedChemicals.accessionId=%s&relatedGenes.accessionId=%s&view=max" \
-                  % (source, a, b)
+						% (source, a, b)
+
             guidelines = getJson(uri, authobj)
+
             guid = "nan"
+
             options="nan"
+
             if guidelines == None:
+
                 continue
+
             else:
+
                 for doc in guidelines:
+
                     if doc["objCls"] == "Guideline":
+
                         guid = doc["id"]
+
                         uri = "https://api.pharmgkb.org/v1/report/guideline/%s/options" \
-                              % guid
+								% guid
+
                         doseOptions = getJson(uri, authobj)
+
                         result = {"guid": guid, "options": doseOptions}
+
                         return result
+
                     else:
+
                         print 'No guideline found...'
