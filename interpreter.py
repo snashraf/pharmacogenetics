@@ -23,7 +23,7 @@ class Interpreter:
 
 	def HapScorer(self):
 			
-			it = ["p.score1", "p.score2"]
+			it = ["p.al1", "p.al2"]
 			
 			self.sql.execute("select distinct gid, symbol from genes")
 			
@@ -37,38 +37,44 @@ class Interpreter:
 					
 				for i in it:
 
-					self.sql.execute("select distinct p.hapid, a.starname, %s from patienthaps p join alleles a \
-					on a.gid=p.gid where p.gid=? order by ? asc limit 10" %i, (gid,i))
+					print i
+					
+					self.sql.execute("select distinct p.hapid, a.starname, p.ref, %s from patienthaps p join alleles a \
+					on a.hapid=p.hapid where p.gid=? order by %s, p.ref asc limit 10" %(i,i), (gid,))
 					
 					results = self.sql.fetchall()
-					
+										
 					if len(results) == 0:
+						
 						continue
 					
-					for (hapid, starname, score) in results:
+					else:
 						
-						lastval = "None"
-						
-						self.sql.execute("select distinct starhaps, guid from drugpairs where gid = ?", (gid,))
-						
-						vals = self.sql.fetchone()
-						
-						starhaps = vals[0]
-						
-						guid = vals[1]
-						
-						match = "| Partial |"
-						
-						if score == 0:
-						
-							match = "| Full |"				
-						
-						if starname in starhaps and "nan" not in guid:
-						
-							lastval = guid 
-						
-						print i
-						print hapid, "/", starname, "|", score, "|", lastval, match
+						for (hapid, starname, refscore, alscore) in results:
+																					
+							lastval = "None"
+							
+							self.sql.execute("select distinct starhaps, guid from drugpairs where gid = ?", (gid,))
+							
+							vals = self.sql.fetchone()
+							
+							starhaps = vals[0]
+							
+							guid = vals[1]
+							
+							match = "| Partial |"
+							
+							if alscore == 0:
+							
+								match = "| Full |"				
+							
+							if starname in starhaps and "nan" not in guid:
+							
+								lastval = guid 
+							
+							print i
+							
+							print hapid, "/", starname, "|", refscore, "|", alscore, "|", lastval, match
 						
 					
 					print "---------------------"

@@ -9,9 +9,13 @@ from gene import Gene
 import sqlite3
 from pgkb_functions import *
 import requests
-
+from tqdm import tqdm
+from Bio import pairwise2
+from Bio.Phylo.TreeConstruction import DistanceCalculator
+from Bio import AlignIO
 
 # ---------------------------------------------------------------------
+
 
 class DataCollector:
     '''
@@ -56,7 +60,7 @@ class DataCollector:
         self.sql.execute('''DROP TABLE IF EXISTS drugpairs''')
         self.sql.execute('''CREATE TABLE drugpairs(did text, gid text, guid text, starhaps text, rsids text)''')
 
-        print 'Getting gene-drug pairs...'
+        print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
 
         # get the uri for finding well-annotated pairs (given by pharmgkb)
 
@@ -65,44 +69,72 @@ class DataCollector:
         # get data and read in this json file
 
         data = urllib2.urlopen(uri)
+        
         self.json = json.load(data)
+        
         guid = "nan"
+        
         options = "nan"
         
-        for doc in self.json:
+        for doc in tqdm(self.json):
+        
             gid = doc['gene']['id']
+        
             symbol = doc['gene']['symbol']
+        
             did = doc['chemical']['id']
+        
             # get annotated variants first
+        
             results = PGKB_connect(authobj, "clinAnno", did, gid)
+        
             varids = "nan"
         
             if results is not None:
+        
                 varids = []
+        
                 for doc in results:
+        
                     rsid = doc["location"]["displayName"]
         
                     varids.append(rsid)
+        
             if type(varids) == list:
+        
                 varids = ",".join(list(set(varids)))
+        
             results = PGKB_connect(authobj, "clinGuide", did, gid)
             
             if results is not None:
+        
                 guid=results['guid']
+        
                 optionlist = results['options']
+        
                 if optionlist == None:
+        
                     options = "nan"
+        
                 else:
+        
                     for gene in optionlist['data']:
+        
                         if symbol in gene['symbol']:
+        
                             options = gene['options']
             
             if type(options) is list:
+        
                 options = ",".join(options)
+        
             item = (did, gid, str(guid), options, varids)
+        
             # insert results in table drugpairs
+        
             self.sql.execute('''INSERT INTO drugpairs VALUES(?,?,?,?,?)''',
                                  item)
+        
         self.conn.commit()
 
     def GetGeneData(self):
@@ -111,11 +143,12 @@ class DataCollector:
         :return:
         '''
 
-        print '--- Getting gene data ---'
+        print 'Getting gene data... (/o*)'
 
         # drop already existing tables genes and alleles
 
         self.sql.execute('''DROP TABLE IF EXISTS genes''')
+        
         self.sql.execute('''DROP TABLE IF EXISTS alleles''')
 
         # (re)create tables in database
@@ -123,6 +156,7 @@ class DataCollector:
         self.sql.execute('''CREATE TABLE genes
                                             (gid text UNIQUE, symbol text, chr text, start text, stop text)'''
                          )
+        
         self.sql.execute('''CREATE TABLE alleles
                                             (hapid text, gid text, starname text,
                                             hgvs text, rsid text, alt text,
@@ -140,10 +174,8 @@ class DataCollector:
 
         # go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
 
-        for gid in genes:
-        
-            print gid
-        
+        for gid in tqdm(genes):
+                
             if 'PA' in gid:
 
                 g = Gene(gid, 'pharmgkb')
@@ -177,7 +209,7 @@ class DataCollector:
         :return:
         """
 
-        print '--- Getting variant data ---'
+        print 'Getting variant data... ~(^_^)~'
 
         # drop tables if they exist already to reset them
 
@@ -204,10 +236,8 @@ class DataCollector:
 
         # rotate through rsids and create variant objects to fetch information
 
-        for (rsid, gid) in self.sql.fetchall():
+        for (rsid, gid) in tqdm(self.sql.fetchall()):
         
-            print rsid
-
             # create variant instances with the given rsid.
             # if there is no pgkb id, try entrez instead.
 
@@ -247,7 +277,7 @@ class DataCollector:
         :return:
         """
 
-        print '--- Getting drug data ---'
+        print 'Getting drug data /(>_<)\\}'
 
         # drop and re-create table chemicals
 
@@ -264,12 +294,10 @@ class DataCollector:
 
         # fetch matching did and use to create uri for query
 
-        for result in self.sql.fetchall():
+        for result in tqdm(self.sql.fetchall()):
         
             did = result[0]
-        
-            print did
-        
+                
             uri = \
                 'https://api.pharmgkb.org/v1/data/chemical/%s?view=max' \
                 % did
@@ -316,5 +344,3 @@ if __name__ == '__main__':
     data = DataCollector('config/curr_designs/design.vcf')
 
     data.Update()
-
-    pass

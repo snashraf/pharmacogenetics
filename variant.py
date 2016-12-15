@@ -71,7 +71,6 @@ class Variant:
                     self.ref = self.json['location']['reference']
                     self.alt = ','.join(self.json['location']['variants'])
             except:
-                print 'cant find location for', self.rs
                 self.begin = 0
                 self.end = 0
                 self.chr = "nan"

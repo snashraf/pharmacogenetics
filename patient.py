@@ -5,7 +5,7 @@ import vcf
 import sqlite3
 from collections import Counter
 from operator import itemgetter
-
+from pgkb_functions import *
 # ---------------------------------------------------------------------
 
 class Patient:
@@ -238,7 +238,7 @@ class Patient:
 
 		self.sql.execute("DROP TABLE IF EXISTS patienthaps")
 
-		self.sql.execute("CREATE TABLE IF NOT EXISTS patienthaps(gid text, hapid text, score1 int, score2 int)")
+		self.sql.execute("CREATE TABLE IF NOT EXISTS patienthaps(gid text, hapid text, ref int, al1 int, al2 int)")
 
 		self.sql.execute("SELECT DISTINCT gid from genes")
 
@@ -248,9 +248,19 @@ class Patient:
 
 		for gid in gids:
 
-			self.sql.execute("SELECT rsid, alt from alleles where hgvs like '%=%' and rsid like '%rs%' and gid=?", (gid,))
+			self.sql.execute("SELECT a.rsid, a.alt from alleles a join variants v on a.rsid=v.rsid where a.hgvs like '%=%' and a.gid=? order by v.start", (gid,))
 
-			reference = { rsid : alt for (rsid, alt) in self.sql.fetchall() }
+			refrsids = self.sql.fetchall()
+			
+			rsidorder = [tup[0] for tup in refrsids]
+			
+			reference = { rsid : alt for (rsid, alt) in refrsids}
+			
+			print gid
+			
+			refseq = seqMaker(rsidorder, reference, reference)
+			
+			print refseq
 			
 			# get list of all hapids for this gene
 			
@@ -266,45 +276,73 @@ class Patient:
 				
 				haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 
-				haprsids = dict(reference, **haprsids)
-				
-				# get patient rsids
-				
-				self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '1/1' and a.hapid = ?", (hapid,))
-				
-				patrsids_base = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
-				
-				patrsids_al1 = dict(reference, **patrsids_base)
-				
-				modified = {k : (patrsids_al1[k], haprsids[k]) for k in patrsids_al1.keys() if patrsids_al1[k] != haprsids[k]}
-
-				score1 = len(modified)
-
-				# --------------------------------------------------------------------------------------------------
-				
-				self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '0/1' and a.hapid = ?", (hapid,))
-
-				patrsids_add = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
-
-				patrsids_al2 = dict(patrsids_base, **patrsids_add)
-				
-				modified = {k : (patrsids_al2[k], haprsids[k]) for k in patrsids_al2.keys() if patrsids_al2[k] != haprsids[k]}
-									
-				score2 = len(modified)
-
-				if len(patrsids_base) == 0 and len(patrsids_add) == 0:
-								
+				if len(haprsids) == 0:
+					
 					continue
 				
 				else:
-					item = (gid, hapid, score1, score2)
-								
-					self.sql.execute("INSERT INTO patienthaps VALUES(?,?,?,?)", item)
+					
+					haprsids = dict(reference, **haprsids)
+					
+					hapseq = seqMaker(rsidorder, reference, haprsids)
+					
+					print hapseq
+					
+					modified = {k : (reference[k], haprsids[k]) for k in reference.keys() if reference[k] != haprsids[k]}
+
+					score_ref = len(modified)
+					
+					if score_ref == 0:
+						
+						continue
+					
+					else:
+					
+						# get patient rsids
+						
+						self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '1/1' and a.hapid = ?", (hapid,))
+						
+						patrsids_base = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
+						
+						patrsids_al1 = dict(reference, **patrsids_base)
+						
+						patseq1 = seqMaker(rsidorder, reference, patrsids_al1)
+						
+						print patseq1
+						
+						modified = {k : (patrsids_al1[k], haprsids[k]) for k in patrsids_al1.keys() if patrsids_al1[k] != haprsids[k]}
+
+						score_al1 = len(modified)
+
+						# --------------------------------------------------------------------------------------------------
+						
+						self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '0/1' and a.hapid = ?", (hapid,))
+
+						patrsids_add = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
+
+						patrsids_al2 = dict(patrsids_base, **patrsids_add)
+						
+						patseq2 = seqMaker(rsidorder, reference, patrsids_al2)
+
+						print patseq2
+
+						modified = {k : (patrsids_al2[k], haprsids[k]) for k in patrsids_al2.keys() if patrsids_al2[k] != haprsids[k]}
+											
+						score_al2 = len(modified)
+
+						if len(patrsids_base) == 0 and len(patrsids_add) == 0:
+										
+							continue
+						
+						else:
+							
+							item = (gid, hapid, score_ref, score_al1, score_al2)
+										
+							self.sql.execute("INSERT INTO patienthaps VALUES(?,?,?,?,?)", item)
 
 		# -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 		self.conn.commit()
-		
 		
 pat = Patient('data/test.g.vcf.gz')
 

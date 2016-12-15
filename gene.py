@@ -32,31 +32,50 @@ This class gets information on a given gene based on gene ID. Can use either Pha
             pass
 
     def Load(self):
+		
         if self.mode == 'pharmgkb':
+        
             uri = 'https://api.pharmgkb.org/v1/data/gene/%s?view=max' \
                 % self.gid
+        
             data = urllib2.urlopen(uri)
+        
             self.json = json.load(data)
+        
             self.name = self.json['symbol']
+        
             self.chr = self.json['chr']['name'].lstrip("chr")
+        
             self.start = self.json['chrStart']
+        
             self.stop = self.json['chrStop']
-            print self.chr, self.start, self.stop
+                
         elif self.mode == 'entrez':
+        
             uri = \
                 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=%i&retmode=XML' \
                 % int(self.gid)
+        
             f = urllib2.urlopen(uri)
+        
             data = f.read()
+        
             f.close()
+        
             self.tree = etree.XML(data)
+        
             for elem in self.tree[0][3].iter():
+        
                 if 'ref_locus' in elem.tag:
+        
                     self.name = elem.text
 
     def GetHaps(self):
+		
         if self.mode == 'entrez':
+        
             return
+        
         else:
 
         # get a list of known haplotype IDs from gene ID
@@ -66,30 +85,45 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                 % self.gid
 
             data = urllib2.urlopen(uri)
+        
             response = json.load(data)
+        
             for doc in response:
 
                 # get various attributes from resulting json file
 
                 starname = doc['name']
-
+                
                 try:
+        
                     hgvs = doc['hgvs']
+                    
                 except KeyError:
+        
                     hgvs = None
+                
                 alleles = doc['alleles']
+                
                 hapid = doc['id']
+                
                 copynum = doc['copyNumber']
+                
                 rsids = []
 
                 dic = {}
+                
                 # get all the involved rsids
 
                 for allele in alleles:
+					
                     try:
+                    
                         rsid = allele['location']['displayName']
+                    
                         alt = allele['allele']
+                    
                         rsids.append((rsid, alt))
+                    
                     except KeyError:
 
                         continue
@@ -106,6 +140,6 @@ This class gets information on a given gene based on gene ID. Can use either Pha
                     'id': hapid,
                     'copynum': copynum,
                     'rsids': rsids,
-                    'guideine':guideline
+                    'guideline':guideline
                     }
                 self.alleles.append(all)

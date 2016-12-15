@@ -133,7 +133,7 @@ def PGKB_connect(authobj, mode, a, b):
 
                 for doc in guidelines:
 
-                    if doc["objCls"] == "Guideline":
+                     if doc["objCls"] == "Guideline":
 
                         guid = doc["id"]
 
@@ -146,6 +146,34 @@ def PGKB_connect(authobj, mode, a, b):
 
                         return result
 
-                    else:
 
-                        print 'No guideline found...'
+def seqMaker(rsidorder, reference, rsids):
+
+	seq = ""
+	for rsid in rsidorder:
+		try:
+			base = rsids[rsid]
+		except:
+			base = reference[rsid]
+
+		if "del" in base or base == "-":
+			continue
+
+		elif "," in base:
+			bases = base.split(",")
+			base = bases[0]
+		
+		elif "[" in base or "(" in base:
+			base = base.split("[")
+			num=int(base[1].rstrip("]"))
+			base = base[0] * num
+			
+			# currently bugs on the TA repeats
+
+		seq+=(base)
+
+	return seq
+
+def Aligner(seqlist):
+	pass
+		
