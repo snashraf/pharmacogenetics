@@ -248,28 +248,34 @@ class Patient:
 
 		for gid in gids:
 
+			sequences = []
+
 			self.sql.execute("SELECT a.rsid, a.alt from alleles a join variants v on a.rsid=v.rsid where a.hgvs like '%=%' and a.gid=? order by v.start", (gid,))
 
 			refrsids = self.sql.fetchall()
 			
+			if len(refrsids) == 0:
+				
+				continue
+				
 			rsidorder = [tup[0] for tup in refrsids]
 			
 			reference = { rsid : alt for (rsid, alt) in refrsids}
-			
-			print gid
-			
+						
 			refseq = seqMaker(rsidorder, reference, reference)
 			
-			print refseq
+			newline =  ">REF\n"+refseq+ "\n"
+						
+			sequences.append(newline)
 			
 			# get list of all hapids for this gene
 			
-			self.sql.execute("SELECT DISTINCT hapid, starname, hgvs from alleles where gid=?", (gid,))
+			self.sql.execute("SELECT DISTINCT hapid, starname, hgvs from alleles where gid=? and hgvs not like '%=%'", (gid,))
 			
 			hapids = self.sql.fetchall()
 			
 			for (hapid, starhap, hgvs) in hapids:
-					
+									
 				# get haplotype alleles and create complete dictionary
 				
 				self.sql.execute("SELECT rsid, alt from alleles where hapid=? and rsid like '%rs%'", (hapid,))
@@ -286,8 +292,6 @@ class Patient:
 					
 					hapseq = seqMaker(rsidorder, reference, haprsids)
 					
-					print hapseq
-					
 					modified = {k : (reference[k], haprsids[k]) for k in reference.keys() if reference[k] != haprsids[k]}
 
 					score_ref = len(modified)
@@ -297,34 +301,30 @@ class Patient:
 						continue
 					
 					else:
-					
+						
 						# get patient rsids
 						
-						self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '1/1' and a.hapid = ?", (hapid,))
+						self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '1/1' and a.hapid = ? and v.rsid like '%rs%'", (hapid,))
 						
 						patrsids_base = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 						
 						patrsids_al1 = dict(reference, **patrsids_base)
 						
 						patseq1 = seqMaker(rsidorder, reference, patrsids_al1)
-						
-						print patseq1
-						
+													
 						modified = {k : (patrsids_al1[k], haprsids[k]) for k in patrsids_al1.keys() if patrsids_al1[k] != haprsids[k]}
 
 						score_al1 = len(modified)
 
 						# --------------------------------------------------------------------------------------------------
 						
-						self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '0/1' and a.hapid = ?", (hapid,))
+						self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '0/1' and a.hapid = ? and v.rsid like '%rs%'", (hapid,))
 
 						patrsids_add = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 
 						patrsids_al2 = dict(patrsids_base, **patrsids_add)
 						
 						patseq2 = seqMaker(rsidorder, reference, patrsids_al2)
-
-						print patseq2
 
 						modified = {k : (patrsids_al2[k], haprsids[k]) for k in patrsids_al2.keys() if patrsids_al2[k] != haprsids[k]}
 											
@@ -336,9 +336,34 @@ class Patient:
 						
 						else:
 							
+							hapline =  ">" + starhap + "\n"+hapseq + "\n"
+						
+							if hapline not in sequences:
+								
+								sequences.append(hapline)
+							
+							else:
+								
+								continue
+							
 							item = (gid, hapid, score_ref, score_al1, score_al2)
 										
 							self.sql.execute("INSERT INTO patienthaps VALUES(?,?,?,?,?)", item)
+			
+			al1 =  ">Patient_allele1\n"+patseq1+"\n"
+			
+			sequences.append(al1)
+
+			al2 =  ">Patient_allele2\n"+patseq2+"\n"
+
+			sequences.append(al2)
+			
+			path = "data/alignments/"
+			
+			with open(path + gid + "_aln.fasta", "w") as f:
+				
+				f.writelines(sequences)
+							
 
 		# -------------------------------------------------------------------------------------------------------------------------------------------------------
 

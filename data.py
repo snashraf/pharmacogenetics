@@ -160,7 +160,7 @@ class DataCollector:
         self.sql.execute('''CREATE TABLE alleles
                                             (hapid text, gid text, starname text,
                                             hgvs text, rsid text, alt text,
-                                            UNIQUE(hapid, rsid)
+                                            UNIQUE(hapid, rsid, starname)
                                             ON CONFLICT REPLACE)'''
                          )
 

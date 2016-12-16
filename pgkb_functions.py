@@ -7,7 +7,7 @@ import getpass
 import urllib
 import urllib2
 import ast
-
+import re
 
 # ---------------------------------------------------------------------
 def Authenticate():
@@ -150,27 +150,48 @@ def PGKB_connect(authobj, mode, a, b):
 def seqMaker(rsidorder, reference, rsids):
 
 	seq = ""
+
 	for rsid in rsidorder:
+
 		try:
+
 			base = rsids[rsid]
-		except:
+
+		except KeyError:
+			
 			base = reference[rsid]
 
 		if "del" in base or base == "-":
+
 			continue
 
-		elif "," in base:
+		if "," in base:
+			
 			bases = base.split(",")
+
 			base = bases[0]
 		
 		elif "[" in base or "(" in base:
-			base = base.split("[")
-			num=int(base[1].rstrip("]"))
-			base = base[0] * num
 			
-			# currently bugs on the TA repeats
+			# find bracketed objects
+			
+			filt = re.split('\[(.*?)\]|\((.*?)\)', base)
+						
+			for frag in filt:
 
-		seq+=(base)
+				if frag is not None:
+
+					try:
+
+						num = int(frag)
+
+					except:
+
+						motif = frag
+		
+			base = motif * num
+
+		seq += (base)
 
 	return seq
 
