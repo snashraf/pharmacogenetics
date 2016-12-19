@@ -3,9 +3,15 @@
 
 import vcf
 import sqlite3
-from collections import Counter
+from collections import Counter, OrderedDict, defaultdict
 from operator import itemgetter
 from pgkb_functions import *
+import subprocess as s
+from Bio import Phylo
+from ete3 import Tree
+import time
+import itertools
+
 # ---------------------------------------------------------------------
 
 class Patient:
@@ -22,13 +28,21 @@ class Patient:
 		Import imports the input vcf
 		GetIDs finds changed positions and matches them to the design.
 		"""
+
 		print 'Initiating patient...'
+
 		self.f = f
+
 		self.reader = vcf.Reader(open(f, 'r'))
+
 		self.genes = {}
+
 		self.haplotypes = []
+
 		self.starhaps = {}
+
 		print "Loading patient data..."
+
 		self.Load()
 
 	def Load(self):
@@ -36,12 +50,19 @@ class Patient:
 		Function for loading the most important startup functions
 		:return:
 		"""
+
 		self.ImportData()
+
 		self.GetIDs()
+
 		self.conn.commit()
+
 		#self.Hapmaker()
+
 		#self.conn.commit()
+
 		self.Hapmatcher()
+
 		self.conn.commit()
 
 	def ImportData(self):
@@ -51,47 +72,31 @@ class Patient:
 		:return:
 		"""
 
-		print 'Trying to import database...'
-		try:
+		print 'Importing database...'
 
-			# connect to db
+		# connect to db
 
-			self.conn = sqlite3.connect('pharmacogenetics.db')
-			self.sql = self.conn.cursor()
+		self.conn = sqlite3.connect('pharmacogenetics.db')
 
-			# drop and re-create patient tables
-			# (maybe another db would be better?)
+		self.sql = self.conn.cursor()
 
-			self.sql.execute('''DROP TABLE IF EXISTS patientvars''')
-			self.sql.execute('''DROP TABLE IF EXISTS patienthaps''')
+		# drop and re-create patient tables
 
-			# patientvars focusus on positions and rsids,
-			# patienthaps focuses on calculated haplotype storage
+		self.sql.execute('''DROP TABLE IF EXISTS patientvars''')
 
-			self.sql.execute('''CREATE TABLE patientvars
-												(chr text, 
-												start int, 
-												end int, 
-												ref text, 
-												alt text, 
-												call text, 
-												pid text, 
-												pgt text)'''
-							 )
-			self.sql.execute('''CREATE TABLE patienthaps
-												(gid text, 
-												hapid text, 
-												chr text,
-												hapscore int,
-												patscore int)'''
-							 )
+		# patientvars focusus on positions and rsids,
 
-		except:
+		self.sql.execute('''CREATE TABLE patientvars
+											(chr text, 
+											start int, 
+											end int, 
+											ref text, 
+											alt text, 
+											call text, 
+											pid text, 
+											pgt text)'''
+						 )
 
-			# if error in db, reload db (testing purposes...)
-			# self.d.Update()
-
-			raise
 
 	def GetIDs(self):
 		"""
@@ -101,28 +106,47 @@ class Patient:
 		print 'Reading patient variants...'
 
 		# create list of positions to localize in patient
-
+		
 		for record in self.reader:
 
 			self.sql.execute("SELECT DISTINCT chr, start, end, ref, alt FROM variants")
+			
 			positions = self.sql.fetchall()
+			
 			for (chr, start, end, ref, alt) in positions:
+			
 				try:
+			
 					records = self.reader.fetch(str(chr), start=start-1, end=end)
+			
 				except:
+			
 					continue
+			
 				for record in records: # doctest: +SKIP
+			
 					ref = str(record.REF)
+			
 					alt = (str(record.ALT[0])).replace("<NON_REF>",".")
+			
 					for sample in record.samples:
+			
 						call = str(sample['GT'])  # 1/0 etc, phasing found here
+			
 						try:
+			
 							pid = str(sample['PID'])
+			
 							pgt = str(sample['PGT'])
+			
 						except:
+			
 							pid = "nan"
+			
 							pgt = "nan"
+			
 					item = (chr, start, end, ref, alt, call, pid, pgt)
+			
 					self.sql.execute('''INSERT INTO patientvars VALUES(?,?,?,?,?,?,?,?)'''
 							, item)
 
@@ -235,10 +259,10 @@ class Patient:
 		Results are stored in a list...
 		:return:
 		"""
-
+		
 		self.sql.execute("DROP TABLE IF EXISTS patienthaps")
 
-		self.sql.execute("CREATE TABLE IF NOT EXISTS patienthaps(gid text, hapid text, ref int, al1 int, al2 int)")
+		self.sql.execute("CREATE TABLE IF NOT EXISTS patienthaps(hapid text, al1 int, al2 int)")
 
 		self.sql.execute("SELECT DISTINCT gid from genes")
 
@@ -250,22 +274,26 @@ class Patient:
 
 			sequences = []
 
-			self.sql.execute("SELECT a.rsid, a.alt from alleles a join variants v on a.rsid=v.rsid where a.hgvs like '%=%' and a.gid=? order by v.start", (gid,))
+			self.sql.execute("SELECT a.rsid, a.alt, a.hapid from alleles a join variants v on a.rsid=v.rsid where a.hgvs like '%=%' and a.gid=? order by v.start", (gid,))
 
 			refrsids = self.sql.fetchall()
 			
-			if len(refrsids) == 0:
+			try:
+				
+				refid = refrsids[0][2]
+			
+			except:
 				
 				continue
-				
-			rsidorder = [tup[0] for tup in refrsids]
+
+			rsidorder = [rsid for (rsid, alt, hapid) in refrsids]
 			
-			reference = { rsid : alt for (rsid, alt) in refrsids}
+			reference = { rsid : alt for (rsid, alt, hapid) in refrsids}
 						
 			refseq = seqMaker(rsidorder, reference, reference)
 			
-			newline =  ">REF\n"+refseq+ "\n"
-						
+			newline =  ">%s\n%s\n" %(refid, refseq)
+									
 			sequences.append(newline)
 			
 			# get list of all hapids for this gene
@@ -275,7 +303,7 @@ class Patient:
 			hapids = self.sql.fetchall()
 			
 			for (hapid, starhap, hgvs) in hapids:
-									
+				
 				# get haplotype alleles and create complete dictionary
 				
 				self.sql.execute("SELECT rsid, alt from alleles where hapid=? and rsid like '%rs%'", (hapid,))
@@ -287,7 +315,7 @@ class Patient:
 					continue
 				
 				else:
-					
+										
 					haprsids = dict(reference, **haprsids)
 					
 					hapseq = seqMaker(rsidorder, reference, haprsids)
@@ -335,20 +363,17 @@ class Patient:
 							continue
 						
 						else:
+
+							hapline = ">%s\n %s\n" %(hapid, hapseq)
 							
-							hapline =  ">" + starhap + "\n"+hapseq + "\n"
-						
-							if hapline not in sequences:
+							if hapline not in sequences and hapseq != "":
 								
 								sequences.append(hapline)
 							
 							else:
 								
-								continue
+								continue										
 							
-							item = (gid, hapid, score_ref, score_al1, score_al2)
-										
-							self.sql.execute("INSERT INTO patienthaps VALUES(?,?,?,?,?)", item)
 			
 			al1 =  ">Patient_allele1\n"+patseq1+"\n"
 			
@@ -360,14 +385,78 @@ class Patient:
 			
 			path = "data/alignments/"
 			
-			with open(path + gid + "_aln.fasta", "w") as f:
+			fn = path + gid + "_aln.fasta"
+			
+			
+			with open(fn, "w") as f:
 				
 				f.writelines(sequences)
-							
-
-		# -------------------------------------------------------------------------------------------------------------------------------------------------------
-
-		self.conn.commit()
 		
-pat = Patient('data/test.g.vcf.gz')
+			try:
+				
+				self.HapScorer(fn, "phylo", refid)
 
+			except:
+				
+				raise
+
+
+	def HapScorer(self, fn, mode, refid):
+		
+		if mode == "phylo":
+			
+			# phylogenetic tree
+			
+			of = fn.replace("alignments/", "alignments/aligned/")
+			
+			tn = of.strip(".fasta")+"_tree.dnd"
+			
+			with open(fn, "rb") as infile, open(of, "wb") as outfile:
+			
+				s.check_call("./clustalo -i %s -o %s --auto --force --guidetree-out=%s" %(fn, of, tn),  shell=True)
+		
+			tree = Phylo.read(tn, "newick")
+						
+			names = []
+				
+			for clade in tree.find_clades():
+
+				if clade.name:
+	
+					if clade.name in names:
+		
+						continue
+					
+					names.append(clade.name)
+						
+			tree.root_with_outgroup({refid})
+
+			# Phylo.draw_ascii(tree)
+			
+			distances = {}
+			
+			for hap in names:
+				
+				if "Patient" in hap:
+					
+					continue
+				
+				else:
+			
+					for i in range(1,3):
+						
+						matches = []
+												
+						dist = tree.distance("Patient_allele%i" %i, hap)
+												
+						distances["al%i" %i] = dist
+										
+					item = (hap, distances["al1"], distances["al2"])
+								
+					self.sql.execute("INSERT INTO patienthaps VALUES(?,?,?)", item)
+				
+		else:
+			# standard mode
+			pass	
+			
+		self.conn.commit()

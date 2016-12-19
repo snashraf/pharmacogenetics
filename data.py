@@ -137,6 +137,7 @@ class DataCollector:
         
         self.conn.commit()
 
+
     def GetGeneData(self):
         '''
         Fetches data on given gene IDs.

@@ -39,8 +39,10 @@ class Interpreter:
 
 					print i
 					
-					self.sql.execute("select distinct p.hapid, a.starname, p.ref, %s from patienthaps p join alleles a \
-					on a.hapid=p.hapid where p.gid=? order by %s, p.ref asc limit 10" %(i,i), (gid,))
+					# get exact matches:
+					self.sql.execute("select distinct a.starname, p.hapid, %s from patienthaps p \
+											join alleles a on a.hapid=p.hapid \
+											where gid=? order by %s asc" %(i, i), (gid,))
 					
 					results = self.sql.fetchall()
 										
@@ -50,31 +52,21 @@ class Interpreter:
 					
 					else:
 						
-						for (hapid, starname, refscore, alscore) in results:
-																					
-							lastval = "None"
+						for (starname, hapid, alscore) in results:
+							
+							lastval = []
 							
 							self.sql.execute("select distinct starhaps, guid from drugpairs where gid = ?", (gid,))
 							
-							vals = self.sql.fetchone()
+							vals = self.sql.fetchall()
 							
-							starhaps = vals[0]
+							for (starhaps, guids) in vals:
+								
+								if starname in starhaps:
 							
-							guid = vals[1]
-							
-							match = "| Partial |"
-							
-							if alscore == 0:
-							
-								match = "| Full |"				
-							
-							if starname in starhaps and "nan" not in guid:
-							
-								lastval = guid 
-							
-							print i
-							
-							print hapid, "/", starname, "|", refscore, "|", alscore, "|", lastval, match
+									lastval.append(guids)
+																
+							print hapid, "/", starname, "|", alscore, "|", list(set(lastval))
 						
 					
 					print "---------------------"
