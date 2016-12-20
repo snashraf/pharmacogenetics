@@ -14,6 +14,7 @@ from Bio import pairwise2
 from Bio.Phylo.TreeConstruction import DistanceCalculator
 from Bio import AlignIO
 import lxml
+from lxml import etree
 
 # ---------------------------------------------------------------------
 
@@ -23,7 +24,7 @@ class DataCollector:
     This class imports a design VCF and creates a database with these positions, using PharmGKB.
     '''
 
-    def __init__(self, f):
+    def __init__(self):
         """
         f = given VCF input file
         GetDesign imports the test design and matches rs values to positions
@@ -32,7 +33,6 @@ class DataCollector:
         All of this is exported
         """
 
-        self.f = f  # filename of design
         self.conn = sqlite3.connect('pharmacogenetics.db')  # connect to db- if it doesn't exist, create it
         self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
@@ -219,6 +219,8 @@ class DataCollector:
         
         self.sql.execute('''DROP TABLE IF EXISTS alias''')
 
+	self.sql.execute('''DROP TABLE IF EXISTS transtable''')
+
         # create variant and alias table. Variant should have an unique combo of rsid and gid,
         # and alias should be unique in the alias table.
 
@@ -230,7 +232,7 @@ class DataCollector:
                                     ON CONFLICT REPLACE)'''
                          )
 
-	self.sql.execute("CREATE TABLE transtable(rsid text PRIMARY KEY, start int, end int, ref text, alt text)"
+	self.sql.execute("CREATE TABLE transtable(rsid text PRIMARY KEY, start int, end int, ref text, alt text)")
         
         self.sql.execute('''CREATE TABLE alias
                                             (rsid text, alias varchar(255) PRIMARY KEY)'''
@@ -288,33 +290,80 @@ class DataCollector:
 
 		# get reference nucleotide at that position
 
-		uri = "http://genome.ucsc.edu/cgi-bin/das/hg19/dna?segment=chr%i:%i,%i" \
+		uri = "http://genome.ucsc.edu/cgi-bin/das/hg19/dna?segment=chr%s:%i,%i" \
 			% (v.chr, v.nbegin, v.nbegin)
 
-		f = urllib2.urlopen(url)
+		f = urllib2.urlopen(uri)
 
 		data = f.read()
 
 		f.close()
 
-		tree = lxml.etree.XML(data)
+		tree = etree.XML(data)
 
 		for elem in tree.iter():
 
 			if elem.tag == "DNA":
 
-				prevbase = elem.text
+				prevbase = elem.text.replace("\n", "").upper()
 
 			else:
 
 				continue
 		
 		# correct if not SNP
-	
-		# 
-		# create and insert table item (5 columns)
 
-		item = (rsid, v.nbegin, v.nend, v.nref, v.nalt)
+		print v.ref, v.alt
+
+		# set defaults
+
+		alts = []
+
+		if v.ref == "-":
+
+		# scenario 1: insertion (REF - ALT A)
+
+			v.nref = prevbase
+
+			for alt in v.alt.split(","):
+				
+				alt = prevbase + alt
+
+				alts.append(alt)				 
+
+			print v.nref, alts
+
+		# scenario 2: deletion ( REF A, ALT -, A)
+
+		if "-" in v.alt:
+
+			v.nref = prevbase + v.ref
+
+			for alt in v.alt.split(","):
+
+				if alt == "-":
+
+					alt = prevbase
+
+				if alt == v.ref:
+
+					alt = v.nref
+
+				else:
+
+					print alt, "special case!"
+
+				alts.append(alt)
+			
+			print v.nref, alts
+
+		v.nalt = ", ".join(alts)
+
+		# create and insert table item (5 columns)		
+
+		item = (rsid, v.nbegin, v.nend, v.ref, v.alt)
+
+		print item
 
 		self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?)", item)
 
