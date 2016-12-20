@@ -13,6 +13,7 @@ from tqdm import tqdm
 from Bio import pairwise2
 from Bio.Phylo.TreeConstruction import DistanceCalculator
 from Bio import AlignIO
+import lxml
 
 # ---------------------------------------------------------------------
 
@@ -222,10 +223,14 @@ class DataCollector:
         # and alias should be unique in the alias table.
 
         self.sql.execute('''CREATE TABLE variants
-                                    (rsid text, varid text, gid text, chr text, start int, end int, ref text, alt text,
+                                    (rsid text, varid text, gid text, chr text, 
+					start int, end int, ref text, alt text,
+					type text,
                                     UNIQUE(rsid,gid)
                                     ON CONFLICT REPLACE)'''
                          )
+
+	self.sql.execute("CREATE TABLE transtable(rsid text PRIMARY KEY, start int, end int, ref text, alt text)"
         
         self.sql.execute('''CREATE TABLE alias
                                             (rsid text, alias varchar(255) PRIMARY KEY)'''
@@ -252,9 +257,9 @@ class DataCollector:
 
             # this results in a combination tuple of rsid and gid and aliases
         
-            item = (rsid, v.id, gid, v.chr, v.begin, v.end, v.ref, v.alt)
-        
-            self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?)'''
+            item = (rsid, v.id, gid, v.chr, v.begin, v.end, v.ref, v.alt, v.type)
+       
+            self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?)'''
                              , item)
 
             # go through aliases, ignore duplicates and put in alias table
@@ -270,6 +275,48 @@ class DataCollector:
                     # on duplicate, ignore
 
                     continue
+	   
+	    # create entry in transtable
+
+	    if v.type != "snp":
+		
+		# left shift position by 1
+
+		v.nbegin = v.begin - 1
+
+		v.nend = v.end
+
+		# get reference nucleotide at that position
+
+		uri = "http://genome.ucsc.edu/cgi-bin/das/hg19/dna?segment=chr%i:%i,%i" \
+			% (v.chr, v.nbegin, v.nbegin)
+
+		f = urllib2.urlopen(url)
+
+		data = f.read()
+
+		f.close()
+
+		tree = lxml.etree.XML(data)
+
+		for elem in tree.iter():
+
+			if elem.tag == "DNA":
+
+				prevbase = elem.text
+
+			else:
+
+				continue
+		
+		# correct if not SNP
+	
+		# 
+		# create and insert table item (5 columns)
+
+		item = (rsid, v.nbegin, v.nend, v.nref, v.nalt)
+
+		self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?)", item)
 
     def GetChemData(self):
         """

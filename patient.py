@@ -11,6 +11,7 @@ from Bio import Phylo
 from ete3 import Tree
 import time
 import itertools
+import re
 
 # ---------------------------------------------------------------------
 
@@ -61,9 +62,9 @@ class Patient:
 
 		#self.conn.commit()
 
-		self.Hapmatcher()
+		# self.Hapmatcher()
 
-		self.conn.commit()
+		#self.conn.commit()
 
 	def ImportData(self):
 		"""
@@ -75,7 +76,6 @@ class Patient:
 		print 'Importing database...'
 
 		# connect to db
-
 		self.conn = sqlite3.connect('pharmacogenetics.db')
 
 		self.sql = self.conn.cursor()
@@ -87,15 +87,15 @@ class Patient:
 		# patientvars focusus on positions and rsids,
 
 		self.sql.execute('''CREATE TABLE patientvars
-											(chr text, 
-											start int, 
-											end int, 
-											ref text, 
-											alt text, 
-											call text, 
-											pid text, 
-											pgt text)'''
-						 )
+					(chr text,	
+					start int, 
+					end int, 
+					ref text, 
+					alt text, 
+					call text, 
+	         			pid text, 
+					pgt text)'''
+						 	)
 
 
 	def GetIDs(self):
@@ -105,28 +105,91 @@ class Patient:
 		"""
 		print 'Reading patient variants...'
 
-		# create list of positions to localize in patient
-		
+		# create list of positions to localize in patient		
 		for record in self.reader:
 
-			self.sql.execute("SELECT DISTINCT chr, start, end, ref, alt FROM variants")
-			
+			self.sql.execute("SELECT DISTINCT chr, start, end, ref, alt, type FROM variants")
 			positions = self.sql.fetchall()
 			
-			for (chr, start, end, ref, alt) in positions:
-			
-				try:
-			
-					records = self.reader.fetch(str(chr), start=start-1, end=end)
-			
-				except:
-			
+			for (chr, start, end, ref, alt, type) in positions:
+				
+				records = None				
+
+				if type == "unknown":
+
 					continue
+
+				elif type == "in-del":
+
+					# insertion
 			
+					if ref == "-":
+						
+						if "," in alt:
+
+							alt = alt.split(",")
+
+						dist = len(max(alt, key=len))
+									
+					# deletion
+					
+					elif alt == "-":
+		
+						dist = len(ref)
+					
+					end = start + dist
+
+					records = self.reader.fetch(str(chr), start=start-2, end=end)
+
+				elif "micro" in type:
+
+					# currently only TA repeats
+					conv = []
+
+					bases = [ref] + alt.split(",")
+					
+					for base in bases:
+
+						if "[" in base or "(" in base:
+	
+        	                		# find bracketed objects
+	
+	                        			filt = re.split('\[(.*?)\]|\((.*?)\)', base)
+
+        	                			for frag in filt:
+		
+                	                			if frag is not None:
+					
+                                        				try:
+
+                                                				num = int(frag)
+
+                                        				except:
+
+                                                				motif = frag
+
+                        			base = motif * num
+
+						conv.append(base)
+
+					dist = len(max(conv, key=len))
+
+					end = start + dist
+					
+					records = self.reader.fetch(str(chr), start-2, end=end)
+			
+				else:
+
+					records = self.reader.fetch(str(chr), start-1, end=end)
+
 				for record in records: # doctest: +SKIP
 			
 					ref = str(record.REF)
-			
+
+					start = record.POS
+						
+					end = start + 1
+					
 					alt = (str(record.ALT[0])).replace("<NON_REF>",".")
 			
 					for sample in record.samples:
@@ -364,6 +427,7 @@ class Patient:
 						
 						else:
 
+
 							hapline = ">%s\n %s\n" %(hapid, hapseq)
 							
 							if hapline not in sequences and hapseq != "":
@@ -391,7 +455,9 @@ class Patient:
 			with open(fn, "w") as f:
 				
 				f.writelines(sequences)
-		
+
+			print fn		
+
 			try:
 				
 				self.HapScorer(fn, "phylo", refid)
@@ -431,7 +497,7 @@ class Patient:
 						
 			tree.root_with_outgroup({refid})
 
-			# Phylo.draw_ascii(tree)
+			Phylo.draw_ascii(tree)
 			
 			distances = {}
 			
@@ -460,3 +526,5 @@ class Patient:
 			pass	
 			
 		self.conn.commit()
+
+tom = Patient("data/test.g.vcf.gz")

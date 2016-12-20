@@ -38,7 +38,9 @@ class Variant:
             data = urllib2.urlopen(uri)
             self.json = json.load(data)[0]
             self.id = self.json['id']
-            return
+            self.type = self.json['type']
+	    
+	    return
         elif self.mode == 'entrez':
             uri = \
                 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=snp&id=%i&report=XML' \
@@ -64,11 +66,16 @@ class Variant:
         if self.mode == 'pharmgkb':
             try:
                 if 'GRCh37' in self.json['location']['name']:
+ 
                     self.chr = self.json['location']['name'].split(']'
                             )[1].split(':')[0].strip('chr')
+
                     self.begin = self.json['location']['begin']
+
                     self.end = self.json['location']['end']
+
                     self.ref = self.json['location']['reference']
+
                     self.alt = ','.join(self.json['location']['variants'])
             except:
                 self.begin = 0
