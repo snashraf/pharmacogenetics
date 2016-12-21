@@ -19,9 +19,13 @@ class Variant:
         # initialize
 
         self.mode = mode  # mode of variant search
+
         self.rs = rs  # rs number of variant
+
         self.Load()  # load data (either json, wikitools orxml)
+
         self.GetLocation()
+
         self.GetAlias()  # get HGVS alias'
 
     def Load(self):
@@ -29,6 +33,7 @@ class Variant:
         # check for which mode is being used and adjust query accordingly
 
         if self.mode == 'pharmgkb':
+
             uri = \
                 'https://api.pharmgkb.org/v1/data/variant/?symbol=%s&view=max' \
                 % self.rs
@@ -36,53 +41,33 @@ class Variant:
             # get data and read in this json file
 
             data = urllib2.urlopen(uri)
+
             self.json = json.load(data)[0]
+
             self.id = self.json['id']
+
             self.type = self.json['type']
 	    
 	    return
-        elif self.mode == 'entrez':
-            uri = \
-                'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=snp&id=%i&report=XML' \
-                % int(self.rs.lstrip('rs'))
-            f = urllib2.urlopen(uri)
-            data = f.read()
-            f.close()
-
-            # create xml tree from downloaded file
-
-            self.tree = etree.XML(data)
-            return
-        elif self.mode == 'clinvar':
-            cvid = self.rs.split('cv')[1]
-            uri = \
-                'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=clinvar&id=%s&retmode=json' \
-                % cvid
-            data = urllib2.urlopen(uri)
-            self.json = json.load(data)
-            return
 
     def GetLocation(self):
+
         if self.mode == 'pharmgkb':
-            try:
-                if 'GRCh37' in self.json['location']['name']:
- 
-                    self.chr = self.json['location']['name'].split(']'
-                            )[1].split(':')[0].strip('chr')
 
-                    self.begin = self.json['location']['begin']
+            if 'GRCh37' in self.json['location']['name']:
 
-                    self.end = self.json['location']['end']
+                self.chr = self.json['location']['name'].split(']'
+                        )[1].split(':')[0].strip('chr')
 
-                    self.ref = self.json['location']['reference']
+                self.begin = self.json['location']['begin']
 
-                    self.alt = ','.join(self.json['location']['variants'])
-            except:
-                self.begin = 0
-                self.end = 0
-                self.chr = "nan"
-                self.ref = "nan"
-                self.alt = "nan"
+                self.end = self.json['location']['end']
+
+                self.ref = self.json['location']['reference']
+
+                self.alt = ','.join(self.json['location']['variants'])
+
+
         elif self.mode == 'entrez':
 
             return

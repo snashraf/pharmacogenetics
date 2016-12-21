@@ -20,424 +20,465 @@ from lxml import etree
 
 
 class DataCollector:
-    '''
-    This class imports a design VCF and creates a database with these positions, using PharmGKB.
-    '''
+	'''
+	This class imports a design VCF and creates a database with these positions, using PharmGKB.
+	'''
 
-    def __init__(self):
-        """
-        f = given VCF input file
-        GetDesign imports the test design and matches rs values to positions
-        Import imports the input vcf
-        GetIDs finds changed positions and matches them to the design.
-        All of this is exported
-        """
+	def __init__(self):
+		"""
+		f = given VCF input file
+		GetDesign imports the test design and matches rs values to positions
+		Import imports the input vcf
+		GetIDs finds changed positions and matches them to the design.
+		All of this is exported
+		"""
 
-        self.conn = sqlite3.connect('pharmacogenetics.db')  # connect to db- if it doesn't exist, create it
-        self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
+		self.conn = sqlite3.connect('pharmacogenetics.db')  # connect to db- if it doesn't exist, create it
+		self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
-    def Update(self):
-        """
-        This function rebuilds the database, use for updating the db periodically?
-        :return:
-        """
+	def Update(self):
+		"""
+		This function rebuilds the database, use for updating the db periodically?
+		:return:
+		"""
 
-        self.GetPairs()
-        self.conn.commit()
-        self.GetGeneData()
-        self.conn.commit()
-        self.GetVarData()
-        self.conn.commit()
-        self.GetChemData()
-        self.conn.commit()
+		self.GetPairs()
+		self.conn.commit()
+		self.GetGeneData()
+		self.conn.commit()
+		self.GetVarData()
+		self.conn.commit()
+		self.GetChemData()
+		self.conn.commit()
 
-    def GetPairs(self):
-        """
-        Create table for drug-gene pairs, to be used later to fetch drug data
-        :return:
-        """
-        authobj = Authenticate()
+	def GetPairs(self):
+		"""
+		Create table for drug-gene pairs, to be used later to fetch drug data
+		:return:
+		"""
+		authobj = Authenticate()
 
-        self.sql.execute('''DROP TABLE IF EXISTS drugpairs''')
-        self.sql.execute('''CREATE TABLE drugpairs(did text, gid text, guid text, starhaps text, rsids text)''')
+		self.sql.execute('''DROP TABLE IF EXISTS drugpairs''')
+		self.sql.execute('''CREATE TABLE drugpairs(did text, gid text, guid text, starhaps text, rsids text)''')
 
-        print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
+		print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
 
-        # get the uri for finding well-annotated pairs (given by pharmgkb)
+		# get the uri for finding well-annotated pairs (given by pharmgkb)
 
-        uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
+		uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
 
-        # get data and read in this json file
+		# get data and read in this json file
 
-        data = urllib2.urlopen(uri)
-        
-        self.json = json.load(data)
-        
-        guid = "nan"
-        
-        options = "nan"
-        
-        for doc in tqdm(self.json):
-        
-            gid = doc['gene']['id']
-        
-            symbol = doc['gene']['symbol']
-        
-            did = doc['chemical']['id']
-        
-            # get annotated variants first
-        
-            results = PGKB_connect(authobj, "clinAnno", did, gid)
-        
-            varids = "nan"
-        
-            if results is not None:
-        
-                varids = []
-        
-                for doc in results:
-        
-                    rsid = doc["location"]["displayName"]
-        
-                    varids.append(rsid)
-        
-            if type(varids) == list:
-        
-                varids = ",".join(list(set(varids)))
-        
-            results = PGKB_connect(authobj, "clinGuide", did, gid)
-            
-            if results is not None:
-        
-                guid=results['guid']
-        
-                optionlist = results['options']
-        
-                if optionlist == None:
-        
-                    options = "nan"
-        
-                else:
-        
-                    for gene in optionlist['data']:
-        
-                        if symbol in gene['symbol']:
-        
-                            options = gene['options']
-            
-            if type(options) is list:
-        
-                options = ",".join(options)
-        
-            item = (did, gid, str(guid), options, varids)
-        
-            # insert results in table drugpairs
-        
-            self.sql.execute('''INSERT INTO drugpairs VALUES(?,?,?,?,?)''',
-                                 item)
-        
-        self.conn.commit()
+		data = urllib2.urlopen(uri)
+		
+		self.json = json.load(data)
+		
+		guid = "nan"
+		
+		options = "nan"
+		
+		for doc in tqdm(self.json):
+		
+			gid = doc['gene']['id']
+		
+			symbol = doc['gene']['symbol']
+		
+			did = doc['chemical']['id']
+		
+			# get annotated variants first
+		
+			results = PGKB_connect(authobj, "clinAnno", did, gid)
+		
+			varids = "nan"
+		
+			if results is not None:
+		
+				varids = []
+		
+				for doc in results:
+		
+					rsid = doc["location"]["displayName"]
+		
+					varids.append(rsid)
+		
+			if type(varids) == list:
+		
+				varids = ",".join(list(set(varids)))
+		
+			results = PGKB_connect(authobj, "clinGuide", did, gid)
+			
+			if results is not None:
+		
+				guid=results['guid']
+		
+				optionlist = results['options']
+		
+				if optionlist == None:
+		
+					options = "nan"
+		
+				else:
+		
+					for gene in optionlist['data']:
+		
+						if symbol in gene['symbol']:
+		
+							options = gene['options']
+			
+			if type(options) is list:
+		
+				options = ",".join(options)
+		
+			item = (did, gid, str(guid), options, varids)
+		
+			# insert results in table drugpairs
+		
+			self.sql.execute('''INSERT INTO drugpairs VALUES(?,?,?,?,?)''',
+								 item)
+		
+		self.conn.commit()
 
 
-    def GetGeneData(self):
-        '''
-        Fetches data on given gene IDs.
-        :return:
-        '''
+	def GetGeneData(self):
+		'''
+		Fetches data on given gene IDs.
+		:return:
+		'''
 
-        print 'Getting gene data... (/o*)'
+		print 'Getting gene data... (/o*)'
 
-        # drop already existing tables genes and alleles
+		# drop already existing tables genes and alleles
 
-        self.sql.execute('''DROP TABLE IF EXISTS genes''')
-        
-        self.sql.execute('''DROP TABLE IF EXISTS alleles''')
+		self.sql.execute('''DROP TABLE IF EXISTS genes''')
+		
+		self.sql.execute('''DROP TABLE IF EXISTS alleles''')
 
-        # (re)create tables in database
+		# (re)create tables in database
 
-        self.sql.execute('''CREATE TABLE genes
-                                            (gid text UNIQUE, symbol text, chr text, start text, stop text)'''
-                         )
-        
-        self.sql.execute('''CREATE TABLE alleles
-                                            (hapid text, gid text, starname text,
-                                            hgvs text, rsid text, alt text,
-                                            UNIQUE(hapid, rsid, starname)
-                                            ON CONFLICT REPLACE)'''
-                         )
+		self.sql.execute('''CREATE TABLE genes
+											(gid text UNIQUE, symbol text, chr text, start text, stop text)'''
+						 )
+		
+		self.sql.execute('''CREATE TABLE alleles
+											(hapid text, gid text, starname text,
+											hgvs text, rsid text, alt text,
+											UNIQUE(hapid, rsid, starname)
+											ON CONFLICT REPLACE)'''
+						 )
 
-        # get all unique gene ids from the variant table
+		# get all unique gene ids from the variant table
 
-        self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
-        
-        genes = [tup[0] for tup in self.sql.fetchall()]
-        
-        genes = list(set(genes))
+		self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
+		
+		genes = [tup[0] for tup in self.sql.fetchall()]
+		
+		genes = list(set(genes))
 
-        # go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
+		# go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
 
-        for gid in tqdm(genes):
-                
-            if 'PA' in gid:
+		for gid in tqdm(genes):
+				
+			if 'PA' in gid:
 
-                g = Gene(gid, 'pharmgkb')
+				g = Gene(gid, 'pharmgkb')
 
-                # insert the resulting name and alleles into sql table
+				# insert the resulting name and alleles into sql table
 
-                self.sql.execute('''INSERT INTO genes VALUES(?,?,?,?,?)''',
-                                 (gid, g.name, g.chr, g.start, g.stop))
+				self.sql.execute('''INSERT INTO genes VALUES(?,?,?,?,?)''',
+								 (gid, g.name, g.chr, g.start, g.stop))
 
-                for allele in g.alleles:
-        
-                    for (rsid, alt) in allele['rsids']:
-        
-                        self.sql.execute('''INSERT INTO alleles VALUES(?,?,?,?,?,?)'''
-                                         , (
-                                             allele['id'],
-                                             gid,
-                                             allele['starname'],
-                                             allele['hgvs'],
-                                             rsid,
-                                             alt
-                                         ))
-        else:
-        
-            pass
+				for allele in g.alleles:
+		
+					for (rsid, alt) in allele['rsids']:
+		
+						self.sql.execute('''INSERT INTO alleles VALUES(?,?,?,?,?,?)'''
+										 , (
+											 allele['id'],
+											 gid,
+											 allele['starname'],
+											 allele['hgvs'],
+											 rsid,
+											 alt
+										 ))
+		else:
+		
+			pass
 
-    def GetVarData(self):
-        """
-        Using Variant objects, this function fetches data on variants from the PharmGKB servers,
-        if not available uses the Entrez servers, possibilities are limited for now.
-        :return:
-        """
+	def GetVarData(self):
+		"""
+		Using Variant objects, this function fetches data on variants from the PharmGKB servers,
+		if not available uses the Entrez servers, possibilities are limited for now.
+		:return:
+		"""
 
-        print 'Getting variant data... ~(^_^)~'
+		print 'Getting variant data... ~(^_^)~'
 
-        # drop tables if they exist already to reset them
+		# drop tables if they exist already to reset them
 
-        self.sql.execute('''DROP TABLE IF EXISTS variants''')
-        
-        self.sql.execute('''DROP TABLE IF EXISTS alias''')
+		self.sql.execute('''DROP TABLE IF EXISTS variants''')
+		
+		self.sql.execute('''DROP TABLE IF EXISTS alias''')
 
-	self.sql.execute('''DROP TABLE IF EXISTS transtable''')
+		self.sql.execute('''DROP TABLE IF EXISTS transtable''')
 
-        # create variant and alias table. Variant should have an unique combo of rsid and gid,
-        # and alias should be unique in the alias table.
+		# create variant and alias table. Variant should have an unique combo of rsid and gid,
+		# and alias should be unique in the alias table.
 
-        self.sql.execute('''CREATE TABLE variants
-                                    (rsid text, varid text, gid text, chr text, 
+		self.sql.execute('''CREATE TABLE variants
+									(rsid text, varid text, gid text, chr text, 
 					start int, end int, ref text, alt text,
 					type text,
-                                    UNIQUE(rsid,gid)
-                                    ON CONFLICT REPLACE)'''
-                         )
+									UNIQUE(rsid,gid)
+									ON CONFLICT REPLACE)'''
+						 )
 
-	self.sql.execute("CREATE TABLE transtable(rsid text PRIMARY KEY, start int, end int, ref text, alt text)")
-        
-        self.sql.execute('''CREATE TABLE alias
-                                            (rsid text, alias varchar(255) PRIMARY KEY)'''
-                         )
-
-        # get all rsids in the design vcf
-
-        self.sql.execute('SELECT DISTINCT rsid, gid FROM alleles WHERE rsid LIKE "rs%"')
-
-        # rotate through rsids and create variant objects to fetch information
-
-        for (rsid, gid) in tqdm(self.sql.fetchall()):
-        
-            # create variant instances with the given rsid.
-            # if there is no pgkb id, try entrez instead.
-
-            try:
-        
-                v = Variant(rsid, 'pharmgkb')
-        
-            except urllib2.HTTPError:
-        
-                v = Variant(rsid, 'entrez')
-
-            # this results in a combination tuple of rsid and gid and aliases
-        
-            item = (rsid, v.id, gid, v.chr, v.begin, v.end, v.ref, v.alt, v.type)
-       
-            self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?)'''
-                             , item)
-
-            # go through aliases, ignore duplicates and put in alias table
-
-            for alias in v.names:
-        
-                try:
-                    self.sql.execute('''INSERT INTO alias VALUES(?,?)'''
-                                     , (rsid, alias))
-
-                except sqlite3.IntegrityError:
-
-                    # on duplicate, ignore
-
-                    continue
-	   
-	    # create entry in transtable
-
-	    if v.type != "snp":
+		self.sql.execute("CREATE TABLE transtable(rsid text, start int, end int, ref text, alt text)")
 		
-		# left shift position by 1
+		self.sql.execute('''CREATE TABLE alias
+											(rsid text, alias varchar(255) PRIMARY KEY)'''
+						 )
 
-		v.nbegin = v.begin - 1
+		# get all rsids in the design vcf
 
-		v.nend = v.end
+		self.sql.execute('SELECT DISTINCT a.rsid, a.gid, g.symbol, a.alt FROM alleles a JOIN genes g on a.gid = g.gid order by a.gid, a.rsid')
 
-		# get reference nucleotide at that position
+		# rotate through rsids and create variant objects to fetch information
 
-		uri = "http://genome.ucsc.edu/cgi-bin/das/hg19/dna?segment=chr%s:%i,%i" \
-			% (v.chr, v.nbegin, v.nbegin)
+		b = open("blacklist.txt", "w")
 
-		f = urllib2.urlopen(uri)
-
-		data = f.read()
-
-		f.close()
-
-		tree = etree.XML(data)
-
-		for elem in tree.iter():
-
-			if elem.tag == "DNA":
-
-				prevbase = elem.text.replace("\n", "").upper()
-
-			else:
-
-				continue
+		for (rsid, gid, symbol, alt) in tqdm(self.sql.fetchall()):
 		
-		# correct if not SNP
+			print rsid, "ALT:", alt
 
-		print v.ref, v.alt
+			# create variant instances with the given rsid.
+			# if there is no pgkb id, try entrez instead.
 
-		# set defaults
+			try:
+		
+				v = Variant(rsid, 'pharmgkb')
+		
+			except:
 
-		alts = []
+				if "chr" in rsid:
 
-		if v.ref == "-":
+					# find genome version (hg19)
 
-		# scenario 1: insertion (REF - ALT A)
+					# find chromosome number
 
-			v.nref = prevbase
+					# find location
 
-			for alt in v.alt.split(","):
-				
-				alt = prevbase + alt
+					pass
 
-				alts.append(alt)				 
+				elif symbol in rsid:
 
-			print v.nref, alts
-
-		# scenario 2: deletion ( REF A, ALT -, A)
-
-		if "-" in v.alt:
-
-			v.nref = prevbase + v.ref
-
-			for alt in v.alt.split(","):
-
-				if alt == "-":
-
-					alt = prevbase
-
-				if alt == v.ref:
-
-					alt = v.nref
+					pass
 
 				else:
 
-					print alt, "special case!"
+					pass
 
-				alts.append(alt)
-			
-			print v.nref, alts
+				continue
 
-		v.nalt = ", ".join(alts)
+			# this results in a combination tuple of rsid and gid and aliases
+		
+			item = (rsid, v.id, gid, v.chr, v.begin, v.end, v.ref, v.alt, v.type)
+	   
+			self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?)'''
+							 , item)
 
-		# create and insert table item (5 columns)		
+			# go through aliases, ignore duplicates and put in alias table
 
-		item = (rsid, v.nbegin, v.nend, v.ref, v.alt)
+			for alias in v.names:
+		
+				try:
+					self.sql.execute('''INSERT INTO alias VALUES(?,?)'''
+									 , (rsid, alias))
 
-		print item
+				except sqlite3.IntegrityError:
 
-		self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?)", item)
+					# on duplicate, ignore
 
-    def GetChemData(self):
-        """
-        Gets info on seperate drugs, such as name and associated terms
-        terms give info on what the drug does
-        :return:
-        """
+					continue
+	   
+		# create entry in transtable
 
-        print 'Getting drug data /(>_<)\\}'
+			if v.type != "snp":
+		
+				# left shift position by 1
 
-        # drop and re-create table chemicals
+				v.nbegin = v.begin - 1
 
-        self.sql.execute('''DROP TABLE IF EXISTS chemicals''')
-        
-        self.sql.execute('''CREATE TABLE chemicals
-                                (did text, name text, terms text)'''
-                         )
+				v.nend = v.end
 
-        # get all the important drug ids (dids) from
-        # the known gene-drug connections table
+				# get reference nucleotide at that position
 
-        self.sql.execute('SELECT DISTINCT did FROM drugpairs')
+				server = "http://grch37.rest.ensembl.org"
+				
+				ext = "/sequence/region/human/%s:%i..%i?" \
+						% (v.chr.lstrip("chr"), v.nbegin, v.nbegin)
+				 
+				r = requests.get(server + ext, headers = { "Content-Type" : "text/plain"})
+				 
+				if not r.ok:
+				 
+				  r.raise_for_status()
+				 
+				  sys.exit()
+				 		 
+				prevbase = r.text
 
-        # fetch matching did and use to create uri for query
+				# set defaults
 
-        for result in tqdm(self.sql.fetchall()):
-        
-            did = result[0]
-                
-            uri = \
-                'https://api.pharmgkb.org/v1/data/chemical/%s?view=max' \
-                % did
+				alts = []
 
-            # get data and read in this json file
+				if v.ref == "-":
 
-            data = urllib2.urlopen(uri)
+				# scenario 1: insertion (REF - ALT A)
 
-            self.json = json.load(data)
+					v.nref = prevbase
 
-            name = self.json['name']
+					for alt in v.alt.split(","):
+						
+						alt = prevbase + alt
 
-            terms = self.json['terms']
+						alts.append(alt)				 
 
-            for item in terms:
+					v.nalt = ", ".join(alts)
 
-                term = item['term']
+				# scenario 2: deletion ( REF A, ALT -, A)
 
-                # check for duplicates with chemical name
+				elif "-" in v.alt:
 
-                if name not in term.lower():
+					v.nref = prevbase + v.ref
 
-                    item = (did, str(name), term)
+					for alt in v.alt.split(","):
 
-                    # insert into chemicals table
+						if alt == "-":
 
-                    self.sql.execute('''INSERT INTO chemicals VALUES(?,?,?)'''
-                                     , item)
+							alt = prevbase
 
-    def BedFile(self):
+						if alt == v.ref:
 
-        # creates bed file for subsetting .BAM files.
+							alt = v.nref
 
-        self.sql.execute("SELECT chr, start, stop, symbol FROM genes ORDER BY length(chr), chr")
+						else:
 
-        with open("PharmacogenomicGenes_PGKB.bed", "w") as bed:
+							print alt, "special case!"
 
-            for tup in self.sql.fetchall():
+						alts.append(alt)
+					
+				elif "(" in v.ref:
 
-                bed.write("\t".join(map(str, tup)) + "\n")
+					# TA repeats
+
+					# manual for now
+
+					v.nref = prevbase + "TA"
+
+					# subtract ref TAs 
+
+					alts.append(prevbase)
+
+					alts.append(prevbase + "TATA")
+
+					alts.append(prevbase + "TATATA")
+
+				# create and insert table item (5 columns)		
+
+				if len(alts) > 0:
+
+					for alt in alts:
+
+						item = (rsid, v.nbegin, v.nend, v.nref, alt)
+
+						print item
+
+						self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?)", item)
+
+				else:
+
+					item = (rsid, v.nbegin, v.nend, v.ref, v.alt)
+
+					print item
+
+					self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?)", item)
+
+
+
+
+
+
+	def GetChemData(self):
+		"""
+		Gets info on seperate drugs, such as name and associated terms
+		terms give info on what the drug does
+		:return:
+		"""
+
+		print 'Getting drug data /(>_<)\\}'
+
+		# drop and re-create table chemicals
+
+		self.sql.execute('''DROP TABLE IF EXISTS chemicals''')
+		
+		self.sql.execute('''CREATE TABLE chemicals
+								(did text, name text, terms text)'''
+						 )
+
+		# get all the important drug ids (dids) from
+		# the known gene-drug connections table
+
+		self.sql.execute('SELECT DISTINCT did FROM drugpairs')
+
+		# fetch matching did and use to create uri for query
+
+		for result in tqdm(self.sql.fetchall()):
+		
+			did = result[0]
+				
+			uri = \
+				'https://api.pharmgkb.org/v1/data/chemical/%s?view=max' \
+				% did
+
+			# get data and read in this json file
+
+			data = urllib2.urlopen(uri)
+
+			self.json = json.load(data)
+
+			name = self.json['name']
+
+			terms = self.json['terms']
+
+			for item in terms:
+
+				term = item['term']
+
+				# check for duplicates with chemical name
+
+				if name not in term.lower():
+
+					item = (did, str(name), term)
+
+					# insert into chemicals table
+
+					self.sql.execute('''INSERT INTO chemicals VALUES(?,?,?)'''
+									 , item)
+
+	def BedFile(self):
+
+		# creates bed file for subsetting .BAM files.
+
+		self.sql.execute("SELECT chr, start, stop, symbol FROM genes ORDER BY length(chr), chr")
+
+		with open("PharmacogenomicGenes_PGKB.bed", "w") as bed:
+
+			for tup in self.sql.fetchall():
+
+				bed.write("\t".join(map(str, tup)) + "\n")
 
 if __name__ == '__main__':
 
-    data = DataCollector('config/curr_designs/design.vcf')
+	data = DataCollector('config/curr_designs/design.vcf')
 
-    data.Update()
+	data.Update()
