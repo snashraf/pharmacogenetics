@@ -197,4 +197,21 @@ def seqMaker(rsidorder, reference, rsids):
 
 def Aligner(seqlist):
 	pass
-		
+	
+def getRef(chr, start, end):
+
+	server = "http://grch37.rest.ensembl.org"
+
+	ext = "/sequence/region/human/%s:%i..%i?" \
+					% (chr.lstrip("chr"), start, end)
+
+	r = requests.get(server + ext, headers = { "Content-Type" : "text/plain"})
+
+	if not r.ok:
+
+	  r.raise_for_status()
+
+	  sys.exit()
+
+	return r.text
+

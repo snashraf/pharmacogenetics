@@ -232,7 +232,7 @@ class DataCollector:
 									ON CONFLICT REPLACE)'''
 						 )
 
-		self.sql.execute("CREATE TABLE transtable(rsid text, start int, end int, ref text, alt text)")
+		self.sql.execute("CREATE TABLE transtable(rsid text, hapid text, start int, end int, ref text, alt text)")
 		
 		self.sql.execute('''CREATE TABLE alias
 											(rsid text, alias varchar(255) PRIMARY KEY)'''
@@ -240,54 +240,25 @@ class DataCollector:
 
 		# get all rsids in the design vcf
 
-		self.sql.execute('SELECT DISTINCT a.rsid, a.gid, g.symbol, a.alt FROM alleles a JOIN genes g on a.gid = g.gid order by a.gid, a.rsid')
+		self.sql.execute('SELECT DISTINCT a.rsid, a.gid, g.symbol, a.alt FROM alleles a JOIN genes g on a.gid = g.gid where rsid LIKE "%rs%" order by a.gid, a.rsid')
 
 		# rotate through rsids and create variant objects to fetch information
 
-		b = open("blacklist.txt", "w")
-
-		for (rsid, gid, symbol, alt) in tqdm(self.sql.fetchall()):
-		
-			print rsid, "ALT:", alt
+		for (rsid, gid, symbol, alt, hapid) in tqdm(self.sql.fetchall()):
 
 			# create variant instances with the given rsid.
-			# if there is no pgkb id, try entrez instead.
-
-			try:
-		
-				v = Variant(rsid, 'pharmgkb')
-		
-			except:
-
-				if "chr" in rsid:
-
-					# find genome version (hg19)
-
-					# find chromosome number
-
-					# find location
-
-					pass
-
-				elif symbol in rsid:
-
-					pass
-
-				else:
-
-					pass
-
-				continue
-
+			
+			v = Variant(rsid, 'pharmgkb')
+						
 			# this results in a combination tuple of rsid and gid and aliases
 		
 			item = (rsid, v.id, gid, v.chr, v.begin, v.end, v.ref, v.alt, v.type)
-	   
+
 			self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?)'''
 							 , item)
-
+                       
 			# go through aliases, ignore duplicates and put in alias table
-
+			
 			for alias in v.names:
 		
 				try:
@@ -311,21 +282,8 @@ class DataCollector:
 				v.nend = v.end
 
 				# get reference nucleotide at that position
-
-				server = "http://grch37.rest.ensembl.org"
-				
-				ext = "/sequence/region/human/%s:%i..%i?" \
-						% (v.chr.lstrip("chr"), v.nbegin, v.nbegin)
-				 
-				r = requests.get(server + ext, headers = { "Content-Type" : "text/plain"})
-				 
-				if not r.ok:
-				 
-				  r.raise_for_status()
-				 
-				  sys.exit()
 				 		 
-				prevbase = r.text
+				prevbase = getRef(chr, v.nbegin, v.nbegin)
 
 				# set defaults
 
@@ -363,9 +321,7 @@ class DataCollector:
 
 						else:
 
-							print alt, "special case!"
-
-						alts.append(alt)
+							alts.append(alt)
 					
 				elif "(" in v.ref:
 
@@ -378,7 +334,7 @@ class DataCollector:
 					# subtract ref TAs 
 
 					alts.append(prevbase)
-
+	
 					alts.append(prevbase + "TATA")
 
 					alts.append(prevbase + "TATATA")
@@ -389,23 +345,109 @@ class DataCollector:
 
 					for alt in alts:
 
-						item = (rsid, v.nbegin, v.nend, v.nref, alt)
 
-						print item
+						item = (rsid, hapid, v.nbegin, v.nend, v.nref, alt)
 
-						self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?)", item)
+						self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?,?)", item)
 
 				else:
 
 					item = (rsid, v.nbegin, v.nend, v.ref, v.alt)
 
-					print item
-
 					self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?)", item)
 
+	def GetNonRS(self):
 
+		self.sql.execute("SELECT rsid, hapid, alt from alleles where rsid NOT LIKE '%rs%' order by rsid")
 
+		print "Parsing non-rs variants..."
 
+		for (rsid, hapid, alt) in tqdm(self.sql.fetchall):
+
+			id = rsid
+	
+        	        if "chr" in rsid:
+
+                	# find genome version (hg19)
+
+                		ver = rsid[rsid.find("(") + 1 : rsid.find(")")]
+
+	                        if ver == "hg19":
+
+                	        	# find chromosome number
+		
+                        		chr = rsid.split(":")[0]
+
+                        	        # find location
+
+                                	loc = int(rsid[rsid.find(":") + 1 : rsid.find("(")])
+
+                               		# get reference position
+
+                              		ref = getRef(chr, loc, loc)
+
+                                	if ref == alt or "delGENE" in alt:
+
+                                		continue
+
+                                	if len(ref) == len(alt):
+
+                                		type = "snp"
+
+                                        	begin = loc
+
+                                       		end = loc
+
+                               		if "ins" in alt:
+
+                                		alt = alt.replace("ins", ref)
+
+                                       		type = "in-del"
+
+                                       		begin = loc
+
+                                        	end = loc + len(alt)
+
+                                	elif "del" in alt:
+
+                                        	loc = loc-1
+
+                                        	prev = getRef(chr, loc, loc)
+
+                                		if alt == "del":
+
+                                        		ref = prev + ref
+
+						else:
+
+                                                	ref = prev+alt.lstrip("del")
+
+                                                alt = prev
+
+                                               	type = "in-del"
+
+                                                begin = loc
+
+                                                end = loc + len(ref)
+
+                                        else:
+
+                                                type = "unknown"
+
+                                item = (rsid, hapid, chr, begin, end, ref, alt)
+
+                                self.sql.execute("INSERT INTO transtable VALUES(?,?,?,?,?,?,?)", item)
+
+                                elif symbol in rsid:
+
+                                        pass
+
+                                else:
+
+                                        pass
+
+                                continue
+i
 
 
 	def GetChemData(self):
