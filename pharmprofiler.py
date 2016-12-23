@@ -52,16 +52,26 @@ def CreateDB(tables):
                 d.GetPairs()
             
             elif table == "genes":
-                
+              
                 d.GetGeneData()
             
-            elif table == "vars":
+            elif table == "allvars":
             
                 d.GetVarData()
+
+		d.GetNonRS()
+
+	    elif table == "rsvars":
+
+		d.GetVarData()
             
             elif table == "drugs":
                 
                 d.GetChemData()
+
+	    elif table == "hapvars":
+
+		d.GetNonRS()
 
         d.conn.commit()
 
