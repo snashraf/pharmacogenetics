@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from pgkb_functions import PGKB_connect
+from modules.pgkb_functions import PGKB_connect
 
 # ---------------------------------------------------------------------
 

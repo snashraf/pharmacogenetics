@@ -3,11 +3,11 @@
 
 from optparse import OptionParser
 
-from data import DataCollector
+from lib.data import DataCollector
 
-from db import Database
+from lib.db import Database
 
-from patient import Patient
+from lib.patient import Patient
 
 
 def main():
