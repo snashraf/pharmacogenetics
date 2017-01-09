@@ -3,49 +3,30 @@
 
 import urllib2
 import json
-from variant import Variant
+from variant import Variant, Indel
 from gene import Gene
 from drug import Drug
-import sqlite3
-from pgkb_functions import PGKB_connect, getRef
+from db import Database
+from pair import Pair
+from pgkb_functions import PGKB_connect, getRef, Authenticate
 from tqdm import tqdm
 
 # ---------------------------------------------------------------------
 
-class DataCollector(object):
+class DataCollector(Database):
 
     '''
 ....This class imports a design VCF and creates a database with these positions, using PharmGKB.
 ....'''
 
-    def __init__(self):
+    def __init__(self, dbname):
         """
-........f = given VCF input file
-........GetDesign imports the test design and matches rs values to positions
-........Import imports the input vcf
-........GetIDs finds changed positions and matches them to the design.
-........All of this is exported
+        takes database object to work on!
 ........"""
+        Database.__init__(self, dbname)
 
-        self.conn = sqlite3.connect('pharmacogenetics.db')  # connect to db- if it doesn't exist, create it
-        self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
+        self.authobj = Authenticate()
 
-    def Update(self):
-        """
-........This function rebuilds the database, use for updating the db periodically?
-........:return:
-........"""
-
-        self.GetPairs()
-        self.conn.commit()
-        self.GetGeneData()
-        self.conn.commit()
-        self.GetVarData()
-        self.conn.commit()
-        self.GetNonRS()
-        self.conn.commit()
-        self.GetChemData()
-        self.conn.commit()
 
     def GetPairs(self):
         """
@@ -53,11 +34,7 @@ class DataCollector(object):
 ........:return:
 ........"""
 
-        authobj = Authenticate()
-
-        self.sql.execute('''DROP TABLE IF EXISTS drugpairs''')
-        self.sql.execute('''CREATE TABLE drugpairs(did text, gid text, guid text, starhaps text, rsids text)'''
-                         )
+        self.remakeTable('drugpairs')
 
         print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
 
@@ -65,7 +42,7 @@ class DataCollector(object):
 
         uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
 
-        # get data and read in this json file
+            # get data and read in this json file
 
         data = urllib2.urlopen(uri)
 
@@ -81,54 +58,12 @@ class DataCollector(object):
 
             did = doc['chemical']['id']
 
-            # get annotated variants first
+            p = Pair(gid, did, self.authobj)
 
-            results = PGKB_connect(authobj, 'clinAnno', did, gid)
+            item = (p.gid, p.did, p.guid, p.options, ",".join(p.varids))
 
-            varids = 'nan'
+            self.insertValues("drugpairs", item)
 
-            if results is not None:
-
-                varids = []
-
-                for doc in results:
-
-                    rsid = doc['location']['displayName']
-
-                    varids.append(rsid)
-
-            if type(varids) == list:
-
-                varids = ','.join(list(set(varids)))
-
-            results = PGKB_connect(authobj, 'clinGuide', did, gid)
-
-            if results is not None:
-
-                guid = results['guid']
-
-                optionlist = results['options']
-
-                if optionlist == None:
-
-                    options = 'nan'
-
-                else:
-
-                    for gene in optionlist['data']:
-
-                        if symbol in gene['symbol']:
-
-                            options = ','.join(gene['options'])
-
-            item = (did, gid, str(guid), options, varids)
-
-            # insert results in table drugpairs
-
-            self.sql.execute('''INSERT INTO drugpairs VALUES(?,?,?,?,?)'''
-                             , item)
-
-        self.conn.commit()
 
     def GetGeneData(self):
         '''
@@ -137,24 +72,6 @@ class DataCollector(object):
 ........'''
 
         print 'Getting gene data... (/o*)'
-
-        # drop already existing tables genes and alleles
-
-        self.sql.execute('''DROP TABLE IF EXISTS genes''')
-
-        self.sql.execute('''DROP TABLE IF EXISTS alleles''')
-
-        # (re)create tables in database
-
-        self.sql.execute('''CREATE TABLE genes
-                                            (gid text UNIQUE, symbol text, chr text, start text, stop text)'''
-                         )
-
-        self.sql.execute('''CREATE TABLE alleles
-                                            (hapid text, gid text, starname text,
-                                            hgvs text, rsid text, alt text,
-                                            UNIQUE(hapid, rsid, starname)
-                                            ON CONFLICT REPLACE)''')
 
         # get all unique gene ids from the variant table
 
@@ -172,51 +89,25 @@ class DataCollector(object):
 
             # insert the resulting name and alleles into sql table
 
-            self.sql.execute('''INSERT INTO genes VALUES(?,?,?,?,?)'''
-                             , (gid, g.name, g.chr, g.start,
-                             g.stop))
+            item = (gid, g.name, g.chr, g.start,
+                             g.stop)
+
+            self.insertValues("genes", item)
 
             for allele in g.alleles:
 
                 for (rsid, alt) in allele['rsids']:
 
-                    self.sql.execute('''INSERT INTO alleles VALUES(?,?,?,?,?,?)'''
-                            , (
+                    item = (
                         allele['id'],
                         gid,
                         allele['starname'],
                         allele['hgvs'],
                         rsid,
                         alt,
-                        ))
+                        )
 
-
-    def DbPrep(self):
-
-        # drop tables if they exist already to reset them
-
-        self.sql.execute('''DROP TABLE IF EXISTS variants''')
-
-        self.sql.execute('''DROP TABLE IF EXISTS alias''')
-
-        self.sql.execute('''DROP TABLE IF EXISTS transtable''')
-
-        # create variant and alias table. Variant should have an unique combo of rsid and gid,
-        # and alias should be unique in the alias table.
-
-        self.sql.execute('''CREATE TABLE variants
-                                    (rsid text, varid text, gid text, chr text, 
-                    pbegin int, pend int, pref text, palt text,
-                    vbegin int, vend int, vref text, valt text,
-                    type text,
-                                    UNIQUE(rsid,gid)
-                                    ON CONFLICT REPLACE)''')
-
-        self.sql.execute('''CREATE TABLE alias
-                                            (rsid text, alias varchar(255) PRIMARY KEY)'''
-                         )
-
-        self.conn.commit()
+                    self.insertValues("alleles", item)
 
 
     def GetVarData(self):
@@ -228,6 +119,8 @@ class DataCollector(object):
 
         print 'Getting variant data... ~(^_^)~'
 
+        self.remakeTable("variants")
+
         # get all rsids in the design vcf
 
         self.sql.execute('SELECT DISTINCT a.rsid, a.gid FROM alleles a JOIN genes g on a.gid = g.gid where rsid LIKE "rs%" order by a.gid, a.rsid'
@@ -238,14 +131,22 @@ class DataCollector(object):
         for (rsid, gid) in tqdm(self.sql.fetchall()):
 
             # create variant instances with the given rsid.
-
-            try:
-
-                v = Variant(rsid, 'pharmgkb')
             
-            except KeyError:
+            v = Variant(rsid)
 
-                continue
+            if v.muttype == "snp":
+
+                v.nend = v.end
+                
+                v.nbegin = v.begin
+                
+                v.nref = v.ref
+                
+                v.nalt = v.alt
+
+            else:
+
+                v = Indel(rsid)
 
             # this results in a combination tuple of rsid and gid and aliases
 
@@ -258,10 +159,10 @@ class DataCollector(object):
                 v.end,
                 v.ref,
                 v.alt,
-                v.begin,
-                v.end,
-                v.ref,
-                v.alt,
+                v.nbegin,
+                v.nend,
+                v.nref,
+                v.nalt,
                 v.type,
                 )
 
@@ -273,97 +174,14 @@ class DataCollector(object):
             for alias in v.names:
 
                 try:
-                    self.sql.execute('''INSERT INTO alias VALUES(?,?)'''
-                            , (rsid, alias))
+
+                    self.insertValues("alias", (rsid, alias))
+                
                 except sqlite3.IntegrityError:
 
                     # on duplicate, ignore
 
                     continue
-
-        # create entry in transtable
-
-        if v.type != 'snp':
-
-            # left shift position by 1
-
-            self.TranslateIndel(v)
-
-
-    def TranslateIndel(self, v):
-
-        v.nbegin = v.begin - 1
-
-        v.nend = v.end
-
-        # get reference nucleotide at that position
-
-        prevbase = getRef(v.chr, v.nbegin, v.nbegin)
-
-        # set defaults
-
-        alts = []
-
-        if v.ref == '-':
-
-        # scenario 1: insertion (REF - ALT A)
-
-            v.nref = prevbase
-
-            for alt in v.alt.split(','):
-
-                alt = prevbase + alt
-
-                alts.append(alt)
-
-            v.nalt = ', '.join(alts)
-
-        elif '-' in v.alt:
-
-        # scenario 2: deletion ( REF A, ALT -, A)
-
-            v.nref = prevbase + v.ref
-
-            for alt in v.alt.split(','):
-
-                if alt == '-':
-
-                    alt = prevbase
-
-                if alt == v.ref:
-
-                    alt = v.nref
-                else:
-
-                    alts.append(alt)
-
-        elif '(' in v.ref:
-
-            # TA repeats
-
-            # manual for now
-
-            v.nref = prevbase + 'TA'
-
-            # subtract ref TAs
-
-            alts.append(prevbase)
-
-            alts.append(prevbase + 'TATA')
-
-            alts.append(prevbase + 'TATATA')
-
-        # create and insert table item (5 columns)........
-
-        if len(alts) > 0:
-
-            for alt in alts:
-
-                self.sql.execute('UPDATE variants SET vbegin = ?, vend = ?, vref = ?, valt = ? WHERE rsid = ?'
-                        , (v.nbegin, v.nend, v.nref, alt, rsid))
-        else:
-
-            return
 
 
     def GetNonRS(self):
@@ -377,88 +195,10 @@ class DataCollector(object):
 
                     # find genome version (hg19)
 
-            ver = rsid[rsid.find('(') + 1:rsid.find(')')]
+            item = hg19conv(rsid, gid, alt)
 
-                         # find chromosome number
+            self.insertValues("variants", item)
 
-            loc = rsid.split(':')[0]
-
-                        # find location
-
-            begin = int(rsid[rsid.find(':') + 1:rsid.find('(')])
-
-            end = begin
-
-                        # get reference position
-
-            ref = getRef(chr, begin, begin)
-
-            if ref == alt or 'delGENE' in alt:
-
-                continue
-
-            if len(ref) == len(alt):
-
-                muttype = 'snp'
-
-                nbegin = begin
-
-                nend = nbegin
-
-                nref = ref
-
-                nalt = alt
-
-            if 'ins' in alt:
-
-                nalt = alt.replace('ins', ref)
-
-                muttype = 'in-del'
-
-                nend = nbegin + len(alt)
-
-            elif 'del' in alt:
-
-                nbegin = nbegin - 1
-
-                prev = getRef(chr, nbegin, nbegin)
-
-                if alt == 'del':
-
-                    nref = prev + nref
-                
-                else:
-
-                    nref = prev + alt.lstrip('del')
-
-                nalt = prev
-
-                muttype = 'in-del'
-
-                nend = nbegin + len(ref)
-            
-            else:
-
-                type = 'unknown'
-
-            item = (
-                rsid,
-                rsid,
-                gid,
-                loc,
-                begin,
-                end,
-                ref,
-                alt,
-                nbegin,
-                nend,
-                nref,
-                nalt,
-                muttype,
-                )
-
-            self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)'''
-                             , item)
 
     def GetChemData(self):
         """
@@ -471,11 +211,7 @@ class DataCollector(object):
 
         # drop and re-create table drugs
 
-        self.sql.execute('''DROP TABLE IF EXISTS drugs''')
-
-        self.sql.execute('''CREATE TABLE drugs
-                                (did text, name text, terms text)'''
-                         )
+        self.remakeTable("drugs")
 
         # get all the important drug ids (dids) from
         # the known gene-drug connections table
@@ -502,8 +238,7 @@ class DataCollector(object):
 
                     # insert into drugs table
 
-                    self.sql.execute('''INSERT INTO drugs VALUES(?,?,?)'''
-                            , item)
+                    self.insertValues(drugs, item)
 
     def BedFile(self):
 
@@ -517,3 +252,5 @@ class DataCollector(object):
             for tup in self.sql.fetchall():
 
                 bed.write('\t'.join(map(str, tup)) + '\n')
+
+# -----------------------------------------------------------------

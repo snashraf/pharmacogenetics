@@ -1,4 +1,4 @@
- cv#!/usr/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import json
@@ -14,11 +14,9 @@ class Variant(object):
      entrez or snpedia (for additional information))
     """
 
-    def __init__(self, rs, mode):
+    def __init__(self, rs):
 
         # initialize
-
-        self.mode = mode  # mode of variant search
 
         self.rs = rs  # rs number of variant
 
@@ -32,44 +30,41 @@ class Variant(object):
 
         # check for which mode is being used and adjust query accordingly
 
-        if self.mode == 'pharmgkb':
+        uri = \
+            'https://api.pharmgkb.org/v1/data/variant/?symbol=%s&view=max' \
+            % self.rs
 
-            uri = \
-                'https://api.pharmgkb.org/v1/data/variant/?symbol=%s&view=max' \
-                % self.rs
+        # get data and read in this json file
 
-            # get data and read in this json file
+        data = urllib2.urlopen(uri)
 
-            data = urllib2.urlopen(uri)
+        self.json = json.load(data)[0]
 
-            self.json = json.load(data)[0]
+        self.id = self.json['id']
 
-            self.id = self.json['id']
+        self.type = self.json['type']
 
-            self.type = self.json['type']
+        return
 
-            return
 
     def GetLocation(self):
 
-        if self.mode == 'pharmgkb':
+    	if 'GRCh37' not in self.json['location']['name']:
 
-            if 'GRCh37' in self.json['location']['name']:
+    		return
 
-                self.chr = self.json['location']['name'].split(']'
-                        )[1].split(':')[0].strip('chr')
+        else:
 
-                self.begin = self.json['location']['begin']
+            self.chr = self.json['location']['name'].split(']'
+                    )[1].split(':')[0].strip('chr')
 
-                self.end = self.json['location']['end']
+            self.begin = self.json['location']['begin']
 
-                self.ref = self.json['location']['reference']
+            self.end = self.json['location']['end']
 
-                self.alt = ','.join(self.json['location']['variants'])
+            self.ref = self.json['location']['reference']
 
-        elif self.mode == 'entrez':
-
-            return
+            self.alt = ','.join(self.json['location']['variants'])
 
     def GetAlias(self):
 
@@ -100,3 +95,13 @@ class Variant(object):
                         name = xref + ':g.' + str(pos) + ref + '>' + alt
 
                         self.names.append(name)
+
+class Indel(Variant):
+	'''
+lalalalalala
+	'''
+
+	def __init__(self, rsid):
+
+		pass
+

@@ -21,11 +21,23 @@ def Authenticate():
 
     print 'Authenticating...'
 
-    username = raw_input('PGKB user name: ')
+    val = raw_input("use test settings? y/n: ")
 
-    email = raw_input('PGKB e-mail address: ')
+    if "y" in val:
 
-    password = getpass.getpass()
+    	username = "jwolthuis"
+
+    	email = "j.c.wolthuis@students.uu.nl"
+
+    	password = "Dakie123"
+
+    elif "n" in val:
+
+	    username = raw_input('PGKB user name: ')
+
+	    email = raw_input('PGKB e-mail address: ')
+
+	    password = getpass.getpass()
 
     req = {'username': username, 'email': email, 'password': password}
 
@@ -183,6 +195,7 @@ def seqMaker(rsidorder, reference, rsids):
                     try:
 
                         num = int(frag)
+
                     except:
 
                         motif = frag
@@ -215,3 +228,86 @@ def getRef(chr, start, end):
         sys.exit()
 
     return r.text
+
+
+def hg19conv(rsid, gid, alt):
+
+    # find chromosome number
+
+    loc = rsid.split(':')[0]
+
+    # find location
+
+    begin = int(rsid[rsid.find(':') + 1:rsid.find('(')])
+
+    end = begin
+
+    # get reference position
+
+    ref = getRef(chr, begin, begin)
+
+    if ref == alt or 'delGENE' in alt:
+
+        return None
+
+    if len(ref) == len(alt):
+
+        muttype = 'snp'
+
+        nbegin = begin
+
+        nend = nbegin
+
+        nref = ref
+
+        nalt = alt
+
+    if 'ins' in alt:
+
+        nalt = alt.replace('ins', ref)
+
+        muttype = 'in-del'
+
+        nend = nbegin + len(alt)
+
+    elif 'del' in alt:
+
+        nbegin = nbegin - 1
+
+        prev = getRef(chr, nbegin, nbegin)
+
+        if alt == 'del':
+
+            nref = prev + nref
+        
+        else:
+
+            nref = prev + alt.lstrip('del')
+
+        nalt = prev
+
+        muttype = 'in-del'
+
+        nend = nbegin + len(ref)
+    
+    else:
+
+        muttype = 'unknown'
+
+    item = (
+		    rsid,
+		    rsid,
+		    gid,
+		    loc,
+		    begin,
+		    end,
+		    ref,
+		    alt,
+		    nbegin,
+		    nend,
+		    nref,
+		    nalt,
+		    muttype,
+		    )
+
+    return item

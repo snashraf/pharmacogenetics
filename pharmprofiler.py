@@ -1,13 +1,28 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from optparse import OptionParser
+
 from data import DataCollector
+
+from db import Database
 
 
 def main():
 
     parser = OptionParser(usage='usage: %prog [options] filename',
                           version='%prog 1.0')
+
+    parser.add_option(
+        '-n',
+        '--name',
+        action='store',
+        dest='dbname',
+        default="database",
+        help='''
+		Specify database name. This will be used to create/access a database. Default is "database".       
+        ''' ,
+        )
 
     parser.add_option(
         '-d',
@@ -34,7 +49,7 @@ def main():
 
     if len(options.tables) > 0:
 
-        CreateDB(options.tables)
+        CreateDB(options.dbname, options.tables)
 
     if options.gvcf:
 
@@ -46,9 +61,11 @@ def main():
             pass
 
 
-def CreateDB(tables):
+def CreateDB(dbname, tables):
 
-    d = DataCollector()
+    db = Database(dbname)
+
+    d = DataCollector(dbname)
 
     if 'all' in tables:
 
