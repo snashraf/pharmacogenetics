@@ -9,30 +9,26 @@ import urllib2
 import ast
 import re
 
+
 # ---------------------------------------------------------------------
+
 def Authenticate():
     """
     This function creates an authenticating object for use in pharmgkb.
     Necessary for accessing clinical annotations and recommendations!
     :return:
     """
+
     print 'Authenticating...'
-    
-    username = raw_input("PGKB user name: ")
-    
-    email = raw_input("PGKB e-mail address: ")
-    
-    password =getpass.getpass()
-    
-    req = {
-    
-        "username": username,
-    
-        "email": email,
-    
-        "password": password
-    }
-    
+
+    username = raw_input('PGKB user name: ')
+
+    email = raw_input('PGKB e-mail address: ')
+
+    password = getpass.getpass()
+
+    req = {'username': username, 'email': email, 'password': password}
+
     # uri for authenticating with this file
 
     url = 'https://api.pharmgkb.org/v1/auth/oauthSignIn'
@@ -48,19 +44,19 @@ def Authenticate():
     # read response
 
     response = urllib2.urlopen(req)
-    
+
     str_response = response.read()
 
     # convert token to something that
     # can be used for authentication
-    
+
     token = ast.literal_eval(str_response)
 
     # create an authorized session and
     # return this session
 
     client = OAuth2Session(token=token)
-    
+
     return client
 
 
@@ -71,6 +67,7 @@ def getJson(uri, client):
     :param client: result of Authenticate()
     :return:
     """
+
     resp = requests.head(uri)
 
     status = resp.status_code
@@ -82,13 +79,17 @@ def getJson(uri, client):
         data = r.json()
 
         return data
-
     else:
 
         return None
 
-def PGKB_connect(authobj, mode, a, b):
-	
+
+def PGKB_connect(
+    authobj,
+    mode,
+    a,
+    b,
+    ):
     """
     Find connections between two pharmgkb objects.
     Usually a haplotype or rsid compared with a drug id.
@@ -97,121 +98,120 @@ def PGKB_connect(authobj, mode, a, b):
     :param did: object 2 to compare, usually a drug id
     :return:
     """
-    
-    if mode == "clinAnno":
- 
+
+    if mode == 'clinAnno':
+
         uri = \
             'https://api.pharmgkb.org/v1/report/pair/%s/%s/clinicalAnnotation?view=base' \
             % (a, b)
- 
+
         result = getJson(uri, authobj)
- 
+
         return result
+    elif mode == 'clinGuide':
 
-    elif mode == "clinGuide":
-
-        sources = ["cpic", "dpwg", "pro"]
+        sources = ['cpic', 'dpwg', 'pro']
 
         for source in sources:
-			
-			# uses did and gid
 
-            uri = "https://api.pharmgkb.org/v1/data/guideline?source=%s&relatedChemicals.accessionId=%s&relatedGenes.accessionId=%s&view=max" \
-						% (source, a, b)
+            # uses did and gid
+
+            uri = \
+                'https://api.pharmgkb.org/v1/data/guideline?source=%s&relatedChemicals.accessionId=%s&relatedGenes.accessionId=%s&view=max' \
+                % (source, a, b)
 
             guidelines = getJson(uri, authobj)
 
-            guid = "nan"
+            guid = 'nan'
 
-            options="nan"
+            options = 'nan'
 
             if guidelines == None:
 
                 continue
-
             else:
 
                 for doc in guidelines:
 
-                     if doc["objCls"] == "Guideline":
+                    if doc['objCls'] == 'Guideline':
 
-                        guid = doc["id"]
+                        guid = doc['id']
 
-                        uri = "https://api.pharmgkb.org/v1/report/guideline/%s/options" \
-								% guid
+                        uri = \
+                            'https://api.pharmgkb.org/v1/report/guideline/%s/options' \
+                            % guid
 
                         doseOptions = getJson(uri, authobj)
 
-                        result = {"guid": guid, "options": doseOptions}
+                        result = {'guid': guid, 'options': doseOptions}
 
                         return result
 
 
 def seqMaker(rsidorder, reference, rsids):
 
-	seq = ""
+    seq = ''
 
-	for rsid in rsidorder:
+    for rsid in rsidorder:
 
-		try:
+        try:
 
-			base = rsids[rsid]
+            base = rsids[rsid]
+        except KeyError:
 
-		except KeyError:
-			
-			base = reference[rsid]
+            base = reference[rsid]
 
-		if "del" in base or base == "-":
+        if 'del' in base or base == '-':
 
-			continue
+            continue
 
-		if "," in base:
-			
-			bases = base.split(",")
+        if ',' in base:
 
-			base = bases[0]
-		
-		elif "[" in base or "(" in base:
-			
-			# find bracketed objects
-			
-			filt = re.split('\[(.*?)\]|\((.*?)\)', base)
-						
-			for frag in filt:
+            bases = base.split(',')
 
-				if frag is not None:
+            base = bases[0]
+        elif '[' in base or '(' in base:
 
-					try:
+            # find bracketed objects
 
-						num = int(frag)
+            filt = re.split('\[(.*?)\]|\((.*?)\)', base)
 
-					except:
+            for frag in filt:
 
-						motif = frag
-		
-			base = motif * num
+                if frag is not None:
 
-		seq += (base)
+                    try:
 
-	return seq
+                        num = int(frag)
+                    except:
+
+                        motif = frag
+
+            base = motif * num
+
+        seq += base
+
+    return seq
+
 
 def Aligner(seqlist):
-	pass
-	
+    pass
+
+
 def getRef(chr, start, end):
 
-	server = "http://grch37.rest.ensembl.org"
+    server = 'http://grch37.rest.ensembl.org'
 
-	ext = "/sequence/region/human/%s:%i..%i?" \
-					% (chr.lstrip("chr"), start, end)
+    ext = '/sequence/region/human/%s:%i..%i?' % (chr.lstrip('chr'),
+            start, end)
 
-	r = requests.get(server + ext, headers = { "Content-Type" : "text/plain"})
+    r = requests.get(server + ext, headers={'Content-Type': 'text/plain'
+                     })
 
-	if not r.ok:
+    if not r.ok:
 
-	  r.raise_for_status()
+        r.raise_for_status()
 
-	  sys.exit()
+        sys.exit()
 
-	return r.text
-
+    return r.text

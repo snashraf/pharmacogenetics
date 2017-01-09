@@ -1,138 +1,147 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from patient import Patient
 from data import DataCollector
 import json
 import sqlite3
 from pgkb_functions import *
 
+
 class Interpreter:
 
+    def __init__(self, patientObj):
 
-	def __init__(self, patientObj):
+        self.p = patientObj
 
-		self.p = patientObj
+        self.advice = {}
 
-		self.advice = {}
+        self.conn = sqlite3.connect('pharmacogenetics.db')
 
-		self.conn = sqlite3.connect('pharmacogenetics.db')
+        self.sql = self.conn.cursor()
 
-		self.sql = self.conn.cursor()
+        self.conn.commit()
 
-		self.conn.commit()
+    def HapScorer(self):
 
-	def HapScorer(self):
-			
-			it = ["p.al1", "p.al2"]
-			
-			self.sql.execute("select distinct gid, symbol from genes")
-			
-			results = self.sql.fetchall()
+        it = ['p.al1', 'p.al2']
 
-			for (gid, symbol) in results:
+        self.sql.execute('select distinct gid, symbol from genes')
 
-				print symbol
-						
-				print "---------------------"
-					
-				for i in it:
+        results = self.sql.fetchall()
 
-					print i
-					
-					# get exact matches:
-					self.sql.execute("select distinct a.starname, p.hapid, %s from patienthaps p \
+        for (gid, symbol) in results:
+
+            print symbol
+
+            print '---------------------'
+
+            for i in it:
+
+                print i
+
+                    # get exact matches:
+
+                self.sql.execute("select distinct a.starname, p.hapid, %s from patienthaps p \
 											join alleles a on a.hapid=p.hapid \
-											where gid=? order by %s asc" %(i, i), (gid,))
-					
-					results = self.sql.fetchall()
-										
-					if len(results) == 0:
-						
-						continue
-					
-					else:
-						
-						for (starname, hapid, alscore) in results:
-							
-							lastval = []
-							
-							self.sql.execute("select distinct starhaps, guid from drugpairs where gid = ?", (gid,))
-							
-							vals = self.sql.fetchall()
-							
-							for (starhaps, guids) in vals:
-								
-								if starname in starhaps:
-							
-									lastval.append(guids)
-																
-							print hapid, "/", starname, "|", alscore, "|", list(set(lastval))
-						
-					
-					print "---------------------"
+											where gid=? order by %s asc"
+                                  % (i, i), (gid, ))
 
+                results = self.sql.fetchall()
 
-	def DoseGuideCheck(self):
-		
-	
-		authobj = Authenticate()
-	
-		doseInfo = None
-	
-		doseGuide = None
-	
-		self.sql.execute("drop table if exists annotations")
-		
-		self.sql.execute("create table if not exists annotations(varid text, did text, allele text, advice text, loe text)")
+                if len(results) == 0:
 
-		self.sql.execute("select distinct v.varid, d.did, p.ref, p.alt, p.call, p.start from variants v join patientvars p on p.start = v.start join drugpairs d on d.gid = v.gid where d.rsids like ('%' || v.rsid || '%') group by d.did")
-		
-		for (varid, did, ref, alt, call, start) in self.sql.fetchall():
-	
-			if call == "0/0":
-	
-				allele = ref+ref
-	
-			elif call == "0/1":
-	
-				allele = ref+alt
-	
-			elif call == "1/1":
-	
-				allele = alt+alt
-	
-			print allele
-	
-			results = PGKB_connect(authobj, "clinAnno",varid, did) 
-	
-			if results is not None:
-	
-				for phen in results:
-										
-					for al in phen['allelePhenotypes']:
-	
-						if allele in al['allele']:
-	
-							advice = al['phenotype']
-							
-							loe = phen['levelOfEvidence']['term']
-							
-							item = (varid, did, allele, advice, loe)
-							
-							print "Level of evidence:", loe
-							print advice
-							
-							self.sql.execute("insert into annotations values(?,?,?,?,?)", item)
-								
-						else:
-	
-							pass
+                    continue
+                else:
 
-		self.conn.commit()
+                    for (starname, hapid, alscore) in results:
+
+                        lastval = []
+
+                        self.sql.execute('select distinct starhaps, guid from drugpairs where gid = ?'
+                                , (gid, ))
+
+                        vals = self.sql.fetchall()
+
+                        for (starhaps, guids) in vals:
+
+                            if starname in starhaps:
+
+                                lastval.append(guids)
+
+                        print hapid, '/', starname, '|', alscore, '|', \
+                            list(set(lastval))
+
+                print '---------------------'
+
+    def DoseGuideCheck(self):
+
+        authobj = Authenticate()
+
+        doseInfo = None
+
+        doseGuide = None
+
+        self.sql.execute('drop table if exists annotations')
+
+        self.sql.execute('create table if not exists annotations(varid text, did text, allele text, advice text, loe text)'
+                         )
+
+        self.sql.execute("select distinct v.varid, d.did, p.ref, p.alt, p.call, p.start from variants v join patientvars p on p.start = v.start join drugpairs d on d.gid = v.gid where d.rsids like ('%' || v.rsid || '%') group by d.did"
+                         )
+
+        for (
+            varid,
+            did,
+            ref,
+            alt,
+            call,
+            start,
+            ) in self.sql.fetchall():
+
+            if call == '0/0':
+
+                allele = ref + ref
+            elif call == '0/1':
+
+                allele = ref + alt
+            elif call == '1/1':
+
+                allele = alt + alt
+
+            print allele
+
+            results = PGKB_connect(authobj, 'clinAnno', varid, did)
+
+            if results is not None:
+
+                for phen in results:
+
+                    for al in phen['allelePhenotypes']:
+
+                        if allele in al['allele']:
+
+                            advice = al['phenotype']
+
+                            loe = phen['levelOfEvidence']['term']
+
+                            item = (varid, did, allele, advice, loe)
+
+                            print 'Level of evidence:', loe
+                            print advice
+
+                            self.sql.execute('insert into annotations values(?,?,?,?,?)'
+                                    , item)
+                        else:
+
+                            pass
+
+        self.conn.commit()
+
 
 pat = Patient('data/test.g.vcf.gz')
 
-print "patient created"
+print 'patient created'
 
 app = Interpreter(pat)
 app.HapScorer()

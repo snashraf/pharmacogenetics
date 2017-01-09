@@ -1,4 +1,4 @@
-#!/usr/bin/python
+ cv#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import json
@@ -7,7 +7,7 @@ import urllib2
 
 # -------------------------------------------------------------------------
 
-class Variant:
+class Variant(object):
 
     """
     This class stores information on variants. It can take info from pharmkgb,
@@ -22,7 +22,7 @@ class Variant:
 
         self.rs = rs  # rs number of variant
 
-        self.Load()  # load data (either json, wikitools orxml)
+        self.Load()  # load data
 
         self.GetLocation()
 
@@ -47,8 +47,8 @@ class Variant:
             self.id = self.json['id']
 
             self.type = self.json['type']
-	    
-	    return
+
+            return
 
     def GetLocation(self):
 
@@ -66,7 +66,6 @@ class Variant:
                 self.ref = self.json['location']['reference']
 
                 self.alt = ','.join(self.json['location']['variants'])
-
 
         elif self.mode == 'entrez':
 
@@ -101,21 +100,3 @@ class Variant:
                         name = xref + ':g.' + str(pos) + ref + '>' + alt
 
                         self.names.append(name)
-
-        elif self.mode == 'entrez':
-
-            self.names = []
-
-            for elem in self.tree.iter():
-
-                if 'hgvs' in elem.tag:
-
-                    self.names.append(unicode(elem.text))
-
-            return
-
-        elif self.mode == 'clinvar':
-
-            self.names = []
-
-            return
