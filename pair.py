@@ -10,11 +10,13 @@ class Pair(object):
 Fill in here...
     '''
 
-    def __init__(self, did, gid, authobj):
+    def __init__(self, gid, symbol, did, authobj):
     
         self.did = did
 
         self.gid = gid
+
+        self.symbol = symbol
 
         self.authobj = authobj
 
@@ -50,6 +52,8 @@ Fill in here...
 
     def FindOptions(self):
 
+            self.options = "nan"
+            
             results = PGKB_connect(self.authobj, 'clinGuide', self.did, self.gid)
 
             if results is not None:
@@ -60,7 +64,7 @@ Fill in here...
 
                 for gene in optionlist['data']:
 
-                    if symbol in gene['symbol']:
+                    if self.symbol in gene['symbol']:
 
                         self.options = ','.join(gene['options'])
 

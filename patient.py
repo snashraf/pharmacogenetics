@@ -5,19 +5,20 @@ import vcf
 import sqlite3
 from collections import Counter, OrderedDict
 from pgkb_functions import seqMaker
+from db import Database
 import subprocess as s
 from Bio import Phylo
 import re
 
 # ---------------------------------------------------------------------
 
-class Patient(object):
+class Patient(Database):
 
     '''
     This class imports a design VCF and an input VCF.
     '''
 
-    def __init__(self, f):
+    def __init__(self, dbname, f):
         """
         f = given VCF input file
         GetDesign imports the test design and matches rs values to 
@@ -27,6 +28,8 @@ class Patient(object):
         """
 
         print 'Initiating patient...'
+
+        Database.__init__(self, dbname)
 
         self.f = f
 
@@ -42,7 +45,9 @@ class Patient(object):
 
         self.Load()
 
+
     def Load(self):
+
         """
         Function for loading the most important startup functions
         :return:
@@ -54,13 +59,10 @@ class Patient(object):
 
         self.conn.commit()
 
-        #self.Hapmaker()
+        self.Hapmatcher()
 
-        #self.conn.commit()
+        self.conn.commit()
 
-        # self.Hapmatcher()
-
-        #self.conn.commit()
 
     def ImportData(self):
         """
@@ -69,29 +71,7 @@ class Patient(object):
         :return:
         """
 
-        print 'Importing database...'
-
-        # connect to db
-        self.conn = sqlite3.connect('pharmacogenetics.db')
-
-        self.sql = self.conn.cursor()
-
-        # drop and re-create patient tables
-
-        self.sql.execute('''DROP TABLE IF EXISTS patientvars''')
-
-        # patientvars focusus on positions and rsids,
-
-        self.sql.execute('''CREATE TABLE patientvars
-                    (loc text,  
-                    start int, 
-                    end int, 
-                    ref text, 
-                    alt text, 
-                    call text, 
-                    pid text, 
-                    pgt text)'''
-                            )
+        self.remakeTable("patientvars")
 
 
     def GetIDs(self):
@@ -102,6 +82,7 @@ class Patient(object):
         print 'Reading patient variants...'
 
         # create list of positions to localize in patient       
+        
         for record in self.reader:
 
             self.sql.execute("SELECT DISTINCT loc, start, end, ref, alt, muttype FROM variants")
@@ -148,8 +129,7 @@ class Patient(object):
             
                     item = (loc, start, end, ref, alt, call, pid, pgt)
             
-                    self.sql.execute('''INSERT INTO patientvars VALUES(?,?,?,?,?,?,?,?)'''
-                            , item)
+                    self.insertValues("patientvars", item)
 
 
     def FetchSpecial(self, muttype, start, end, ref, alt):
@@ -223,108 +203,6 @@ class Patient(object):
         return records
 
 
-    def Hapmaker(self):
-        '''
-        IN PROGRESS:
-        Create HGVS haplotypes from rsids. Should implement phasing...
-        :return:
-        '''
-
-        print "Starting hapmaker,..."
-
-        # get gids that are present in patient by joining tables
-
-        self.sql.execute("""SELECT DISTINCT v.gid from variants v
-                            JOIN patientvars p ON v.start = p.start""")
-
-        # make an easy usuable list for later on, remove tuples
-
-        gids = [tup[0] for tup in self.sql.fetchall()]
-
-        # loop through gids
-
-        for gid in gids:
-
-            # get rsid, alias for that rsid, and bases at this position in chr1 and 2
-
-            self.sql.execute('''SELECT a.alias, p.ref, p.alt, p.call
-                                FROM patientvars p
-                                JOIN variants v ON p.start = v.start
-                                JOIN alias a ON a.rsid = v.rsid
-                                WHERE v.gid = ?;''',
-                             (gid, ))
-
-            results = self.sql.fetchall()
-
-            # create dictionary for storing genomic positions, amb is for unphased variants
-
-            pos = {'amb': [], 'chr1': [], 'chr2': []}
-
-            # find the version of the alias notation that is the highest by using counter and max
-
-            counts = Counter(elem[1].split('.')[1] for elem in results
-                             if 'NC' in elem[1] and 'g.' in elem[1])
-
-            chosen_ver = str(max(counts.keys()))
-
-            # loop through results
-
-            for (alias, ref, alt, num) in results:
-                # select on "NC" and genomic position
-
-                if 'NC' in alias and 'g.' in alias:
-
-                    if '>' in alias and chosen_ver in alias:
-
-                        seq_id = alias.split('.')[0]
-
-                        gen_pos = alias.split('.')[2]
-
-                        if '|' in num:
-
-                            if '|1' in num:
-
-                                pos['chr2'].append(gen_pos)
-
-                            if '1|' in num:
-
-                                pos['chr1'].append(gen_pos)
-
-                        elif '/' in num:
-
-                            pos['amb'].append(gen_pos)
-
-            # check for unchanged positions - make these "=" as hgvs reccs
-
-            for (k, v) in pos.items():
-
-                if len(v) == 0:
-
-                    pos[k] = ['=']
-
-                else:
-
-                    # sort based on genomic position (split the genomic position on base change, leaving the number)
-
-                    v.sort(key=lambda x: x.split('ACTG')[0])
-
-            # check if the haplotype notation should be the phased version or not
-
-            if '/' in num:
-
-                haplotype = '%s.%s.%s' % (seq_id, chosen_ver,
-                        ';'.join(pos['amb']))
-
-            elif '|' in num:
-
-                haplotype = '%s%s.[%s];[%s]' % (seq_id, chosen_ver,
-                        ';'.join(pos['chr1']), ';'.join(pos['chr2']))
-
-            item = (gid, haplotype, 'N/A', 'N/A')
-
-            self.sql.execute('''INSERT INTO patienthaps VALUES(?,?,?,?)'''
-                             , item)
-
     def Hapmatcher(self):
         
         """
@@ -333,9 +211,7 @@ class Patient(object):
         :return:
         """
         
-        self.sql.execute("DROP TABLE IF EXISTS patienthaps")
-
-        self.sql.execute("CREATE TABLE IF NOT EXISTS patienthaps(hapid text, al1 int, al2 int)")
+        self.remakeTable('patienthaps')
 
         self.sql.execute("SELECT DISTINCT gid from genes")
 
@@ -365,7 +241,7 @@ class Patient(object):
                         
             refseq = seqMaker(rsidorder, reference, reference)
             
-            newline =  ">%s\n%s\n" %(refid, refseq)
+            newline =  ">{}\n{}\n".format(refid, refseq)
                                     
             sequences.append(newline)
             
@@ -403,7 +279,12 @@ class Patient(object):
                         
                         # get patient rsids
                         
-                        self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '1/1' and a.hapid = ? and v.rsid like '%rs%'", (hapid,))
+                        self.sql.execute("select distinct v.rsid, p.alt from variants v \
+                                        join patientvars p on p.start = v.start \
+                                        join alleles a on v.gid = a.gid \
+                                        where p.call = '1/1' \
+                                        and a.hapid = ? \
+                                        and v.rsid like '%rs%'", (hapid,))
                         
                         patrsids_base = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
                         
@@ -417,7 +298,9 @@ class Patient(object):
 
                         # --------------------------------------------------------------------------------------------------
                         
-                        self.sql.execute("select distinct v.rsid, p.alt from variants v join patientvars p on p.start=v.start join alleles a on v.gid=a.gid where p.call = '0/1' and a.hapid = ? and v.rsid like '%rs%'", (hapid,))
+                        self.sql.execute("select distinct v.rsid, p.alt from variants v \
+                                            join patientvars p on p.start=v.start join alleles a on v.gid=a.gid \
+                                            where p.call = '0/1' and a.hapid = ? and v.rsid like '%rs%'", (hapid,))
 
                         patrsids_add = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 
@@ -520,7 +403,10 @@ class Patient(object):
                                         
                     item = (hap, distances["al1"], distances["al2"])
                                 
-                    self.sql.execute("INSERT INTO patienthaps VALUES(?,?,?)", item)
+                    self.insertValues("patienthaps", item)
+
+            self.conn.commit()
+
                 
         else:
             # standard mode

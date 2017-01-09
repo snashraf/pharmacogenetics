@@ -13,301 +13,307 @@ import re
 # ---------------------------------------------------------------------
 
 def Authenticate():
-    """
-    This function creates an authenticating object for use in pharmgkb.
-    Necessary for accessing clinical annotations and recommendations!
-    :return:
-    """
+	"""
+	This function creates an authenticating object for use in pharmgkb.
+	Necessary for accessing clinical annotations and recommendations!
+	:return:
+	"""
 
-    print 'Authenticating...'
+	print 'Authenticating...'
 
-    val = raw_input("use test settings? y/n: ")
+	val = raw_input("Login as Joanna? y/n: ")
 
-    if "y" in val:
+	if "y" in val:
 
-    	username = "jwolthuis"
+		username = "jwolthuis"
 
-    	email = "j.c.wolthuis@students.uu.nl"
+		email = "j.c.wolthuis@students.uu.nl"
 
-    	password = "Dakie123"
+	elif "n" in val:
 
-    elif "n" in val:
+		username = raw_input('PGKB user name: ')
 
-	    username = raw_input('PGKB user name: ')
+		email = raw_input('PGKB e-mail address: ')
 
-	    email = raw_input('PGKB e-mail address: ')
+	password = getpass.getpass()
 
-	    password = getpass.getpass()
+	req = {'username': username, 'email': email, 'password': password}
 
-    req = {'username': username, 'email': email, 'password': password}
+	# uri for authenticating with this file
 
-    # uri for authenticating with this file
+	url = 'https://api.pharmgkb.org/v1/auth/oauthSignIn'
 
-    url = 'https://api.pharmgkb.org/v1/auth/oauthSignIn'
+	# encode request including user info
 
-    # encode request including user info
+	data = urllib.urlencode(req)
 
-    data = urllib.urlencode(req)
+	# send request to specified url
 
-    # send request to specified url
+	req = urllib2.Request(url, data)
 
-    req = urllib2.Request(url, data)
+	# read response
 
-    # read response
+	response = urllib2.urlopen(req)
 
-    response = urllib2.urlopen(req)
+	str_response = response.read()
 
-    str_response = response.read()
+	# convert token to something that
+	# can be used for authentication
 
-    # convert token to something that
-    # can be used for authentication
+	token = ast.literal_eval(str_response)
 
-    token = ast.literal_eval(str_response)
+	# create an authorized session and
+	# return this session
 
-    # create an authorized session and
-    # return this session
+	client = OAuth2Session(token=token)
 
-    client = OAuth2Session(token=token)
-
-    return client
+	return client
 
 
 def getJson(uri, client):
-    """
-    Uses uri and given authenticated client to get json data.
-    :param uri: filled in uri refining query
-    :param client: result of Authenticate()
-    :return:
-    """
+	"""
+	Uses uri and given authenticated client to get json data.
+	:param uri: filled in uri refining query
+	:param client: result of Authenticate()
+	:return:
+	"""
 
-    resp = requests.head(uri)
+	resp = requests.head(uri)
 
-    status = resp.status_code
+	status = resp.status_code
 
-    if status == 200:
+	if status == 200:
 
-        r = client.get(uri)
+		r = client.get(uri)
 
-        data = r.json()
+		data = r.json()
 
-        return data
-    else:
+		return data
+	else:
 
-        return None
+		return None
 
 
 def PGKB_connect(
-    authobj,
-    mode,
-    a,
-    b,
-    ):
-    """
-    Find connections between two pharmgkb objects.
-    Usually a haplotype or rsid compared with a drug id.
-    :param authobj: authentication session resulting from Authenticate()
-    :param a: object 1 to compare
-    :param did: object 2 to compare, usually a drug id
-    :return:
-    """
+	authobj,
+	mode,
+	a,
+	b,
+	):
+	"""
+	Find connections between two pharmgkb objects.
+	Usually a haplotype or rsid compared with a drug id.
+	:param authobj: authentication session resulting from Authenticate()
+	:param a: object 1 to compare
+	:param did: object 2 to compare, usually a drug id
+	:return:
+	"""
 
-    if mode == 'clinAnno':
+	if mode == 'clinAnno':
 
-        uri = \
-            'https://api.pharmgkb.org/v1/report/pair/%s/%s/clinicalAnnotation?view=base' \
-            % (a, b)
+		uri = \
+			'https://api.pharmgkb.org/v1/report/pair/{}/{}/clinicalAnnotation?view=base' \
+			.format(a, b)
 
-        result = getJson(uri, authobj)
+		result = getJson(uri, authobj)
 
-        return result
-    elif mode == 'clinGuide':
+		return result
+	
+	elif mode == 'clinGuide':
 
-        sources = ['cpic', 'dpwg', 'pro']
+		sources = ['cpic', 'dpwg', 'pro']
 
-        for source in sources:
+		for source in sources:
 
-            # uses did and gid
+			# uses did and gid
 
-            uri = \
-                'https://api.pharmgkb.org/v1/data/guideline?source=%s&relatedChemicals.accessionId=%s&relatedGenes.accessionId=%s&view=max' \
-                % (source, a, b)
+			uri = \
+				'https://api.pharmgkb.org/v1/data/guideline?source={}&relatedChemicals.accessionId={}&relatedGenes.accessionId={}&view=max' \
+				.format(source, a, b)
 
-            guidelines = getJson(uri, authobj)
+			guidelines = getJson(uri, authobj)
 
-            guid = 'nan'
+			guid = 'nan'
 
-            options = 'nan'
+			options = 'nan'
 
-            if guidelines == None:
+			if guidelines == None:
 
-                continue
-            else:
+				continue
 
-                for doc in guidelines:
+			else:
 
-                    if doc['objCls'] == 'Guideline':
+				for doc in guidelines:
 
-                        guid = doc['id']
+					if doc['objCls'] == 'Guideline':
 
-                        uri = \
-                            'https://api.pharmgkb.org/v1/report/guideline/%s/options' \
-                            % guid
+						guid = doc['id']
 
-                        doseOptions = getJson(uri, authobj)
+						uri = \
+							'https://api.pharmgkb.org/v1/report/guideline/{}/options' \
+							.format(guid)
 
-                        result = {'guid': guid, 'options': doseOptions}
+						doseOptions = getJson(uri, authobj)
 
-                        return result
+						result = {'guid': guid, 'options': doseOptions}
+
+						return result
 
 
 def seqMaker(rsidorder, reference, rsids):
 
-    seq = ''
+	seq = ''
 
-    for rsid in rsidorder:
+	for rsid in rsidorder:
 
-        try:
+		try:
 
-            base = rsids[rsid]
-        except KeyError:
+			base = rsids[rsid]
 
-            base = reference[rsid]
+		except KeyError:
 
-        if 'del' in base or base == '-':
+			base = reference[rsid]
 
-            continue
+		if 'del' in base or base == '-':
 
-        if ',' in base:
+			continue
 
-            bases = base.split(',')
+		if ',' in base:
 
-            base = bases[0]
-        elif '[' in base or '(' in base:
+			bases = base.split(',')
 
-            # find bracketed objects
+			base = bases[0]
 
-            filt = re.split('\[(.*?)\]|\((.*?)\)', base)
+		elif '[' in base or '(' in base:
 
-            for frag in filt:
+			# find bracketed objects
 
-                if frag is not None:
+			filt = re.split('\[(.*?)\]|\((.*?)\)', base)
 
-                    try:
+			for frag in filt:
 
-                        num = int(frag)
+				if frag is not None:
 
-                    except:
+					try:
 
-                        motif = frag
+						num = int(frag)
 
-            base = motif * num
+					except:
 
-        seq += base
+						motif = frag
 
-    return seq
+			base = motif * num
+
+		seq += base
+
+	return seq
 
 
 def Aligner(seqlist):
-    pass
+	pass
 
 
-def getRef(chr, start, end):
+def getRef(loc, start, end):
 
-    server = 'http://grch37.rest.ensembl.org'
+	server = 'http://grch37.rest.ensembl.org'
 
-    ext = '/sequence/region/human/%s:%i..%i?' % (chr.lstrip('chr'),
-            start, end)
+	ext = '/sequence/region/human/{}:{}..{}?'.format(loc.lstrip('chr'),
+			start, end)
 
-    r = requests.get(server + ext, headers={'Content-Type': 'text/plain'
-                     })
+	r = requests.get(server + ext, headers={'Content-Type': 'text/plain'
+					 })
 
-    if not r.ok:
+	if not r.ok:
 
-        r.raise_for_status()
+		r.raise_for_status()
 
-        sys.exit()
+		sys.exit()
 
-    return r.text
+	return r.text
 
 
 def hg19conv(rsid, gid, alt):
 
-    # find chromosome number
+	# find chromosome number
 
-    loc = rsid.split(':')[0]
+	loc = rsid.split(':')[0]
 
-    # find location
+	# find location
 
-    begin = int(rsid[rsid.find(':') + 1:rsid.find('(')])
+	begin = int(rsid[rsid.find(':') + 1:rsid.find('(')])
 
-    end = begin
+	end = begin
 
-    # get reference position
+	# get reference position
 
-    ref = getRef(chr, begin, begin)
+	ref = getRef(loc, begin, begin)
 
-    if ref == alt or 'delGENE' in alt:
+	if ref == alt or 'delGENE' in alt:
 
-        return None
+		return None
 
-    if len(ref) == len(alt):
+	if len(ref) == len(alt):
 
-        muttype = 'snp'
+		muttype = 'snp'
 
-        nbegin = begin
+		nbegin = begin
 
-        nend = nbegin
+		nend = end
 
-        nref = ref
+		nref = ref
 
-        nalt = alt
+		nalt = alt
 
-    if 'ins' in alt:
+	if 'ins' in alt:
 
-        nalt = alt.replace('ins', ref)
+		nbegin = begin
 
-        muttype = 'in-del'
+		nalt = alt.replace('ins', ref)
 
-        nend = nbegin + len(alt)
+		muttype = 'in-del'
 
-    elif 'del' in alt:
+		nref = ref
 
-        nbegin = nbegin - 1
+		nend = nbegin + len(alt)
 
-        prev = getRef(chr, nbegin, nbegin)
+	elif 'del' in alt:
 
-        if alt == 'del':
+		nbegin = begin - 1
 
-            nref = prev + nref
-        
-        else:
+		prev = getRef(loc, nbegin, nbegin)
 
-            nref = prev + alt.lstrip('del')
+		if alt == 'del':
 
-        nalt = prev
+			nref = prev + ref
+		
+		else:
 
-        muttype = 'in-del'
+			nref = prev + alt.lstrip('del')
 
-        nend = nbegin + len(ref)
-    
-    else:
+		nalt = prev
 
-        muttype = 'unknown'
+		muttype = 'in-del'
 
-    item = (
-		    rsid,
-		    rsid,
-		    gid,
-		    loc,
-		    begin,
-		    end,
-		    ref,
-		    alt,
-		    nbegin,
-		    nend,
-		    nref,
-		    nalt,
-		    muttype,
-		    )
+		nend = nbegin + len(ref)
 
-    return item
+	else:
+
+		return None
+	
+	item = (
+		rsid,
+		rsid,
+		gid,
+		loc,
+		begin,
+		end,
+		ref,
+		alt,
+		nbegin,
+		nend,
+		nref,
+		nalt,
+		muttype,
+		)
+
+	return item

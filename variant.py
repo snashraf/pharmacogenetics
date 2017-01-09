@@ -3,105 +3,177 @@
 
 import json
 import urllib2
-
+from pgkb_functions import getRef
 
 # -------------------------------------------------------------------------
 
 class Variant(object):
 
-    """
-    This class stores information on variants. It can take info from pharmkgb,
-     entrez or snpedia (for additional information))
-    """
+	"""
+	This class stores information on variants. It can take info from pharmkgb,
+	 entrez or snpedia (for additional information))
+	"""
 
-    def __init__(self, rs):
+	def __init__(self, rs):
 
-        # initialize
+		# initialize
 
-        self.rs = rs  # rs number of variant
+		self.rs = rs  # rs number of variant
 
-        self.Load()  # load data
+		self.Load()  # load data
 
-        self.GetLocation()
+		self.GetLocation()
 
-        self.GetAlias()  # get HGVS alias'
+		self.GetAlias()  # get HGVS alias'
 
-    def Load(self):
-
-        # check for which mode is being used and adjust query accordingly
-
-        uri = \
-            'https://api.pharmgkb.org/v1/data/variant/?symbol=%s&view=max' \
-            % self.rs
-
-        # get data and read in this json file
-
-        data = urllib2.urlopen(uri)
-
-        self.json = json.load(data)[0]
-
-        self.id = self.json['id']
-
-        self.type = self.json['type']
-
-        return
+		self.SetDefaults()
 
 
-    def GetLocation(self):
+	def Load(self):
 
-    	if 'GRCh37' not in self.json['location']['name']:
+		uri = \
+			'https://api.pharmgkb.org/v1/data/variant/?symbol=%s&view=max' \
+			% self.rs
 
-    		return
+		# get data and read in this json file
 
-        else:
+		data = urllib2.urlopen(uri)
 
-            self.chr = self.json['location']['name'].split(']'
-                    )[1].split(':')[0].strip('chr')
+		self.json = json.load(data)[0]
 
-            self.begin = self.json['location']['begin']
+		self.id = self.json['id']
 
-            self.end = self.json['location']['end']
+		self.muttype = self.json['type']
 
-            self.ref = self.json['location']['reference']
 
-            self.alt = ','.join(self.json['location']['variants'])
+	def GetLocation(self):
 
-    def GetAlias(self):
+		if 'GRCh37' not in self.json['location']['name']:
 
-        # get HGVS alias' for variant, depending on mode again (use later)
+			return
 
-        if self.mode == 'pharmgkb':
+		else:
 
-            try:
+			self.chr = self.json['location']['name'].split(']'
+					)[1].split(':')[0].strip('chr')
 
-                self.names = self.json['altNames']['synonym']
+			self.begin = self.json['location']['begin']
 
-            except:
+			self.end = self.json['location']['end']
 
-                self.names = []
+			self.ref = self.json['location']['reference']
 
-                for doc in self.json['alternateLocations']:
+			self.alt = ','.join(self.json['location']['variants'])
 
-                    if 'RefSeq DNA' in doc['sequence']['resource']:
 
-                        xref = doc['sequence']['xrefId']
+	def GetAlias(self):
 
-                        pos = doc['begin']
+		# get HGVS alias' for variant, depending on mode again (use later)
 
-                        ref = doc['reference']
+		try:
 
-                        alt = doc['variants'][0]
+			self.names = self.json['altNames']['synonym']
 
-                        name = xref + ':g.' + str(pos) + ref + '>' + alt
+		except:
 
-                        self.names.append(name)
+			self.names = []
 
-class Indel(Variant):
-	'''
-lalalalalala
-	'''
+			for doc in self.json['alternateLocations']:
 
-	def __init__(self, rsid):
+				if 'RefSeq DNA' in doc['sequence']['resource']:
 
-		pass
+					xref = doc['sequence']['xrefId']
 
+					pos = doc['begin']
+
+					ref = doc['reference']
+
+					alt = doc['variants'][0]
+
+					name = xref + ':g.' + str(pos) + ref + '>' + alt
+
+					self.names.append(name)
+
+
+	def SetDefaults(self):
+
+		self.nend = self.end
+		
+		self.nbegin = self.begin
+		
+		self.nref = self.ref
+		
+		self.nalt = self.alt
+
+		if self.muttype == "in-del":
+
+			self.LeftShift()
+
+
+	def LeftShift(self):
+
+		alts = []
+		
+		# left shift position by 1
+
+		self.nbegin = self.begin - 1
+
+		self.nend = self.end
+
+		# get reference nucleotide at that position
+				 
+		prevbase = getRef(self.chr, self.nbegin, self.nbegin)
+
+		# set defaults
+
+		if self.ref == "-":
+
+		# scenario 1: insertion (REF - ALT A)
+
+			self.nref = prevbase
+
+			for alt in self.alt.split(","):
+				
+				alt = prevbase + alt
+
+				alts.append(alt)				 
+
+			self.nalt = ", ".join(alts)
+
+		# scenario 2: deletion ( REF A, ALT -, A)
+
+		elif "-" in self.alt:
+
+			self.nref = prevbase + self.ref
+
+			for alt in self.alt.split(","):
+
+				if alt == "-":
+
+					alt = prevbase
+
+				if alt == self.ref:
+
+					alt = self.nref
+
+				else:
+
+					alts.append(alt)
+			
+		elif "(" in self.ref:
+
+			# TA repeats
+
+			# manual for now
+
+			self.nref = prevbase + "TA"
+
+			# subtract ref TAs 
+
+			alts.append(prevbase)
+
+			alts.append(prevbase + "TATA")
+
+			alts.append(prevbase + "TATATA")
+
+		self.nalt = ",".join(alts)

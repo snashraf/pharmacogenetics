@@ -3,254 +3,269 @@
 
 import urllib2
 import json
-from variant import Variant, Indel
+from variant import Variant
 from gene import Gene
 from drug import Drug
 from db import Database
 from pair import Pair
-from pgkb_functions import PGKB_connect, getRef, Authenticate
+from pgkb_functions import Authenticate, hg19conv
 from tqdm import tqdm
+import sqlite3
 
 # ---------------------------------------------------------------------
 
 class DataCollector(Database):
 
-    '''
-....This class imports a design VCF and creates a database with these positions, using PharmGKB.
-....'''
+	'''
+	This class imports a design VCF and creates a database with these positions, using PharmGKB.
+	'''
 
-    def __init__(self, dbname):
-        """
-        takes database object to work on!
-........"""
-        Database.__init__(self, dbname)
+	def __init__(self, dbname):
+		"""
+		takes database object to work on!
+		"""
+		Database.__init__(self, dbname)
 
-        self.authobj = Authenticate()
+		self.authobj = Authenticate()
 
 
-    def GetPairs(self):
-        """
-........Create table for drug-gene pairs, to be used later to fetch drug data
-........:return:
-........"""
+	def GetPairs(self):
+		"""
+		Create table for drug-gene pairs, to be used later to fetch drug data
+		:return:
+		"""
 
-        self.remakeTable('drugpairs')
+		self.remakeTable('drugpairs')
 
-        print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
+		print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
 
-        # get the uri for finding well-annotated pairs (given by pharmgkb)
+		# get the uri for finding well-annotated pairs (given by pharmgkb)
 
-        uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
+		uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
 
-            # get data and read in this json file
+			# get data and read in this json file
 
-        data = urllib2.urlopen(uri)
+		data = urllib2.urlopen(uri)
 
-        guid = 'nan'
+		guid = 'nan'
 
-        options = 'nan'
+		options = 'nan'
 
-        for doc in tqdm(json.load(data)):
+		for doc in tqdm(json.load(data)):
 
-            gid = doc['gene']['id']
+			gid = doc['gene']['id']
 
-            symbol = doc['gene']['symbol']
+			symbol = doc['gene']['symbol']
 
-            did = doc['chemical']['id']
+			did = doc['chemical']['id']
 
-            p = Pair(gid, did, self.authobj)
+			p = Pair(gid, symbol, did, self.authobj)
 
-            item = (p.gid, p.did, p.guid, p.options, ",".join(p.varids))
+			item = (p.gid, p.did, p.guid, p.options, ",".join(p.varids))
 
-            self.insertValues("drugpairs", item)
+			self.insertValues("drugpairs", item)
 
+		self.conn.commit()
 
-    def GetGeneData(self):
-        '''
-........Fetches data on given gene IDs.
-........:return:
-........'''
 
-        print 'Getting gene data... (/o*)'
+	def GetGeneData(self):
+		'''
+		Fetches data on given gene IDs.
+		:return:
+		'''
 
-        # get all unique gene ids from the variant table
+		print 'Getting gene data... (/o*)'
 
-        self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
+		self.remakeTable("genes")
 
-        genes = [tup[0] for tup in self.sql.fetchall()]
+		self.remakeTable("haplotypes")
 
-        genes = list(set(genes))
+		# get all unique gene ids from the variant table
 
-        # go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
+		self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
 
-        for gid in tqdm(genes):
-            
-            g = Gene(gid)
+		genes = self.sql.fetchall()
 
-            # insert the resulting name and alleles into sql table
+		# go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
 
-            item = (gid, g.name, g.chr, g.start,
-                             g.stop)
+		for (gid,) in tqdm(genes):
+			
+			g = Gene(gid)
 
-            self.insertValues("genes", item)
+			# insert the resulting name and haplotypes into sql table
 
-            for allele in g.alleles:
+			item = (gid, g.name, g.chr, g.start,
+							 g.stop)
 
-                for (rsid, alt) in allele['rsids']:
+			self.insertValues("genes", item)
 
-                    item = (
-                        allele['id'],
-                        gid,
-                        allele['starname'],
-                        allele['hgvs'],
-                        rsid,
-                        alt,
-                        )
+			for hap in g.haplotypes:
 
-                    self.insertValues("alleles", item)
+				for (rsid, alt) in hap['rsids']:
 
+					item = (
+						hap['id'],
+						gid,
+						hap['starname'],
+						hap['hgvs'],
+						rsid,
+						alt,
+						)
 
-    def GetVarData(self):
-        """
-........Using Variant objects, this function fetches data on variants from the PharmGKB servers,
-........if not available uses the Entrez servers, possibilities are limited for now.
-........:return:
-........"""
+					self.insertValues("haplotypes", item)
 
-        print 'Getting variant data... ~(^_^)~'
+			self.conn.commit()
 
-        self.remakeTable("variants")
 
-        # get all rsids in the design vcf
+	def GetVarData(self):
+		"""
+		Using Variant objects, this function fetches data on variants from the PharmGKB servers,
+		if not available uses the Entrez servers, possibilities are limited for now.
+		:return:
+		"""
 
-        self.sql.execute('SELECT DISTINCT a.rsid, a.gid FROM alleles a JOIN genes g on a.gid = g.gid where rsid LIKE "rs%" order by a.gid, a.rsid'
-                         )
+		print 'Getting variant data... ~(^_^)~'
 
-        # rotate through rsids and create variant objects to fetch information
+		self.remakeTable("variants")
 
-        for (rsid, gid) in tqdm(self.sql.fetchall()):
+		self.remakeTable("alias")
 
-            # create variant instances with the given rsid.
-            
-            v = Variant(rsid)
+		# get all rsids in the design vcf
 
-            if v.muttype == "snp":
+		self.sql.execute('SELECT DISTINCT a.rsid, a.gid FROM haplotypes a JOIN genes g on a.gid = g.gid where rsid LIKE "rs%" order by a.gid, a.rsid'
+						 )
 
-                v.nend = v.end
-                
-                v.nbegin = v.begin
-                
-                v.nref = v.ref
-                
-                v.nalt = v.alt
+		# rotate through rsids and create variant objects to fetch information
 
-            else:
+		for (rsid, gid) in tqdm(self.sql.fetchall()):
 
-                v = Indel(rsid)
+			# create variant instances with the given rsid.
+			
+			try:
 
-            # this results in a combination tuple of rsid and gid and aliases
+				v = Variant(rsid)
 
-            item = (
-                rsid,
-                v.id,
-                gid,
-                v.chr,
-                v.begin,
-                v.end,
-                v.ref,
-                v.alt,
-                v.nbegin,
-                v.nend,
-                v.nref,
-                v.nalt,
-                v.type,
-                )
+			except KeyError:
 
-            self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)'''
-                             , item)
+				continue
 
-            # go through aliases, ignore duplicates and put in alias table
+			# this results in a combination tuple of rsid and gid and aliases
 
-            for alias in v.names:
+			item = (
+				rsid,
+				v.id,
+				gid,
+				v.chr,
+				v.begin,
+				v.end,
+				v.ref,
+				v.alt,
+				v.nbegin,
+				v.nend,
+				v.nref,
+				v.nalt,
+				v.muttype,
+				)
 
-                try:
+			self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)'''
+							 , item)
 
-                    self.insertValues("alias", (rsid, alias))
-                
-                except sqlite3.IntegrityError:
+			# go through aliases, ignore duplicates and put in alias table
 
-                    # on duplicate, ignore
+			for alias in v.names:
 
-                    continue
+				try:
 
+					self.insertValues("alias", (rsid, alias))
+				
+				except sqlite3.IntegrityError:
 
-    def GetNonRS(self):
+					# on duplicate, ignore
 
-        self.sql.execute("SELECT rsid, alt, gid from alleles where rsid LIKE '%chr%' order by rsid"
-                         )
+					continue
 
-        print 'Parsing non-rs variants...'
+			self.conn.commit()
 
-        for (rsid, alt, gid) in tqdm(self.sql.fetchall()):
 
-                    # find genome version (hg19)
+	def GetNonRS(self):
 
-            item = hg19conv(rsid, gid, alt)
+		self.sql.execute("SELECT rsid, alt, gid from haplotypes where rsid LIKE '%chr%' order by rsid"
+						 )
 
-            self.insertValues("variants", item)
+		print 'Parsing non-rs variants...'
 
+		for (rsid, alt, gid) in tqdm(self.sql.fetchall()):
 
-    def GetChemData(self):
-        """
-........Gets info on seperate drugs, such as name and associated terms
-........terms give info on what the drug does
-........:return:
-........"""
+			item = hg19conv(rsid, gid, alt)
 
-        print 'Getting drug data /(>_<)\\}'
+			if item is not None:
 
-        # drop and re-create table drugs
+				self.insertValues("variants", item)
 
-        self.remakeTable("drugs")
+		self.conn.commit()
 
-        # get all the important drug ids (dids) from
-        # the known gene-drug connections table
 
-        self.sql.execute('SELECT DISTINCT did FROM drugpairs')
+	def GetOthers(self):
+		'''
+		Lalalala
+		'''
+		pass
 
-        # fetch matching did and use to create uri for query
 
-        for result in tqdm(self.sql.fetchall()):
+	def GetDrugData(self):
+		"""
+		Gets info on seperate drugs, such as name and associated terms
+		terms give info on what the drug does
+		:return:
+		"""
 
-            did = result[0]
+		print 'Getting drug data /(>_<)\\}'
 
-            d = Drug(did)
+		# drop and re-create table drugs
 
-            for item in d.terms:
+		self.remakeTable("drugs")
 
-                term = item['term']
+		# get all the important drug ids (dids) from
+		# the known gene-drug connections table
 
-                # check for duplicates with chemical name
+		self.sql.execute('SELECT DISTINCT did FROM drugpairs')
 
-                if name not in term.lower():
+		# fetch matching did and use to create uri for query
 
-                    item = (did, str(name), term)
+		for result in tqdm(self.sql.fetchall()):
 
-                    # insert into drugs table
+			did = result[0]
 
-                    self.insertValues(drugs, item)
+			d = Drug(did)
 
-    def BedFile(self):
+			for item in d.terms:
 
-        # creates bed file for subsetting .BAM files.
+				term = item['term']
 
-        self.sql.execute('SELECT chr, start, stop, symbol FROM genes ORDER BY length(chr), chr'
-                         )
+				# check for duplicates with chemical name
 
-        with open('PharmacogenomicGenes_PGKB.bed', 'w') as bed:
+				if d.name not in term.lower():
 
-            for tup in self.sql.fetchall():
+					item = (did, d.name, term)
 
-                bed.write('\t'.join(map(str, tup)) + '\n')
+					# insert into drugs table
+
+					self.insertValues("drugs", item)
+
+		self.conn.commit()
+
+
+	def BedFile(self):
+
+		# creates bed file for subsetting .BAM files.
+
+		self.sql.execute('SELECT chr, start, stop, symbol FROM genes ORDER BY length(chr), chr'
+						 )
+
+		with open('PharmacogenomicGenes_PGKB.bed', 'w') as bed:
+
+			for tup in self.sql.fetchall():
+
+				bed.write('\t'.join(map(str, tup)) + '\n')
 
 # -----------------------------------------------------------------

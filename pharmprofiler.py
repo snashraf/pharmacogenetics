@@ -7,102 +7,110 @@ from data import DataCollector
 
 from db import Database
 
+from patient import Patient
+
 
 def main():
 
-    parser = OptionParser(usage='usage: %prog [options] filename',
-                          version='%prog 1.0')
+	parser = OptionParser(usage='usage: %prog [options] filename',
+						  version='%prog 1.0')
 
-    parser.add_option(
-        '-n',
-        '--name',
-        action='store',
-        dest='dbname',
-        default="database",
-        help='''
+	parser.add_option(
+		'-n',
+		'--name',
+		action='store',
+		dest='dbname',
+		default="database",
+		help='''
 		Specify database name. This will be used to create/access a database. Default is "database".       
-        ''' ,
-        )
+		''' ,
+		)
 
-    parser.add_option(
-        '-d',
-        '--makedb',
-        action='append',
-        dest='tables',
-        default=[],
-        help='''
+	parser.add_option(
+		'-t',
+		'--maketable',
+		action='append',
+		dest='tables',
+		default=[],
+		help='''
 	Download database (specify tables, default is do whole database)
 	Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) and drugs(chemicals)'       
-        ''' ,
-        )
+		''' ,
+		)
 
-    parser.add_option(  # optional because action defaults to "store"
-        '-p',
-        '--patient',
-        action='store',
-        dest='gvcf',
-        default=None,
-        help='Patient g.vcf file to parse',
-        )
+	parser.add_option(  # optional because action defaults to "store"
+		'-p',
+		'--patient',
+		action='store',
+		dest='gvcf',
+		default=None,
+		help='Patient g.vcf file to parse',
+		)
 
-    (options, args) = parser.parse_args()
+	(options, args) = parser.parse_args()
 
-    if len(options.tables) > 0:
+	if len(options.tables) > 0:
 
-        CreateDB(options.dbname, options.tables)
+		CreateDB(options.dbname, options.tables)
 
-    if options.gvcf:
+	if options.gvcf:
 
-        if '.gz' not in options.gvcf:
+		if '.gz' not in options.gvcf:
 
-            print 'Please convert to .gz and create tabix file first.'
-        else:
+			print 'Please convert to .gz and create tabix file first.'
+		
+		else:
 
-            pass
+			CreatePatient(options.dbname, options.gvcf)
 
 
 def CreateDB(dbname, tables):
 
-    db = Database(dbname)
+	d = DataCollector(dbname)
 
-    d = DataCollector(dbname)
+	if 'all' in tables:
 
-    if 'all' in tables:
+		d.Update()
 
-        d.Update()
+	else:
 
-    else:
+		for table in tables:
 
-        for table in tables:
+			if table == 'pairs':
 
-            if table == 'pairs':
+				d.GetPairs()
 
-                d.GetPairs()
+			elif table == 'genes':
 
-            elif table == 'genes':
+				d.GetGeneData()
 
-                d.GetGeneData()
+			elif table == 'allvars':
 
-            elif table == 'allvars':
+				d.GetVarData()
 
-                d.GetVarData()
+				d.GetNonRS()
 
-                d.GetNonRS()
+			elif table == 'rsvars':
 
-            elif table == 'rsvars':
+				d.GetVarData()
 
-                d.GetVarData()
+			elif table == 'drugs':
 
-            elif table == 'drugs':
+				d.GetDrugData()
 
-                d.GetChemData()
+			elif table == 'hapvars':
 
-            elif table == 'hapvars':
+				d.GetNonRS()
 
-                d.GetNonRS()
+		d.conn.commit()
 
-        d.conn.commit()
 
+def CreatePatient(dbname, gvcf):
+
+	p = Patient(dbname, gvcf)
+
+# --------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    main()
+
+	main()

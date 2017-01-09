@@ -14,13 +14,13 @@ class Gene:
 This class gets information on a given gene based on gene ID. Can use either PharmGKB or Entrez.
     """
 
-    def __init__(self, geneid):
+    def __init__(self, gid):
 
         # initialize with geneID
 
-        self.gid = geneid
+        self.gid = gid
 
-        self.alleles = []
+        self.haplotypes = []
 
         self.genes = []
 
@@ -40,10 +40,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
     def Load(self):
 
-        uri = 'https://api.pharmgkb.org/v1/data/gene/%s?view=max' \
-                % self.gid
-
-        print uri
+        uri = 'https://api.pharmgkb.org/v1/data/gene/{}?view=max'.format(self.gid)
 
         try:
 
@@ -53,7 +50,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
             return None
 
-        self.json = response.load(data)
+        self.json = json.load(response)
 
         self.name = self.json['symbol']
 
@@ -69,8 +66,8 @@ This class gets information on a given gene based on gene ID. Can use either Pha
         # get a list of known haplotype IDs from gene ID
 
         uri = \
-            'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId=%s&view=max' \
-            % self.gid
+            'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max' \
+            .format(self.gid)
 
         data = urllib2.urlopen(uri)
 
@@ -90,7 +87,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
                 hgvs = None
 
-            alleles = doc['alleles']
+            haplotypes = doc['alleles']
 
             hapid = doc['id']
 
@@ -102,15 +99,16 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
             # get all the involved rsids
 
-            for allele in alleles:
+            for hap in haplotypes:
 
                 try:
 
-                    rsid = allele['location']['displayName']
+                    rsid = hap['location']['displayName']
 
-                    alt = allele['allele']
+                    alt = hap['allele']
 
                     rsids.append((rsid, alt))
+
                 except KeyError:
 
                     continue
@@ -119,13 +117,20 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
             # add to alleles dictionary
 
-            all = {
+            d = {
+                
                 'starname': starname,
+                
                 'hgvs': hgvs,
+                
                 'id': hapid,
+                
                 'copynum': copynum,
+                
                 'rsids': rsids,
+                
                 'guideline': guideline,
+
                 }
             
-            self.alleles.append(all)
+            self.haplotypes.append(d)

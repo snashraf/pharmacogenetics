@@ -3,24 +3,25 @@ import json
 
 class Drug(object):
 	'''
-	
+
 	'''
 	def __init__(self, did):
 
-	    uri = \
+	    self.uri = \
 	        'https://api.pharmgkb.org/v1/data/chemical/%s?view=max' \
 	        % did
 
-	    self.load()
+	    self.Load()
+
 
 	def Load(self):
 
 	    # get data and read in this json file
 
-	    data = urllib2.urlopen(uri)
+	    data = urllib2.urlopen(self.uri)
 
-	    json = json.load(data)
+	    j = json.load(data)
 
-	    self.name = json['name']
+	    self.name = j['name']
 
-	    self.terms = json['terms']
+	    self.terms = j['terms']
