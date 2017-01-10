@@ -91,16 +91,10 @@ class Patient(Database):
 
             for (loc, start, end, ref, alt, muttype) in positions:
 
-                records = None
+ records = self.reader.fetch(str(loc), start-1, end=end)
 
-                if muttype != "snp":
-
-                    records = self.FetchSpecial(muttype, start, end, ref, alt)
-
-                else:
-
-                    records = self.reader.fetch(str(loc), start-1, end=end)
                 # TODO PLEASE DO NOT DO THIS
+
                 for record in records: # doctest: +SKIP
 
                     ref = str(record.REF)
@@ -130,79 +124,6 @@ class Patient(Database):
                     item = (loc, start, end, ref, alt, call, pid, pgt)
 
                     self.insertValues("patientvars", item)
-
-
-    def FetchSpecial(self, muttype, start, end, ref, alt):
-
-        # TODO make a dict of valid mutations
-		# LOG unknown mutations
-        if muttype == "unknown":
-
-            return None
-
-        elif muttype == "in-del":
-
-            # insertion
-
-            if ref == "-":
-
-                if "," in alt:
-
-                    alt = alt.split(",")
-
-                dist = len(max(alt, key=len))
-
-            # deletion
-
-            elif alt == "-":
-
-                dist = len(ref)
-
-            end = start + dist
-
-        elif "micro" in muttype:
-
-            # currently only TA repeats
-
-            conv = []
-
-            bases = [ref] + alt.split(",")
-
-            for base in bases:
-
-                if "[" not in base or "(" not in base:
-
-                    continue
-
-                else:
-
-                    # find bracketed objects
-
-                    filt = re.split('\[(.*?)\]|\((.*?)\)', base)
-
-                for frag in filt:
-
-                        if frag is not None:
-
-                            try:
-
-                                    num = int(frag)
-
-                            except:
-
-                                    motif = frag
-
-                base = motif * num
-
-                conv.append(base)
-
-            dist = len(max(conv, key=len))
-
-            end = start + dist
-
-        records = self.reader.fetch(str(loc), start-2, end=end)
-
-        return records
 
 
     def Hapmatcher(self):
@@ -374,6 +295,7 @@ class Patient(Database):
             for clade in tree.find_clades():
 
                 if clade.name and clade.name not in names:
+                	
                         names.append(clade.name)
 
             tree.root_with_outgroup({refid})

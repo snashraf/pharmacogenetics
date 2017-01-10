@@ -26,6 +26,9 @@ class DataCollector(Database):
 		"""
 		Database.__init__(self, dbname)
 
+
+	def Authenticate(self):
+		
 		self.authobj = Authenticate()
 
 
@@ -83,6 +86,7 @@ class DataCollector(Database):
 		# get all unique gene ids from the variant table
 
 		self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
+		
 		# TODO CATCH TABLE DOES NOT EXIST
 
 		genes = self.sql.fetchall()

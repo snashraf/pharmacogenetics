@@ -8,6 +8,7 @@ import urllib
 import urllib2
 import ast
 import re
+import time
 
 
 # ---------------------------------------------------------------------
@@ -205,7 +206,7 @@ def seqMaker(rsidorder, reference, rsids):
 			base = motif * num
 
 		seq += base
-
+			
 	return seq
 
 
@@ -228,6 +229,8 @@ def getRef(loc, start, end):
 		r.raise_for_status()
 
 		sys.exit()
+	
+	time.sleep(0.3)
 
 	return r.text
 

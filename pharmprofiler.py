@@ -9,43 +9,39 @@ from lib.db import Database
 
 from lib.patient import Patient
 
+from collections import OrderedDict
+
+# --------------------------------------------------------------------------
 
 def main():
 
+	options = [
+	
+	{"short":"n" , "long":"name", "action":"store","dest":"dbname", "default":"database",
+			"help":"Specify database name. This will be used to create/access a database. Default is 'database'"},
+				
+	{"short":"t" , "long":"table", "action":"append","dest":"tables", "default":[],
+			"help":"Download database (specify tables, default is do whole database.\
+			Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) and drugs(chemicals)"},
+				
+	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
+			"help":"Patient compressed vcf [g.vcf.gz] file to parse'"}
+	
+		]
+		
 	parser = OptionParser(usage='usage: %prog [options] filename',
 						  version='%prog 1.0')
 
-	parser.add_option(
-		'-n',
-		'--name',
-		action='store',
-		dest='dbname',
-		default="database",
-		help='''
-		Specify database name. This will be used to create/access a database. Default is "database".
-		''' ,
-		)
-
-	parser.add_option(
-		'-t',
-		'--maketable',
-		action='append',
-		dest='tables',
-		default=[],
-		help='''
-	Download database (specify tables, default is do whole database)
-	Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) and drugs(chemicals)'
-		''' ,
-		)
-
-	parser.add_option(  # optional because action defaults to "store"
-		'-p',
-		'--patient',
-		action='store',
-		dest='gvcf',
-		default=None,
-		help='Patient compressed vcf [g.vcf.gz] file to parse',
-		)
+	for o in options:
+		
+		parser.add_option(
+			'-{}'.format(o['short']),
+			'--{}'.format(o['long']),
+			action=o['action'],
+			dest=o['dest'],
+			default=o['default'],
+			help=o['help']
+			)
 
 	(options, args) = parser.parse_args()
 
@@ -66,46 +62,65 @@ def main():
 
 def CreateDB(dbname, tables):
 
+
+
+# --------------------------------------------------------------------------
+
 	d = DataCollector(dbname)
 
-	if 'all' in tables:
+# --------------------------------------------------------------------------
 
-		d.Update()
+	options = OrderedDict ([
+		
+		("pairs",d.GetPairs),
+		
+		("genes",d.GetGeneData),
+		
+		("rsvars",d.GetVarData),
+		
+		("hapvars",d.GetNonRS),
+		
+		("drugs",d.GetDrugData)
+		
+		])
+		
+		
+	options['vars'] = [options["rsvars"], options["hapvars"]]
 
+	options['all'] = options.values()
+
+# --------------------------------------------------------------------------
+
+		
 	# Consider putting options in DICT
 	# Consider list comprehension
 	# [dict[table] for table in tables]
-	else:
 
-		for table in tables:
+	for table in tables:
+		
+		try:
+		
+			o = options[table]
+			
+			if not hasattr( d, "authobj"):
+	
+				d.Authenticate()
+				
+			if type(o) is not list:
+				
+				options[table]()
+			
+			elif type(o) is list:
+			
+				for item in o:
+			
+					item()
+					
+		except:
+			raise
+			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
 
-			if table == 'pairs':
-
-				d.GetPairs()
-
-			elif table == 'genes':
-
-				d.GetGeneData()
-
-			elif table == 'allvars':
-
-				d.GetVarData()
-
-				d.GetNonRS()
-
-			elif table == 'rsvars':
-
-				d.GetVarData()
-
-			elif table == 'drugs':
-
-				d.GetDrugData()
-
-			elif table == 'hapvars':
-
-				d.GetNonRS()
-
-		d.conn.commit()
+	d.conn.commit()
 
 
 def CreatePatient(dbname, gvcf):
