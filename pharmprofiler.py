@@ -22,7 +22,7 @@ def main():
 		dest='dbname',
 		default="database",
 		help='''
-		Specify database name. This will be used to create/access a database. Default is "database".       
+		Specify database name. This will be used to create/access a database. Default is "database".
 		''' ,
 		)
 
@@ -34,7 +34,7 @@ def main():
 		default=[],
 		help='''
 	Download database (specify tables, default is do whole database)
-	Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) and drugs(chemicals)'       
+	Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) and drugs(chemicals)'
 		''' ,
 		)
 
@@ -44,7 +44,7 @@ def main():
 		action='store',
 		dest='gvcf',
 		default=None,
-		help='Patient g.vcf file to parse',
+		help='Patient compressed vcf [g.vcf.gz] file to parse',
 		)
 
 	(options, args) = parser.parse_args()
@@ -58,7 +58,7 @@ def main():
 		if '.gz' not in options.gvcf:
 
 			print 'Please convert to .gz and create tabix file first.'
-		
+
 		else:
 
 			CreatePatient(options.dbname, options.gvcf)
@@ -72,6 +72,9 @@ def CreateDB(dbname, tables):
 
 		d.Update()
 
+	# Consider putting options in DICT
+	# Consider list comprehension
+	# [dict[table] for table in tables]
 	else:
 
 		for table in tables:

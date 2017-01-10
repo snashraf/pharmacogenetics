@@ -83,13 +83,14 @@ class DataCollector(Database):
 		# get all unique gene ids from the variant table
 
 		self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
+		# TODO CATCH TABLE DOES NOT EXIST
 
 		genes = self.sql.fetchall()
 
 		# go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
 
 		for (gid,) in tqdm(genes):
-			
+
 			g = Gene(gid)
 
 			# insert the resulting name and haplotypes into sql table
@@ -140,7 +141,7 @@ class DataCollector(Database):
 		for (rsid, gid) in tqdm(self.sql.fetchall()):
 
 			# create variant instances with the given rsid.
-			
+
 			try:
 
 				v = Variant(rsid)
@@ -177,7 +178,7 @@ class DataCollector(Database):
 				try:
 
 					self.insertValues("alias", (rsid, alias))
-				
+
 				except sqlite3.IntegrityError:
 
 					# on duplicate, ignore

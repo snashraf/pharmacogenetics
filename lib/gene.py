@@ -34,7 +34,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
             self.GetHaps()
 
         except urllib2.HTTPError:
-            
+
             pass
 
 
@@ -47,7 +47,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
             response = urllib2.urlopen(uri)
 
         except urllib2.HTTPError:
-
+            # TODO Log error message to stderr
             return None
 
         self.json = json.load(response)
@@ -65,13 +65,12 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
         # get a list of known haplotype IDs from gene ID
 
-        uri = \
-            'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max' \
-            .format(self.gid)
+        uri = 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max'.format(self.gid)
 
         data = urllib2.urlopen(uri)
 
         response = json.load(data)
+        # TODO catch error
 
         for doc in response:
 
@@ -87,6 +86,9 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
                 hgvs = None
 
+            # WHY NOT JUST JSON??
+            # CONSIDER GENERAL JSON INTErFACE [Get Haplotype etc]
+            # CONSIDER JINJA2 TEMPLAETING FOR SQL INTERFACE
             haplotypes = doc['alleles']
 
             hapid = doc['id']
@@ -107,6 +109,8 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
                     alt = hap['allele']
 
+                    # TODO STOP DUPLICATING DATA
+
                     rsids.append((rsid, alt))
 
                 except KeyError:
@@ -118,19 +122,19 @@ This class gets information on a given gene based on gene ID. Can use either Pha
             # add to alleles dictionary
 
             d = {
-                
+
                 'starname': starname,
-                
+
                 'hgvs': hgvs,
-                
+
                 'id': hapid,
-                
+
                 'copynum': copynum,
-                
+
                 'rsids': rsids,
-                
+
                 'guideline': guideline,
 
                 }
-            
+
             self.haplotypes.append(d)

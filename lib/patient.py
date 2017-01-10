@@ -21,7 +21,7 @@ class Patient(Database):
     def __init__(self, dbname, f):
         """
         f = given VCF input file
-        GetDesign imports the test design and matches rs values to 
+        GetDesign imports the test design and matches rs values to
         positions
         Import imports the input vcf
         GetIDs finds changed positions and matches them to the design.
@@ -81,59 +81,61 @@ class Patient(Database):
         """
         print 'Reading patient variants...'
 
-        # create list of positions to localize in patient       
-        
+        # create list of positions to localize in patient
+
         for record in self.reader:
 
             self.sql.execute("SELECT DISTINCT loc, start, end, ref, alt, muttype FROM variants")
-            
+
             positions = self.sql.fetchall()
-            
+
             for (loc, start, end, ref, alt, muttype) in positions:
-                
-                records = None              
+
+                records = None
 
                 if muttype != "snp":
 
                     records = self.FetchSpecial(muttype, start, end, ref, alt)
-            
+
                 else:
 
                     records = self.reader.fetch(str(loc), start-1, end=end)
-
+                # TODO PLEASE DO NOT DO THIS
                 for record in records: # doctest: +SKIP
-            
+
                     ref = str(record.REF)
 
                     start = record.POS
-                        
+
                     end = start + 1
-                    
+
                     alt = (str(record.ALT[0])).replace("<NON_REF>",".")
-            
+
                     for sample in record.samples:
-            
+
                         call = str(sample['GT'])  # 1/0 etc, phasing found here
-            
+
                         try:
-            
+
                             pid = str(sample['PID'])
-            
+
                             pgt = str(sample['PGT'])
-            
+
                         except KeyError:
-            
+
                             pid = "nan"
-            
+
                             pgt = "nan"
-            
+
                     item = (loc, start, end, ref, alt, call, pid, pgt)
-            
+
                     self.insertValues("patientvars", item)
 
 
     def FetchSpecial(self, muttype, start, end, ref, alt):
 
+        # TODO make a dict of valid mutations
+		# LOG unknown mutations
         if muttype == "unknown":
 
             return None
@@ -141,21 +143,21 @@ class Patient(Database):
         elif muttype == "in-del":
 
             # insertion
-    
+
             if ref == "-":
-                
+
                 if "," in alt:
 
                     alt = alt.split(",")
 
                 dist = len(max(alt, key=len))
-                            
+
             # deletion
-            
+
             elif alt == "-":
 
                 dist = len(ref)
-            
+
             end = start + dist
 
         elif "micro" in muttype:
@@ -165,7 +167,7 @@ class Patient(Database):
             conv = []
 
             bases = [ref] + alt.split(",")
-            
+
             for base in bases:
 
                 if "[" not in base or "(" not in base:
@@ -197,20 +199,20 @@ class Patient(Database):
             dist = len(max(conv, key=len))
 
             end = start + dist
-            
+
         records = self.reader.fetch(str(loc), start-2, end=end)
 
         return records
 
 
     def Hapmatcher(self):
-        
+
         """
         Matches rsids per gene to known haplotypes for that gene.
         Results are stored in a list...
         :return:
         """
-        
+
         self.remakeTable('patienthaps')
 
         self.sql.execute("SELECT DISTINCT gid from genes")
@@ -226,78 +228,78 @@ class Patient(Database):
             self.sql.execute("SELECT a.rsid, a.alt, a.hapid from alleles a join variants v on a.rsid=v.rsid where a.hgvs like '%=%' and a.gid=? order by v.start", (gid,))
 
             refrsids = self.sql.fetchall()
-            
+
             if not refrsids[0][2]:
 
                 continue
 
             else:
-                
+
                 refid = refrsids[0][2]
-            
+
             rsidorder = [rsid for (rsid, alt, hapid) in refrsids]
-            
+
             reference = { rsid : alt for (rsid, alt, hapid) in refrsids}
-                        
+
             refseq = seqMaker(rsidorder, reference, reference)
-            
+
             newline =  ">{}\n{}\n".format(refid, refseq)
-                                    
+
             sequences.append(newline)
-            
+
             # get list of all hapids for this gene
-            
+
             self.sql.execute("SELECT DISTINCT hapid, starname, hgvs from alleles where gid=? and hgvs not like '%=%'", (gid,))
-            
+
             for (hapid, starhap, hgvs) in self.sql.fetchall():
-                
+
                 # get haplotype alleles and create complete dictionary
-                
+
                 self.sql.execute("SELECT rsid, alt from alleles where hapid=? and rsid like '%rs%'", (hapid,))
-                
+
                 haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 
                 if len(haprsids) == 0:
-                    
+
                     continue
-                
+
                 else:
-                                        
+
                     haprsids = dict(reference, **haprsids)
-                    
+
                     hapseq = seqMaker(rsidorder, reference, haprsids)
-                    
+
                     modified = {k : (reference[k], haprsids[k]) for k in reference.keys() if reference[k] != haprsids[k]}
 
                     score_ref = len(modified)
-                    
+
                     if score_ref == 0:
-                        
+
                         continue
-                    
+
                     else:
-                        
+
                         # get patient rsids
-                        
+
                         self.sql.execute("select distinct v.rsid, p.alt from variants v \
                                         join patientvars p on p.start = v.start \
                                         join alleles a on v.gid = a.gid \
                                         where p.call = '1/1' \
                                         and a.hapid = ? \
                                         and v.rsid like '%rs%'", (hapid,))
-                        
+
                         patrsids_base = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
-                        
+
                         patrsids_al1 = dict(reference, **patrsids_base)
-                        
+
                         patseq1 = seqMaker(rsidorder, reference, patrsids_al1)
-                                                    
+
                         modified = {k : (patrsids_al1[k], haprsids[k]) for k in patrsids_al1.keys() if patrsids_al1[k] != haprsids[k]}
 
                         score_al1 = len(modified)
 
                         # --------------------------------------------------------------------------------------------------
-                        
+
                         self.sql.execute("select distinct v.rsid, p.alt from variants v \
                                             join patientvars p on p.start=v.start join alleles a on v.gid=a.gid \
                                             where p.call = '0/1' and a.hapid = ? and v.rsid like '%rs%'", (hapid,))
@@ -305,111 +307,111 @@ class Patient(Database):
                         patrsids_add = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 
                         patrsids_al2 = dict(patrsids_base, **patrsids_add)
-                        
+
                         patseq2 = seqMaker(rsidorder, reference, patrsids_al2)
 
                         modified = {k : (patrsids_al2[k], haprsids[k]) for k in patrsids_al2.keys() if patrsids_al2[k] != haprsids[k]}
-                                            
+
                         score_al2 = len(modified)
 
                         if len(patrsids_base) == 0 and len(patrsids_add) == 0:
-                                        
+
                             continue
-                        
+
                         else:
 
                             hapline = ">%s\n %s\n" %(hapid, hapseq)
-                            
+
                             if hapline not in sequences and hapseq != "":
-                                
+
                                 sequences.append(hapline)
-                            
+
                             else:
-                                
-                                continue                                        
-                                       
+
+                                continue
+
             sequences.append(">Patient_allele1\n" + patseq1 + "\n")
 
             sequences.append(">Patient_allele2\n" + patseq2 + "\n")
-            
+
             path = "data/alignments/"
-            
+
             fn = path + gid + "_aln.fasta"
-              
+
             with open(fn, "w") as f:
-                
+
                 f.writelines(sequences)
 
-            print fn        
+            print fn
 
             try:
-                
+
                 self.HapScorer(fn, "phylo", refid)
 
             except:
-                
+
                 raise
 
 
     def HapScorer(self, fn, mode, refid):
-        
+
         if mode == "phylo":
-            
+
             # phylogenetic tree
-            
+
             of = fn.replace("alignments/", "alignments/aligned/")
-            
+
             tn = of.strip(".fasta")+"_tree.dnd"
-            
+
             with open(fn, "rb") as infile, open(of, "wb") as outfile:
-            
+
                 s.check_call("plugins/clustalo -i %s -o %s --auto --force --guidetree-out=%s" %(fn, of, tn),  shell=True)
-        
+
             tree = Phylo.read(tn, "newick")
-                        
+
             names = []
-                
+
             for clade in tree.find_clades():
 
                 if clade.name:
-    
+
                     if clade.name in names:
-        
+
                         continue
-                    
+
                     names.append(clade.name)
-                        
+
             tree.root_with_outgroup({refid})
 
             Phylo.draw_ascii(tree)
-            
+
             distances = {}
-            
+
             for hap in names:
-                
+
                 if "Patient" in hap:
-                    
+
                     continue
-                
+
                 else:
-            
+
                     for i in range(1,3):
-                        
+
                         matches = []
-                                                
+
                         dist = tree.distance("Patient_allele%i" %i, hap)
-                                                
+
                         distances["al%i" %i] = dist
-                                        
+
                     item = (hap, distances["al1"], distances["al2"])
-                                
+
                     self.insertValues("patienthaps", item)
 
             self.conn.commit()
 
-                
+
         else:
             # standard mode
-            pass    
-            
+            pass
+
         self.conn.commit()
