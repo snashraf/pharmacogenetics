@@ -373,13 +373,8 @@ class Patient(Database):
 
             for clade in tree.find_clades():
 
-                if clade.name:
-
-                    if clade.name in names:
-
-                        continue
-
-                    names.append(clade.name)
+                if clade.name and clade.name not in names:
+                        names.append(clade.name)
 
             tree.root_with_outgroup({refid})
 
