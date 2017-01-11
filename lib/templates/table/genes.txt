@@ -1,0 +1,8 @@
+CREATE TABLE genes
+(
+gid text,
+symbol text,
+chromosome text,
+start int,
+end int
+);

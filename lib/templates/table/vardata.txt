@@ -1,0 +1,12 @@
+CREATE TABLE vardata
+(
+rsid text,
+varid text,
+gid text,
+chromosome text,
+start int,
+end int,
+ref text,
+alt text,
+muttype text
+);

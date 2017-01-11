@@ -1,0 +1,11 @@
+CREATE TABLE patientvars
+(
+chromosome text,
+start int,
+end int,
+ref text,
+alt text,
+call text,
+pid text,
+pgt text
+);

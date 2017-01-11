@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
-
+from jinja2 import Template
+import re
+import os
 # --------------------------------------------------------------------------
 
 class Database(object):
@@ -18,42 +20,57 @@ class Database(object):
 
         self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
+        self.path = os.getcwd()
+
+        self.tempfolder = self.path + "\\templates\\table"
+
+        self.insfolder = self.path + "\\templates\\insert"
+
         self.setDefaults()
+
+    def formatSQL(self, path):
+    
+        conv = ""
+        filt = '\t\n'
+        
+        with open(path, "r") as f:
+            for line in f.readlines():
+                conv += re.sub('[\n\t]', '', line)
+
+        return conv
+        
+
+    def renderSQL(self, sql_string, context):
+
+        template = Template(sql_string)
+
+        sql = template.render(json = context)
+
+        return sql
+
+
+    def insertSQL(self, tabname, context):
+
+        conv = self.formatSQL(self.insfolder + "\\" + tabname + ".txt")
+
+        sql = self.renderSQL(conv, context)
+
+        self.sql.execute(sql)
+
 
     def setDefaults(self):
 
-        self.tableoptions = {
+        templates = os.listdir(self.tempfolder)
 
-            'drugpairs': 'gid text, did text, starhaps text, options text, rsids text',
-        
-            'genes': 'gid text UNIQUE, symbol text, chr text, start text, stop text',
-        
-            'haplotypes': "hapid text, gid text, starname text,\
-						hgvs text, rsid text, alt text,\
-						UNIQUE(hapid, rsid, starname) \
-						ON CONFLICT REPLACE",
-        
-            'variants': "rsid text, varid text, gid text, chr text,\
-					pbegin int, pend int, pref text, palt text,\
-					vbegin int, vend int, vref text, valt text,\
-					type text",
-        
-            'alias': 'rsid text, alias varchar(255) PRIMARY KEY',
-        
-            'drugs': 'did text, name text, terms text',
+        for template in templates:
 
-            'patientvars':'loc text,\
-		                    start int,\
-		                    end int,\
-		                    ref text,\
-		                    alt text, \
-		                    call text,\
-		                    pid text,\
-		                    pgt text',
+            self.removeTable(template.rstrip(".txt"))
 
-		    'patienthaps':'hapid text, al1 int, al2 int'
+            sql = self.formatSQL(self.tempfolder + "\\" + template)
 
-            }
+            self.sql.execute(sql)
+
+        self.conn.commit()
 
 
     def removeTable(self, tabname):
@@ -72,10 +89,10 @@ class Database(object):
 
     def createTable(self, tabname):
 
-    	opts = self.tableoptions[tabname]
+    	sql = self.formatSQL(self.tempfolder + "\\" + tabname + ".txt")
 
-        self.sql.execute('CREATE TABLE {}({})'.format(tabname, opts))
-        
+        self.sql.execute(sql)
+
         self.conn.commit()
 
 
@@ -93,3 +110,5 @@ class Database(object):
     	self.createTable(tabname)
 
     	self.conn.commit()
+
+db = Database("test")

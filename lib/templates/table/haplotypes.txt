@@ -1,0 +1,6 @@
+CREATE TABLE haplotypes
+(
+hapid text,
+hgvs text,
+starname text
+);

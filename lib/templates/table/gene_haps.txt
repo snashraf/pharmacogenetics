@@ -1,0 +1,5 @@
+CREATE TABLE gene_haps
+(
+gid text,
+hapid text
+);

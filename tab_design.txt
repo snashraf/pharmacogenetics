@@ -1,0 +1,42 @@
+TABLE DESIGNS:
+
+PAIRS:
+pairid, gid, did
+
+PAIR_CONNECTIONS:
+pairid, connectionType
+
+GENES:
+gid, symbol, start, end
+
+GENE_HAPLOTYPES:
+gid, hapid
+
+HAPLOTYPES:
+hapid, hgvs, starname 
+
+HAP_VARIANTS:
+hapid, rsid, alt
+
+GENE_VARIANTS:
+gid, rsid
+
+VARIDS:
+rsid, varid
+
+PGKB_VARIANTS:
+varid, chromosome, start, end, ref, alt
+
+VCF_VARIANTS:
+varid, chromosome, start, end, ref, alt
+
+DRUGS:
+did, name, 
+
+---------------------------------
+
+ANNOTATIONS:
+annID
+
+GUIDELINES:
+guid

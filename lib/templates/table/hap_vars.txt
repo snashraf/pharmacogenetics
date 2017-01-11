@@ -1,0 +1,6 @@
+CREATE TABLE hap_vars
+(
+hapid text,
+rsid text,
+alt text
+);

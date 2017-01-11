@@ -1,0 +1,6 @@
+INSERT INTO PAIRS VALUES
+	(
+	{{json['gene']['id']}},
+	{{json['chemical']['id']}},
+	{{json['connectionTypes']|join(",")}}
+	);

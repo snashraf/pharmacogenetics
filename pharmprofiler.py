@@ -2,13 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from optparse import OptionParser
-
 from lib.data import DataCollector
-
 from lib.db import Database
-
 from lib.patient import Patient
-
 from collections import OrderedDict
 
 # --------------------------------------------------------------------------
@@ -27,7 +23,7 @@ def main():
 	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
 			"help":"Patient compressed vcf [g.vcf.gz] file to parse'"}
 	
-		]
+			]
 		
 	parser = OptionParser(usage='usage: %prog [options] filename',
 						  version='%prog 1.0')
@@ -62,8 +58,6 @@ def main():
 
 def CreateDB(dbname, tables):
 
-
-
 # --------------------------------------------------------------------------
 
 	d = DataCollector(dbname)
@@ -72,15 +66,15 @@ def CreateDB(dbname, tables):
 
 	options = OrderedDict ([
 		
-		("pairs",d.GetPairs),
+		("pairs", d.GetPairs),
 		
-		("genes",d.GetGeneData),
+		("genes", d.GetGeneData),
 		
-		("rsvars",d.GetVarData),
+		("rsvars", d.GetVarData),
 		
-		("hapvars",d.GetNonRS),
+		("hapvars", d.GetNonRS),
 		
-		("drugs",d.GetDrugData)
+		("drugs", d.GetDrugData)
 		
 		])
 		

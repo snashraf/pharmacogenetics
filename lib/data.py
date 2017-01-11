@@ -56,19 +56,19 @@ class DataCollector(Database):
 
 		for doc in tqdm(json.load(data)):
 
-			gid = doc['gene']['id']
+			sql = createSQL("templates/insert/pair.jj", doc)
 
-			symbol = doc['gene']['symbol']
-
-			did = doc['chemical']['id']
-
-			p = Pair(gid, symbol, did, self.authobj)
-
-			item = (p.gid, p.did, p.guid, p.options, ",".join(p.varids))
-
-			self.insertValues("drugpairs", item)
+			self.sql.execute(sql)
 
 		self.conn.commit()
+
+
+	def GetAnnotations(self):
+		pass
+
+
+	def GetGuidelines(self):
+		pass
 
 
 	def GetGeneData(self):
@@ -80,8 +80,6 @@ class DataCollector(Database):
 		print 'Getting gene data... (/o*)'
 
 		self.remakeTable("genes")
-
-		self.remakeTable("haplotypes")
 
 		# get all unique gene ids from the variant table
 
@@ -97,29 +95,37 @@ class DataCollector(Database):
 
 			g = Gene(gid)
 
-			# insert the resulting name and haplotypes into sql table
+			self.insertSQL("genes", g.json)
 
-			item = (gid, g.name, g.chr, g.start,
-							 g.stop)
+		self.conn.commit()
 
-			self.insertValues("genes", item)
 
-			for hap in g.haplotypes:
+	def GetHapData(self):
 
-				for (rsid, alt) in hap['rsids']:
+		self.remakeTable("haplotypes")
 
-					item = (
-						hap['id'],
-						gid,
-						hap['starname'],
-						hap['hgvs'],
-						rsid,
-						alt,
-						)
+		self.sql.execute('SELECT DISTINCT gid FROM genes')
+		
+		# TODO CATCH TABLE DOES NOT EXIST
 
-					self.insertValues("haplotypes", item)
+		genes = self.sql.fetchall()
 
-			self.conn.commit()
+		# go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
+
+		for (gid,) in tqdm(genes):
+
+			uri = 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max'.format(self.gid)
+
+        	data = urllib2.urlopen(uri)
+
+        	response = json.load(data)
+			
+			for doc in response:
+				
+
+
+
+		self.conn.commit()
 
 
 	def GetVarData(self):

@@ -1,0 +1,9 @@
+CREATE TABLE vardata_adj
+(
+varid text,
+start int,
+end int,
+ref text,
+alt text,
+muttype text
+);

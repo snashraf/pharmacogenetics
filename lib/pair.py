@@ -73,4 +73,3 @@ Fill in here...
                 self.guid = "nan"
 
                 self.options = "nan"
-

@@ -19,6 +19,7 @@ class Patient(Database):
     '''
 
     def __init__(self, dbname, f):
+        
         """
         f = given VCF input file
         GetDesign imports the test design and matches rs values to
@@ -65,6 +66,7 @@ class Patient(Database):
 
 
     def ImportData(self):
+        
         """
         Import data from collected database and
         create patientvars tables.
@@ -75,10 +77,12 @@ class Patient(Database):
 
 
     def GetIDs(self):
+        
         """
         Gets patient variables, reads into patientvars table
         :return:
         """
+        
         print 'Reading patient variants...'
 
         # create list of positions to localize in patient
@@ -91,7 +95,7 @@ class Patient(Database):
 
             for (loc, start, end, ref, alt, muttype) in positions:
 
- records = self.reader.fetch(str(loc), start-1, end=end)
+                records = self.reader.fetch(str(loc), start-1, end=end)
 
                 # TODO PLEASE DO NOT DO THIS
 
@@ -117,9 +121,9 @@ class Patient(Database):
 
                         except KeyError:
 
-                            pid = "nan"
+                            pid = "nyan"
 
-                            pgt = "nan"
+                            pgt = "nyan"
 
                     item = (loc, start, end, ref, alt, call, pid, pgt)
 

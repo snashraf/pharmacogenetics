@@ -1,0 +1,7 @@
+CREATE TABLE drugs
+(
+did text,
+name text,
+chemformula text,
+terms text
+);
