@@ -1,0 +1,6 @@
+INSERT INTO haplotypes VALUES
+	(
+	{{json.id}},
+	{{json.hgvs}},
+	{{json.name}}
+	);

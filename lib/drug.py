@@ -20,8 +20,4 @@ class Drug(object):
 
 	    data = urllib2.urlopen(self.uri)
 
-	    j = json.load(data)
-
-	    self.name = j['name']
-
-	    self.terms = j['terms']
+	    self.json = json.load(data)

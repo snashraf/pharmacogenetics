@@ -1,0 +1,5 @@
+CREATE TABLE var_alts
+(
+varid text,
+alt text
+);

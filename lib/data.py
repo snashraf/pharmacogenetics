@@ -100,7 +100,7 @@ class DataCollector(Database):
 		self.conn.commit()
 
 
-	def GetHapData(self):
+	def GetHaplotypes(self):
 
 		self.remakeTable("haplotypes")
 
@@ -121,11 +121,17 @@ class DataCollector(Database):
         	response = json.load(data)
 			
 			for doc in response:
-				
 
+				self.insertSQL("gene_haps", doc)
 
+				self.insertSQL("haplotypes", doc)
+
+				for allele in doc['alleles']:
+
+					self.insertSQL("hap_vars", doc)
 
 		self.conn.commit()
+
 
 
 	def GetVarData(self):
@@ -143,12 +149,12 @@ class DataCollector(Database):
 
 		# get all rsids in the design vcf
 
-		self.sql.execute('SELECT DISTINCT a.rsid, a.gid FROM haplotypes a JOIN genes g on a.gid = g.gid where rsid LIKE "rs%" order by a.gid, a.rsid'
+		self.sql.execute('SELECT DISTINCT h.rsid FROM hap_vars h JOIN genes g on h.gid = g.gid where rsid LIKE "rs%" order by a.gid, a.rsid'
 						 )
 
 		# rotate through rsids and create variant objects to fetch information
 
-		for (rsid, gid) in tqdm(self.sql.fetchall()):
+		for (rsid,) in tqdm(self.sql.fetchall()):
 
 			# create variant instances with the given rsid.
 
@@ -239,7 +245,7 @@ class DataCollector(Database):
 		# get all the important drug ids (dids) from
 		# the known gene-drug connections table
 
-		self.sql.execute('SELECT DISTINCT did FROM drugpairs')
+		self.sql.execute('SELECT DISTINCT did FROM pairs')
 
 		# fetch matching did and use to create uri for query
 
@@ -249,19 +255,15 @@ class DataCollector(Database):
 
 			d = Drug(did)
 
-			for item in d.terms:
+			self.insertSQL("drugs", d.json)
 
-				term = item['term']
+			for term in d.json['terms']:
 
-				# check for duplicates with chemical name
+				text = item['term']
+				
+				item = (did, text)
 
-				if d.name not in term.lower():
-
-					item = (did, d.name, term)
-
-					# insert into drugs table
-
-					self.insertValues("drugs", item)
+				self.insertValues("drug_terms", item)
 
 		self.conn.commit()
 

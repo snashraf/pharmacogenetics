@@ -40,11 +40,3 @@ This class gets information on a given gene based on gene ID. Can use either Pha
             return None
 
         self.json = json.load(response)
-
-        self.name = self.json['symbol']
-
-        self.chr = self.json['chr']['name'].lstrip('chr')
-
-        self.start = self.json['chrStart']
-
-        self.stop = self.json['chrStop']

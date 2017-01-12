@@ -1,4 +1,4 @@
-CREATE TABLE vardata
+CREATE TABLE var_data
 (
 rsid text,
 varid text,

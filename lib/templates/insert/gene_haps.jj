@@ -1,0 +1,5 @@
+INSERT INTO gene_haps VALUES
+	(
+	{{json.gene.id}},
+	{{json.id}}
+	);

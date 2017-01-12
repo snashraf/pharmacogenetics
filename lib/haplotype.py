@@ -14,7 +14,7 @@ class Gene:
 This class gets information on a given gene based on gene ID. Can use either PharmGKB or Entrez.
     """
 
-    def __init__(self, gid):
+    def __init__(self, hapid):
 
         # initialize with geneID
 
@@ -37,8 +37,6 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
         response = json.load(data)
 
-        return response
-
         # TODO catch error
 
         for doc in response:
@@ -55,10 +53,7 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
                 hgvs = None
 
-            # WHY NOT JUST JSON??
-            # CONSIDER GENERAL JSON INTErFACE [Get Haplotype etc]
-            # CONSIDER JINJA2 TEMPLAETING FOR SQL INTERFACE
-            haplotypes = doc['alleles']
+            alleles = doc['alleles']
 
             hapid = doc['id']
 
@@ -70,40 +65,12 @@ This class gets information on a given gene based on gene ID. Can use either Pha
 
             # get all the involved rsids
 
-            for hap in haplotypes:
+            for var in alleles:
 
                 try:
 
-                    rsid = hap['location']['displayName']
+                    rsid = var['location']['displayName']
 
-                    alt = hap['allele']
-
-                    # TODO STOP DUPLICATING DATA
+                    alt = var['allele']
 
                     rsids.append((rsid, alt))
-
-                except KeyError:
-
-                    continue
-
-            guideline = False
-
-            # add to alleles dictionary
-
-            d = {
-
-                'starname': starname,
-
-                'hgvs': hgvs,
-
-                'id': hapid,
-
-                'copynum': copynum,
-
-                'rsids': rsids,
-
-                'guideline': guideline,
-
-                }
-
-            self.haplotypes.append(d)

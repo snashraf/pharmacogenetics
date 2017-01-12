@@ -1,6 +1,9 @@
 CREATE TABLE hap_vars
 (
 hapid text,
-rsid text,
-alt text
+varid text,
+disp_name text,
+alt text,
+desc text,
+muttype text
 );
