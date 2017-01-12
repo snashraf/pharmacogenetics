@@ -56,7 +56,7 @@ class DataCollector(Database):
 
 		for doc in tqdm(json.load(data)):
 
-			sql = createSQL("templates/insert/pair.jj", doc)
+			sql = self.templateSQL("pairs").render(json = doc)
 
 			self.sql.execute(sql)
 

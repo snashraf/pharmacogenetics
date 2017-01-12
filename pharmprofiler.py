@@ -18,12 +18,10 @@ def main():
 				
 	{"short":"t" , "long":"table", "action":"append","dest":"tables", "default":[],
 			"help":"Download database (specify tables, default is do whole database.\
-			Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) and drugs(chemicals)"},
+			Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) and drugs(chemicals"},
 				
 	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
 			"help":"Patient compressed vcf [g.vcf.gz] file to parse'"}
-	
-			]
 		
 	parser = OptionParser(usage='usage: %prog [options] filename',
 						  version='%prog 1.0')
@@ -75,9 +73,7 @@ def CreateDB(dbname, tables):
 		("hapvars", d.GetNonRS),
 		
 		("drugs", d.GetDrugData)
-		
 		])
-		
 		
 	options['vars'] = [options["rsvars"], options["hapvars"]]
 
@@ -85,7 +81,6 @@ def CreateDB(dbname, tables):
 
 # --------------------------------------------------------------------------
 
-		
 	# Consider putting options in DICT
 	# Consider list comprehension
 	# [dict[table] for table in tables]
@@ -111,7 +106,9 @@ def CreateDB(dbname, tables):
 					item()
 					
 		except:
+			
 			raise
+			
 			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
 
 	d.conn.commit()

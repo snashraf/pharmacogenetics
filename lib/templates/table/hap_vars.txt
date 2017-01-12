@@ -1,9 +1,0 @@
-CREATE TABLE hap_vars
-(
-hapid text,
-varid text,
-disp_name text,
-alt text,
-desc text,
-muttype text
-);

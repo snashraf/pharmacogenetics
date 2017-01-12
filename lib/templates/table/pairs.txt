@@ -1,6 +1,0 @@
-CREATE TABLE pairs
-(
-gid text,
-did text,
-connections text
-);

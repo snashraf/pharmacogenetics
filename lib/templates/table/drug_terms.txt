@@ -1,5 +1,0 @@
-CREATE TABLE drug_terms
-(
-did text,
-term text
-);

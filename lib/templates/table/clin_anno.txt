@@ -1,6 +1,0 @@
-CREATE TABLE clin_anno
-(
-anid int,
-loe text,
-varid text
-);

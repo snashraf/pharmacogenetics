@@ -28,34 +28,26 @@ class Database(object):
 
         self.setDefaults()
 
+
     def formatSQL(self, path):
-    
+
         conv = ""
         filt = '\t\n'
-        
+
         with open(path, "r") as f:
             for line in f.readlines():
                 conv += re.sub('[\n\t]', '', line)
 
         return conv
-        
-
-    def renderSQL(self, sql_string, context):
-
-        template = Template(sql_string)
-
-        sql = template.render(json = context)
-
-        return sql
 
 
-    def insertSQL(self, tabname, context):
+		def templateSQL(self, tabname):
+		
+			sql_string = self.formatSQL(self.insfolder + "\\" + tabname + ".txt")
+			
+			template = Template(sql_string)
 
-        conv = self.formatSQL(self.insfolder + "\\" + tabname + ".txt")
-
-        sql = self.renderSQL(conv, context)
-
-        self.sql.execute(sql)
+			return template
 
 
     def setDefaults(self):

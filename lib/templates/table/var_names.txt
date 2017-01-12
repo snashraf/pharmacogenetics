@@ -1,5 +1,0 @@
-CREATE TABLE var_names
-(
-varid text,
-alias text
-);
