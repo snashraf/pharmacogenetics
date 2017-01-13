@@ -1,0 +1,18 @@
+INSERT INTO Haplotypes VALUES(
+	{{json.genes.id}},	
+	{{json.id}},
+	{{json.symbol}},
+	{{json.name}},
+	{{json.hgvs}}
+);
+
+{% for doc in json.alleles %}
+
+	INSERT INTO HapVars (
+		{{doc.id}},
+		{{doc.variant.id}},
+		{{doc.allele}},
+		{{doc.type}}
+	);
+
+{% endfor %}}

@@ -12,10 +12,18 @@ INSERT INTO Pairs VALUES(
 	{{json.chemical.id}}
 );
 
+------------------------------------- > go through Drug IDs
+
 CREATE TABLE Drugs (
 	DrugID text,
 	ChemName text
 	ChemFormula text
+);
+
+CREATE TABLE DrugTerms (
+	{{json.id}},
+	{{json.resource}},
+	{{json.term}}
 );
 
 INSERT INTO Drugs VALUES(
@@ -24,6 +32,15 @@ INSERT INTO Drugs VALUES(
 	{{json.smiles}}
 );
 
+{% for doc in json.terms %}
+
+	INSERT INTO DrugTerms VALUES(
+		{{json.id}},
+		{{doc.resource}},
+		{{doc.term}
+	);
+
+{% endfor %}
 
 --------------------------------- > get GeneIDs from pairs
 
@@ -71,12 +88,17 @@ CREATE TABLE HapVars (
 	MutType text
 );
 
-INSERT INTO HapVars (
-	{{json1.id}},
-	{{json2.variant.id}},
-	{{json2.allele}},
-	{{json2.type}}
-);
+{% for doc in json.alleles %}
+
+	INSERT INTO HapVars (
+		{{doc.id}},
+		{{doc.variant.id}},
+		{{doc.allele}},
+		{{doc.type}}
+	);
+
+{% endfor %}}
+
 --------------------------- > go through varIDs and fetch data on them
 
 CREATE TABLE Variants (
@@ -100,17 +122,39 @@ CREATE TABLE LocPGKB (
 	RefAllele text
 );
 
-INSERT INTO LocPGKB VALUES(
-	{{json.id}},
-	{{json.location.name}},
-	{{json.location.begin}},
-	{{json.location.end}},
-	{{json.location.reference}}
-);
+{% for doc in json.location %}
+	{% if "ChGR37" in doc.name %}
+	
+		INSERT INTO LocPGKB VALUES(
+			{{json.id}},
+			{{doc.name}},
+			{{doc.begin}},
+			{{doc.end}},
+			{{doc.reference}}
+		);
+	
+	{% endif %}
+{% endfor %}
 
+{% for var in json.variants %}
+	{% if "ChGR37" in doc.name %}
+	
+		INSERT INTO AltAlleles VALUES(
+			{{json.id}},
+			NULL,
+			{{var}}
+		);
+	
+	{% endif %}
+{% endfor %}
 
--- ( left shunt function )) --
+CREATE TABLE AltAlleles (
+	VarID text,
+	AltPGKB text,
+	AltVCF text
 
+-- ( left shunt function ) and output a json-like file -- 
+ 
 CREATE TABLE LocVCF (
 	VarID text,
 	Chromosome text,
@@ -119,12 +163,18 @@ CREATE TABLE LocVCF (
 	RefAllele text
 );
 
-
-CREATE TABLE AltAlleles (
-	VarID text,
-	AltPGKB text,
-	AltVCF text
+INSERT INTO LocVCF VALUES(
+	{{json.id}},
+	{{json.name}},
+	{{json.begin}},
+	{{json.end}},
+	{{json.reference}}
 );
+		
+{% for variant in json.variants %}
+	UPDATE AltAlleles SET  AltPGKB = {{variant}} WHERE VarID = {{json.id}};
+	);
+{% endfor %}
 
 ----------------------------- > find annotations per pair
 

@@ -1,0 +1,20 @@
+CREATE TABLE Variants (
+	VarID text,
+	RSID text,
+	Significance text
+);
+
+CREATE TABLE LocPGKB (
+	VarID text,
+	RefGenome text,
+	Chromosome text,
+	Start integer,
+	End integer,
+	RefAllele text
+);
+
+CREATE TABLE AltAlleles (
+	VarID text,
+	AltPGKB text,
+	AltVCF text
+);

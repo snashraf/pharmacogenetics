@@ -1,12 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from patient import Patient
-from data import DataCollector
-import json
-import sqlite3
-from modules.pgkb_functions import *
-
+# --------------------------------------------------------------------------
 
 class Interpreter:
 

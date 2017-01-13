@@ -1,18 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import sqlite3
-from jinja2 import Template
-import re
-import os
 # --------------------------------------------------------------------------
+
 
 class Database(object):
 
     '''
-	Database class. Initializes database and takes care of doing big changes.
+ Database class. Initializes database and takes care of doing big changes.
 
-	'''
+ '''
 
     def __init__(self, dbname):
 
@@ -22,33 +19,31 @@ class Database(object):
 
         self.path = os.getcwd()
 
-        self.tempfolder = self.path + "\\templates\\table"
+        self.tempfolder = self.path + '\\templates\\table'
 
-        self.insfolder = self.path + "\\templates\\insert"
+        self.insfolder = self.path + '\\templates\\insert'
 
         self.setDefaults()
 
-
     def formatSQL(self, path):
 
-        conv = ""
+        conv = ''
         filt = '\t\n'
 
-        with open(path, "r") as f:
+        with open(path, 'r') as f:
             for line in f.readlines():
                 conv += re.sub('[\n\t]', '', line)
 
         return conv
 
+    def templateSQL(self, tabname):
 
-		def templateSQL(self, tabname):
-		
-			sql_string = self.formatSQL(self.insfolder + "\\" + tabname + ".txt")
-			
-			template = Template(sql_string)
+        sql_string = self.formatSQL(self.insfolder + '\\' + tabname
+                                    + '.txt')
 
-			return template
+        template = Template(sql_string)
 
+        return template
 
     def setDefaults(self):
 
@@ -56,51 +51,48 @@ class Database(object):
 
         for template in templates:
 
-            self.removeTable(template.rstrip(".txt"))
+            self.removeTable(template.rstrip('.txt'))
 
-            sql = self.formatSQL(self.tempfolder + "\\" + template)
+            sql = self.formatSQL(self.tempfolder + '\\' + template)
 
             self.sql.execute(sql)
 
         self.conn.commit()
 
-
     def removeTable(self, tabname):
         """
-		This function rebuilds the database, use for updating the db periodically?
-		return:
-		"""
+  This function rebuilds the database, use for updating the db periodically?
+  return:
+  """
 
-        self.sql.execute("DROP TABLE IF EXISTS {}".format(tabname))
-
+        self.sql.execute('DROP TABLE IF EXISTS {}'.format(tabname))
 
     def alterDefault(self, tabname, tabvalues):
 
         self.tableoptions[tabname] = tabvalues
 
-
     def createTable(self, tabname):
 
-    	sql = self.formatSQL(self.tempfolder + "\\" + tabname + ".txt")
+        sql = self.formatSQL(self.tempfolder + '\\' + tabname + '.txt')
 
         self.sql.execute(sql)
 
         self.conn.commit()
 
-
     def insertValues(self, tabname, tabvalues):
 
-    	qmarks = ",".join(["?" for item in tabvalues])
+        qmarks = ','.join(['?' for item in tabvalues])
 
-        self.sql.execute('INSERT INTO {} VALUES({})'.format(tabname, qmarks), (tabvalues))
-
+        self.sql.execute('INSERT INTO {} VALUES({})'.format(tabname,
+                         qmarks), tabvalues)
 
     def remakeTable(self, tabname):
 
-    	self.removeTable(tabname)
+        self.removeTable(tabname)
 
-    	self.createTable(tabname)
+        self.createTable(tabname)
 
-    	self.conn.commit()
+        self.conn.commit()
 
-db = Database("test")
+
+db = Database('test')

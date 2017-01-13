@@ -1,0 +1,11 @@
+CREATE TABLE Drugs (
+	DrugID text,
+	ChemName text
+	ChemFormula text
+);
+
+CREATE TABLE DrugTerms (
+	{{json.id}},
+	{{json.resource}},
+	{{json.term}}
+);

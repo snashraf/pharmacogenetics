@@ -1,11 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import urllib2
-import json
-import modules.pgkb_functions
-
-
 # -------------------------------------------------------------------------
 
 class Gene:

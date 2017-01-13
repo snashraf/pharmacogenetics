@@ -1,5 +1,8 @@
-import urllib2
-import json
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# -------------------------------------------------------------------------
+
 
 class Drug(object):
 	'''

@@ -1,6 +1,0 @@
-INSERT INTO pairs VALUES
-	(
-	{{json.gene.id}},
-	{{json.chemical.id}},
-	{{json.connectionTypes|join(",")}}
-	);

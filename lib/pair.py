@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from modules.pgkb_functions import PGKB_connect
-
 # ---------------------------------------------------------------------
 
 class Pair(object):
@@ -11,7 +9,7 @@ Fill in here...
     '''
 
     def __init__(self, gid, symbol, did, authobj):
-    
+
         self.did = did
 
         self.gid = gid
@@ -48,12 +46,12 @@ Fill in here...
         if type(varids) == list:
 
             self.varids = ','.join(list(set(varids)))
-        
+
 
     def FindOptions(self):
 
             self.options = "nan"
-            
+
             results = PGKB_connect(self.authobj, 'clinGuide', self.did, self.gid)
 
             if results is not None:

@@ -1,5 +1,0 @@
-INSERT INTO drug_terms VALUES
-	(
-	{{json.id}},
-	{{json.term}}
-	);

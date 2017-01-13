@@ -1,9 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import json
-import urllib2
-from modules.pgkb_functions import getRef
 
 # -------------------------------------------------------------------------
 
@@ -121,7 +118,7 @@ class Variant(object):
 		self.nend = self.end
 
 		# get reference nucleotide at that position
-				 
+
 		prevbase = getRef(self.chr, self.nbegin, self.nbegin)
 
 		# set defaults
@@ -136,7 +133,7 @@ class Variant(object):
 				
 				alt = prevbase + alt
 
-				alts.append(alt)				 
+				alts.append(alt)
 
 			self.nalt = ", ".join(alts)
 
@@ -168,7 +165,7 @@ class Variant(object):
 
 			self.nref = prevbase + "TA"
 
-			# subtract ref TAs 
+			# subtract ref TAs
 
 			alts.append(prevbase)
 

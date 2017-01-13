@@ -1,6 +1,0 @@
-INSERT INTO drugs VALUES
-	(
-	{{json.id}},
-	{{json.name}},
-	{{json.smiles}}
-	);

@@ -1,0 +1,12 @@
+INSERT INTO LocPGKB VALUES(
+	{{json.id}},
+	{{json.name}},
+	{{json.begin}},
+	{{json.end}},
+	{{json.reference}}
+);
+		
+{% for variant in json.variants %}
+	UPDATE AltAlleles SET  AltPGKB = {{variant}} WHERE VarID = {{json.id}};
+	);
+{% endfor %}

@@ -1,17 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import urllib2
-import json
-from variant import Variant
-from gene import Gene
-from drug import Drug
-from db import Database
-from pair import Pair
-from modules.pgkb_functions import Authenticate, hg19conv
-from tqdm import tqdm
-import sqlite3
-
 # ---------------------------------------------------------------------
 
 class DataCollector(Database):

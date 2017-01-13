@@ -1,9 +1,0 @@
-INSERT INTO hap_vars VALUES
-	(
-	{{json.haplotypes.id}}
-	{{json.location.id}}
-	{{json.location.displayName}},
-	{{json.name}}
-	{{json.allele}},
-	{{json.type}}
-	);

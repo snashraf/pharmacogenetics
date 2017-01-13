@@ -1,15 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import vcf
-import sqlite3
-from collections import Counter, OrderedDict
-from modules.pgkb_functions import seqMaker
-from db import Database
-import subprocess as s
-from Bio import Phylo
-import re
-
 # ---------------------------------------------------------------------
 
 class Patient(Database):
@@ -19,7 +10,7 @@ class Patient(Database):
     '''
 
     def __init__(self, dbname, f):
-        
+
         """
         f = given VCF input file
         GetDesign imports the test design and matches rs values to
@@ -66,7 +57,7 @@ class Patient(Database):
 
 
     def ImportData(self):
-        
+
         """
         Import data from collected database and
         create patientvars tables.
@@ -77,12 +68,12 @@ class Patient(Database):
 
 
     def GetIDs(self):
-        
+
         """
         Gets patient variables, reads into patientvars table
         :return:
         """
-        
+
         print 'Reading patient variants...'
 
         # create list of positions to localize in patient

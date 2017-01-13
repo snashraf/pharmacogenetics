@@ -1,0 +1,7 @@
+CREATE TABLE LocVCF (
+	VarID text,
+	Chromosome text,
+	Start integer,
+	End integer,
+	RefAllele text
+);

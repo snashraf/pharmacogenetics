@@ -1,12 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import urllib2
-import json
-from tqdm import tqdm
-from jinja2 import Template
-import re
-
 # -------------------------
 
 def createSQL(path, context):
@@ -24,20 +18,30 @@ def createSQL(path, context):
 
 	return result
 
-# --- getting all pairs ---
-
-uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
-
-	# get data and read in this json file
-
-data = urllib2.urlopen(uri)
-
-results = json.load(data)
-
-for doc in tqdm(results):
-
-	sql = createSQL("templates/insert/pair.jj", doc)
-
-	print sql
+	# --- getting all pairs ---
+	
+	uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
+	
+		# get data and read in this json file
+	
+	data = urllib2.urlopen(uri)
+	
+	results = json.load(data)
+	
+	for doc in tqdm(results):
+	
+		sql = createSQL("templates/insert/pair.jj", doc)
+	
+		print sql
 
 # -------------------------
+
+def SplitTemplates(path):
+	print "lol"
+	with open(path, "r") as f:
+		lines = f.readlines()
+		print lines
+	
+# -------------------------
+
+SplitTemplates("templates/insert/table_insertion.jj")
