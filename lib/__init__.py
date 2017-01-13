@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import vcf
 import sqlite3
 from collections import Counter, OrderedDict

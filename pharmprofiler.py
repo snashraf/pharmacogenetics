@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from optparse import OptionParser
-from lib.data import DataCollector
-from lib.db import Database
-from lib.patient import Patient
-from collections import OrderedDict
+
+import pharmacogenetics
 
 # --------------------------------------------------------------------------
 
@@ -18,16 +16,18 @@ def main():
 				
 	{"short":"t" , "long":"table", "action":"append","dest":"tables", "default":[],
 			"help":"Download database (specify tables, default is do whole database.\
-			Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) and drugs(chemicals"},
+			Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) \
+			and drugs(chemicals"},
 				
 	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
-			"help":"Patient compressed vcf [g.vcf.gz] file to parse'"}
-		
+			"help":"Patient compressed vcf [g.vcf.gz] file to parse"}
+]
+
 	parser = OptionParser(usage='usage: %prog [options] filename',
-						  version='%prog 1.0')
+																							version='%prog 1.0')
 
 	for o in options:
-		
+
 		parser.add_option(
 			'-{}'.format(o['short']),
 			'--{}'.format(o['long']),
@@ -63,6 +63,8 @@ def CreateDB(dbname, tables):
 # --------------------------------------------------------------------------
 
 	options = OrderedDict ([
+
+		("base", d.__init__),
 		
 		("pairs", d.GetPairs),
 		
@@ -72,12 +74,12 @@ def CreateDB(dbname, tables):
 		
 		("hapvars", d.GetNonRS),
 		
-		("drugs", d.GetDrugData)
-		])
-		
+		("drugs", d.GetDrugData)])
+
 	options['vars'] = [options["rsvars"], options["hapvars"]]
 
-	options['all'] = options.values()
+	options['all'] = options.values
+	()
 
 # --------------------------------------------------------------------------
 
@@ -123,3 +125,6 @@ def CreatePatient(dbname, gvcf):
 if __name__ == '__main__':
 
 	main()
+	
+	print dir(pharmacogenetics)
+	print pharmacogenetics.__name__
