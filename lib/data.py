@@ -1,6 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
+from modules.pgkb_functions import Authenticate, hg19conv
+import urllib2
+import json
+from tqdm import tqdm
+from db import Database
+
 # ---------------------------------------------------------------------
 
 class DataCollector(Database):
@@ -39,13 +46,9 @@ class DataCollector(Database):
 
 		data = urllib2.urlopen(uri)
 
-		guid = 'nan'
+		for response in tqdm(json.load(data)):
 
-		options = 'nan'
-
-		for doc in tqdm(json.load(data)):
-
-			sql = self.insertSQL("pairs").render(json = doc)
+			sql = self.insertSQL("pairs").render(json = response)
 
 			self.sql.executescript(sql)
 
@@ -72,19 +75,23 @@ class DataCollector(Database):
 
 		# get all unique gene ids from the variant table
 
-		self.sql.execute('SELECT DISTINCT gid FROM drugpairs')
+		self.sql.execute('SELECT DISTINCT GeneID FROM Pairs')
 		
 		# TODO CATCH TABLE DOES NOT EXIST
 
 		genes = self.sql.fetchall()
 
-		# go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
+		# go through results and creat e gene objects for each GID with PA (so it can be found on pharmgkb)
 
 		for (gid,) in tqdm(genes):
+			
+			uri = 'https://api.pharmgkb.org/v1/data/gene/{}?view=max'.format(gid)
 
-			g = Gene(gid)
+			data = urllib2.urlopen(uri)
 
-			sql = self.insertSQL("genes").render(json = g.json)
+			response = json.load(data)
+
+			sql = self.insertSQL("genes").render(json = response)
 
 			self.sql.executescript(sql)
 
@@ -95,7 +102,7 @@ class DataCollector(Database):
 
 		self.remakeTable("haplotypes")
 
-		self.sql.execute('SELECT DISTINCT gid FROM genes')
+		self.sql.execute('SELECT DISTINCT GeneID FROM Genes')
 		
 		# TODO CATCH TABLE DOES NOT EXIST
 
@@ -105,18 +112,29 @@ class DataCollector(Database):
 
 		for (gid,) in tqdm(genes):
 
-			uri = 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max'.format(self.gid)
+			uri = 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max'.format(gid)
 
-        	data = urllib2.urlopen(uri)
+			print uri
 
-        	response = json.load(data)
+			try:
 
-			sql = self.insertSQL("haplotypes").render(json = response)
+				data = urllib2.urlopen(uri)
 
-			self.sql.executescript(sql)
-		
+			except:
+
+				continue
+
+			for response in tqdm(json.load(data)):
+
+				print response.keys()
+
+				sql = self.insertSQL("haplotypes").render(json = response)
+
+				print sql
+
+				self.sql.executescript(sql)
+
 		self.conn.commit()
-
 
 
 	def GetVarData(self):
@@ -132,10 +150,10 @@ class DataCollector(Database):
 
 		# get all rsids in the design vcf
 
-		self.sql.execute("SELECT DISTINCT h.RSID FROM Haplotypes h \
-						JOIN Genes g on h.gid = g.gid where rsid LIKE \
-						 "rs%" order by a.gid, a.rsid'
-						 )"
+		self.sql.execute('''SELECT DISTINCT h.VarID FROM Haplotypes h
+						JOIN Genes g on h.GeneID = g.GeneID 
+						order by h.GeneID'''
+						 )
 
 		# rotate through rsids and create variant objects to fetch information
 
@@ -143,9 +161,12 @@ class DataCollector(Database):
 
 			# create variant instances with the given rsid.
 
-			v = Variant(rsid)
+			uri = \
+				'https://api.pharmgkb.org/v1/data/variant/?symbol={}&view=max'.format(rsid)
 
-        	response = json.load(data)
+			data = urllib2.urlopen(uri)
+
+			response = json.load(data)
 
 			sql = self.insertSQL("variants").render(json = response)
 
@@ -156,7 +177,7 @@ class DataCollector(Database):
 
 	def GetNonRS(self):
 
-		self.sql.execute("SELECT rsid, alt, gid from haplotypes where rsid LIKE '%chr%' order by rsid"
+		self.sql.execute("SELECT RSID, AltAllele, GeneId from Haplotypes where rsid LIKE '%chr%' order by rsid"
 						 )
 
 		print 'Parsing non-rs variants...'
@@ -167,7 +188,7 @@ class DataCollector(Database):
 
 			if item is not None:
 
-				self.insertValues("variants", item)
+				self.insertSQL("othervars", item)
 
 		self.conn.commit()
 
@@ -176,7 +197,71 @@ class DataCollector(Database):
 		'''
 		Lalalala
 		'''
-		pass
+		alts = []
+		
+		# left shift position by 1
+
+		self.nbegin = self.begin - 1
+
+		self.nend = self.end
+
+		# get reference nucleotide at that position
+
+		prevbase = getRef(self.chr, self.nbegin, self.nbegin)
+
+		# set defaults
+
+		if self.ref == "-":
+
+		# scenario 1: insertion (REF - ALT A)
+
+			self.nref = prevbase
+
+			for alt in self.alt.split(","):
+				
+				alt = prevbase + alt
+
+				alts.append(alt)
+
+			self.nalt = ", ".join(alts)
+
+		# scenario 2: deletion ( REF A, ALT -, A)
+
+		elif "-" in self.alt:
+ 
+			self.nref = prevbase + self.ref
+
+			for alt in self.alt.split(","):
+
+				if alt == "-":
+
+					alt = prevbase
+
+				if alt == self.ref:
+
+					alt = self.nref
+
+				else:
+
+					alts.append(alt)
+			
+		elif "(" in self.ref:
+
+			# TA repeats
+
+			# manual for now
+
+			self.nref = prevbase + "TA"
+
+			# subtract ref TAs
+
+			alts.append(prevbase)
+
+			alts.append(prevbase + "TATA")
+
+			alts.append(prevbase + "TATATA")
+
+		self.nalt = ",".join(alts)
 
 
 	def GetDrugData(self):
@@ -195,28 +280,72 @@ class DataCollector(Database):
 		# get all the important drug ids (dids) from
 		# the known gene-drug connections table
 
-		self.sql.execute('SELECT DISTINCT did FROM pairs')
+		self.sql.execute('SELECT DISTINCT DrugID FROM Pairs')
 
 		# fetch matching did and use to create uri for query
 
-		for result in tqdm(self.sql.fetchall()):
+		for (did,) in tqdm(self.sql.fetchall()):
 
-			did = result[0]
+			uri = \
+			'https://api.pharmgkb.org/v1/data/chemical/{}?view=max'.format(did)
 
-			d = Drug(did)
+			data = urllib2.urlopen(uri)
 
-			self.insertSQL("drugs", d.json)
+			response = json.load(data)
 
-			for term in d.json['terms']:
-
-				text = item['term']
-				
-				item = (did, text)
-
-				self.insertValues("drug_terms", item)
+			self.insertSQL("drugs")
 
 		self.conn.commit()
 
+
+	def Link(self):
+
+		results = PGKB_connect(self.authobj, 'clinAnno', self.did, self.gid)
+
+		varids = 'nan'
+
+		if results is None:
+
+			self.varids = "nan"
+
+		elif results is not None:
+
+			self.varids = []
+
+			for doc in results:
+
+				rsid = doc['location']['displayName']
+
+				self.varids.append(rsid)
+
+		if type(varids) == list:
+
+			self.varids = ','.join(list(set(varids)))
+
+
+	def FindOptions(self):
+
+			self.options = "nan"
+
+			results = PGKB_connect(self.authobj, 'clinGuide', self.did, self.gid)
+
+			if results is not None:
+
+				self.guid = results['guid']
+
+				optionlist = results['options']
+
+				for gene in optionlist['data']:
+
+					if self.symbol in gene['symbol']:
+
+						self.options = ','.join(gene['options'])
+
+			elif results is None:
+
+				self.guid = "nan"
+
+				self.options = "nan"
 
 	def BedFile(self):
 

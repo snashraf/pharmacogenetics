@@ -5,6 +5,7 @@ import sqlite3
 import os
 import re
 import glob
+from jinja2 import Template, FileSystemLoader, Environment
 
 from modules.pgkb_functions import *
 
@@ -25,7 +26,7 @@ class Database(object):
 
         self.path = os.getcwd()
 
-        self.tempfolder = self.path + '\\templates\\'
+        self.tempfolder = self.path + '\\lib\\templates'
 
         self.setDefaults()
 
@@ -43,12 +44,15 @@ class Database(object):
 
     def insertSQL(self, tabname):
 
-        sql_string = self.loadSQL(self.insfolder + '\\' + tabname
-                                    + '.ins')
+		templateLoader = FileSystemLoader( searchpath=self.tempfolder)
+		
+		templateEnv = Environment( loader=templateLoader )
+		
+		TEMPLATE_FILE = tabname + '.ins'
+		
+		template = templateEnv.get_template( TEMPLATE_FILE )
 
-        template = Template(sql_string)
-
-        return template
+		return template
 
 
     def setDefaults(self):

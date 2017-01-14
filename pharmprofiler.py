@@ -3,7 +3,7 @@
 
 from optparse import OptionParser
 
-from lib import *
+from lib.data import *
 
 # --------------------------------------------------------------------------
 
@@ -63,12 +63,12 @@ def CreateDB(dbname, tables):
 # --------------------------------------------------------------------------
 
 	options = OrderedDict ([
-
-		("base", d.__init__),
 		
 		("pairs", d.GetPairs),
 		
 		("genes", d.GetGeneData),
+
+		("haplotypes", d.GetHaplotypes),
 		
 		("rsvars", d.GetVarData),
 		
@@ -78,8 +78,7 @@ def CreateDB(dbname, tables):
 
 	options['vars'] = [options["rsvars"], options["hapvars"]]
 
-	options['all'] = options.values
-	()
+	options['all'] = options.values()
 
 # --------------------------------------------------------------------------
 
