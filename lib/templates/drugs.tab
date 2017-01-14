@@ -5,7 +5,7 @@ CREATE TABLE Drugs (
 );
 
 CREATE TABLE DrugTerms (
-	{{json.id}},
-	{{json.resource}},
-	{{json.term}}
+	DrugID text,
+	Resource text,
+	Term text
 );

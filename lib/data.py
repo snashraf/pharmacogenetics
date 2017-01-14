@@ -27,7 +27,7 @@ class DataCollector(Database):
 		:return:
 		"""
 
-		self.remakeTable('drugpairs')
+		self.remakeTable('pairs')
 
 		print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
 
@@ -45,9 +45,9 @@ class DataCollector(Database):
 
 		for doc in tqdm(json.load(data)):
 
-			sql = self.templateSQL("pairs").render(json = doc)
+			sql = self.insertSQL("pairs").render(json = doc)
 
-			self.sql.execute(sql)
+			self.sql.executescript(sql)
 
 		self.conn.commit()
 
@@ -84,7 +84,9 @@ class DataCollector(Database):
 
 			g = Gene(gid)
 
-			self.insertSQL("genes", g.json)
+			sql = self.insertSQL("genes").render(json = g.json)
+
+			self.sql.executescript(sql)
 
 		self.conn.commit()
 
@@ -108,17 +110,11 @@ class DataCollector(Database):
         	data = urllib2.urlopen(uri)
 
         	response = json.load(data)
-			
-			for doc in response:
 
-				self.insertSQL("gene_haps", doc)
+			sql = self.insertSQL("haplotypes").render(json = response)
 
-				self.insertSQL("haplotypes", doc)
-
-				for allele in doc['alleles']:
-
-					self.insertSQL("hap_vars", doc)
-
+			self.sql.executescript(sql)
+		
 		self.conn.commit()
 
 
@@ -134,12 +130,12 @@ class DataCollector(Database):
 
 		self.remakeTable("variants")
 
-		self.remakeTable("alias")
-
 		# get all rsids in the design vcf
 
-		self.sql.execute('SELECT DISTINCT h.rsid FROM hap_vars h JOIN genes g on h.gid = g.gid where rsid LIKE "rs%" order by a.gid, a.rsid'
-						 )
+		self.sql.execute("SELECT DISTINCT h.RSID FROM Haplotypes h \
+						JOIN Genes g on h.gid = g.gid where rsid LIKE \
+						 "rs%" order by a.gid, a.rsid'
+						 )"
 
 		# rotate through rsids and create variant objects to fetch information
 
@@ -147,48 +143,13 @@ class DataCollector(Database):
 
 			# create variant instances with the given rsid.
 
-			try:
+			v = Variant(rsid)
 
-				v = Variant(rsid)
+        	response = json.load(data)
 
-			except KeyError:
+			sql = self.insertSQL("variants").render(json = response)
 
-				continue
-
-			# this results in a combination tuple of rsid and gid and aliases
-
-			item = (
-				rsid,
-				v.id,
-				gid,
-				v.chr,
-				v.begin,
-				v.end,
-				v.ref,
-				v.alt,
-				v.nbegin,
-				v.nend,
-				v.nref,
-				v.nalt,
-				v.muttype,
-				)
-
-			self.sql.execute('''INSERT INTO variants VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)'''
-							 , item)
-
-			# go through aliases, ignore duplicates and put in alias table
-
-			for alias in v.names:
-
-				try:
-
-					self.insertValues("alias", (rsid, alias))
-
-				except sqlite3.IntegrityError:
-
-					# on duplicate, ignore
-
-					continue
+			self.sql.executescript(sql)
 
 			self.conn.commit()
 

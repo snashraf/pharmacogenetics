@@ -1,8 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# --------------------------------------------------------------------------
+import sqlite3
+import os
+import re
+import glob
 
+from modules.pgkb_functions import *
+
+# --------------------------------------------------------------------------
 
 class Database(object):
 
@@ -19,13 +25,11 @@ class Database(object):
 
         self.path = os.getcwd()
 
-        self.tempfolder = self.path + '\\templates\\table'
-
-        self.insfolder = self.path + '\\templates\\insert'
+        self.tempfolder = self.path + '\\templates\\'
 
         self.setDefaults()
 
-    def formatSQL(self, path):
+    def loadSQL(self, path):
 
         conv = ''
         filt = '\t\n'
@@ -36,55 +40,47 @@ class Database(object):
 
         return conv
 
-    def templateSQL(self, tabname):
 
-        sql_string = self.formatSQL(self.insfolder + '\\' + tabname
-                                    + '.txt')
+    def insertSQL(self, tabname):
+
+        sql_string = self.loadSQL(self.insfolder + '\\' + tabname
+                                    + '.ins')
 
         template = Template(sql_string)
 
         return template
 
+
     def setDefaults(self):
 
-        templates = os.listdir(self.tempfolder)
+        dropTables = glob.glob(self.tempfolder + "*.rm")
+        createTables = glob.glob(self.tempfolder + "*.tab")
 
-        for template in templates:
+        for template in dropTables + createTables:
 
-            self.removeTable(template.rstrip('.txt'))
+            sql = self.loadSQL(template)
 
-            sql = self.formatSQL(self.tempfolder + '\\' + template)
-
-            self.sql.execute(sql)
+            self.sql.executescript(sql)
 
         self.conn.commit()
 
+
     def removeTable(self, tabname):
-        """
-  This function rebuilds the database, use for updating the db periodically?
-  return:
-  """
 
-        self.sql.execute('DROP TABLE IF EXISTS {}'.format(tabname))
+        sql = self.loadSQL(self.tempfolder + '\\' + tabname + '.rm')
 
-    def alterDefault(self, tabname, tabvalues):
+        self.sql.executescript(sql)
 
-        self.tableoptions[tabname] = tabvalues
+        self.conn.commit()
+
 
     def createTable(self, tabname):
 
-        sql = self.formatSQL(self.tempfolder + '\\' + tabname + '.txt')
+        sql = self.loadSQL(self.tempfolder + '\\' + tabname + '.tab')
 
-        self.sql.execute(sql)
+        self.sql.executescript(sql)
 
         self.conn.commit()
-
-    def insertValues(self, tabname, tabvalues):
-
-        qmarks = ','.join(['?' for item in tabvalues])
-
-        self.sql.execute('INSERT INTO {} VALUES({})'.format(tabname,
-                         qmarks), tabvalues)
 
     def remakeTable(self, tabname):
 
@@ -94,5 +90,6 @@ class Database(object):
 
         self.conn.commit()
 
+# -----------------------------------------------------
 
 db = Database('test')

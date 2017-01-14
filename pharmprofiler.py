@@ -3,7 +3,7 @@
 
 from optparse import OptionParser
 
-import pharmacogenetics
+from lib import *
 
 # --------------------------------------------------------------------------
 
@@ -125,6 +125,3 @@ def CreatePatient(dbname, gvcf):
 if __name__ == '__main__':
 
 	main()
-	
-	print dir(pharmacogenetics)
-	print pharmacogenetics.__name__
