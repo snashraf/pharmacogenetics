@@ -233,89 +233,62 @@ def getRef(loc, start, end):
 
 	return r.text
 
-
 def hg19conv(rsid, gid, alt):
 
+	d = {}
 	# find chromosome number
 
-	loc = rsid.split(':')[0]
+	d['loc'] = rsid.split(':')[0]
 
 	# find location
 
-	begin = int(rsid[rsid.find(':') + 1:rsid.find('(')])
+	d['begin'] = int(rsid[rsid.find(':') + 1:rsid.find('(')])
 
-	end = begin
+	d['end'] = d['begin']
 
 	# get reference position
 
-	ref = getRef(loc, begin, begin)
+	d['ref'] = getRef(d['loc'], d['begin'], d['begin'])
 
-	if ref == alt or 'delGENE' in alt:
+	if d['ref'] == alt or 'delGENE' in alt:
 
 		return None
 
-	if len(ref) == len(alt):
+	if len(d['ref']) == len(alt):
 
-		muttype = 'snp'
-
-		nbegin = begin
-
-		nend = end
-
-		nref = ref
-
-		nalt = alt
+		d['muttype'] = 'snp'
 
 	if 'ins' in alt:
 
-		nbegin = begin
-
-		nalt = alt.replace('ins', ref)
+		d['alt'] = alt.replace('ins', d['ref'])
 
 		muttype = 'in-del'
 
-		nref = ref
-
-		nend = nbegin + len(alt)
+		d['end'] = d['begin'] + len(alt)
 
 	elif 'del' in alt:
 
-		nbegin = begin - 1
+		d['begin'] -= 1
 
-		prev = getRef(loc, nbegin, nbegin)
+		prev = getRef(d['loc'], d['begin'], d['begin'])
 
 		if alt == 'del':
 
-			nref = prev + ref
+			d['ref'] = prev + d['ref']
 		
 		else:
 
-			nref = prev + alt.lstrip('del')
+			d['ref'] = prev + alt.lstrip('del')
 
-		nalt = prev
+		d['alt'] = prev
 
-		muttype = 'in-del'
+		d['muttype'] = 'in-del'
 
-		nend = nbegin + len(ref)
+		d['end'] = d['begin'] + len(d['ref'])
 
 	else:
 
+		print 'oops'
 		return None
-	
-	item = (
-		rsid,
-		rsid,
-		gid,
-		loc,
-		begin,
-		end,
-		ref,
-		alt,
-		nbegin,
-		nend,
-		nref,
-		nalt,
-		muttype,
-		)
 
-	return item
+	return d

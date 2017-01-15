@@ -1,7 +1,8 @@
-CREATE TABLE LocVCF (
+CREATE TABLE LocPGKB (
 	VarID text,
 	Chromosome text,
 	Start integer,
 	End integer,
-	RefAllele text
+	RefAllele text,
+	MutType text
 );

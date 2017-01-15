@@ -1,7 +1,8 @@
 CREATE TABLE Variants (
 	VarID text,
 	RSID text,
-	Significance text
+	Significance text,
+	MutType text
 );
 
 CREATE TABLE LocPGKB (

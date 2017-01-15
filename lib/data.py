@@ -7,6 +7,7 @@ import urllib2
 import json
 from tqdm import tqdm
 from db import Database
+import pprint as pp
 
 # ---------------------------------------------------------------------
 
@@ -55,12 +56,38 @@ class DataCollector(Database):
 		self.conn.commit()
 
 
-	def GetAnnotations(self):
-		pass
+	def GetDrugData(self):
+		"""
+		Gets info on seperate drugs, such as name and associated terms
+		terms give info on what the drug does
+		:return:
+		"""
 
+		print 'Getting drug data /(>_<)\\}'
 
-	def GetGuidelines(self):
-		pass
+		# drop and re-create table drugs
+
+		self.remakeTable("drugs")
+
+		# get all the important drug ids (dids) from
+		# the known gene-drug connections table
+
+		self.sql.execute('SELECT DISTINCT DrugID FROM Pairs')
+
+		# fetch matching did and use to create uri for query
+
+		for (did,) in tqdm(self.sql.fetchall()):
+
+			uri = \
+			'https://api.pharmgkb.org/v1/data/chemical/{}?view=max'.format(did)
+
+			data = urllib2.urlopen(uri)
+
+			response = json.load(data)
+
+			self.insertSQL("drugs")
+
+		self.conn.commit()
 
 
 	def GetGeneData(self):
@@ -114,8 +141,6 @@ class DataCollector(Database):
 
 			uri = 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max'.format(gid)
 
-			print uri
-
 			try:
 
 				data = urllib2.urlopen(uri)
@@ -124,13 +149,9 @@ class DataCollector(Database):
 
 				continue
 
-			for response in tqdm(json.load(data)):
-
-				print response.keys()
+			for response in json.load(data):
 
 				sql = self.insertSQL("haplotypes").render(json = response)
-
-				print sql
 
 				self.sql.executescript(sql)
 
@@ -150,10 +171,14 @@ class DataCollector(Database):
 
 		# get all rsids in the design vcf
 
-		self.sql.execute('''SELECT DISTINCT h.VarID FROM Haplotypes h
+		self.sql.execute('''
+						SELECT DISTINCT v.VarName from HapVars v 
+						JOIN Haplotypes h ON v.HapID = h.HapID 
 						JOIN Genes g on h.GeneID = g.GeneID 
-						order by h.GeneID'''
-						 )
+						WHERE v.VarName LIKE "rs%"
+						ORDER BY h.GeneID;
+						'''
+						)
 
 		# rotate through rsids and create variant objects to fetch information
 
@@ -168,27 +193,46 @@ class DataCollector(Database):
 
 			response = json.load(data)
 
-			sql = self.insertSQL("variants").render(json = response)
+			# pp.pprint(response)
+
+			sql = self.insertSQL("variants").render(json = response[0])
 
 			self.sql.executescript(sql)
 
 			self.conn.commit()
 
+	def ConvertIndels(self):
+
+		self.sql.execute('''
+				SELECT DISTINCT VarID
+			''')
 
 	def GetNonRS(self):
 
-		self.sql.execute("SELECT RSID, AltAllele, GeneId from Haplotypes where rsid LIKE '%chr%' order by rsid"
-						 )
+		self.remakeTable("othervars")
+
+		self.sql.execute('''
+				SELECT DISTINCT v.VarName, v.AltAllele, h.GeneID from HapVars v 
+				JOIN Haplotypes h ON v.HapID = h.HapID 
+				JOIN Genes g on h.GeneID = g.GeneID 
+				WHERE v.VarName LIKE "%chr%"
+				ORDER BY h.GeneID;
+				'''
+				 )
 
 		print 'Parsing non-rs variants...'
 
-		for (rsid, alt, gid) in tqdm(self.sql.fetchall()):
+		for (rsid, gid, alt) in tqdm(self.sql.fetchall()):
 
-			item = hg19conv(rsid, gid, alt)
+			d = hg19conv(rsid, gid, alt)
 
-			if item is not None:
+			print d
 
-				self.insertSQL("othervars", item)
+			sql = self.insertSQL("othervars").render(json = d)
+
+			print sql
+
+			self.sql.executescript(sql)
 
 		self.conn.commit()
 
@@ -262,40 +306,6 @@ class DataCollector(Database):
 			alts.append(prevbase + "TATATA")
 
 		self.nalt = ",".join(alts)
-
-
-	def GetDrugData(self):
-		"""
-		Gets info on seperate drugs, such as name and associated terms
-		terms give info on what the drug does
-		:return:
-		"""
-
-		print 'Getting drug data /(>_<)\\}'
-
-		# drop and re-create table drugs
-
-		self.remakeTable("drugs")
-
-		# get all the important drug ids (dids) from
-		# the known gene-drug connections table
-
-		self.sql.execute('SELECT DISTINCT DrugID FROM Pairs')
-
-		# fetch matching did and use to create uri for query
-
-		for (did,) in tqdm(self.sql.fetchall()):
-
-			uri = \
-			'https://api.pharmgkb.org/v1/data/chemical/{}?view=max'.format(did)
-
-			data = urllib2.urlopen(uri)
-
-			response = json.load(data)
-
-			self.insertSQL("drugs")
-
-		self.conn.commit()
 
 
 	def Link(self):

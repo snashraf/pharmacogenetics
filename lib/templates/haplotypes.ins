@@ -7,12 +7,11 @@ INSERT INTO Haplotypes VALUES(
 );
 
 {% for doc in json.alleles %}
-
-	INSERT INTO HapVars (
-		"{{doc.linkedObjects.variant.id}}",
-		"{{doc.location.displayName}}",
-		"{{doc.allele}}",
-		"{{doc.type}}"
-	);
-
+	{% if doc.allele %}
+		INSERT INTO HapVars VALUES(
+			"{{json.id}}",
+			"{{doc.location.displayName}}",
+			"{{doc.allele}}"
+		);
+	{% endif %}
 {% endfor %}

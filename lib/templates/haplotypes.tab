@@ -8,8 +8,7 @@ CREATE TABLE Haplotypes (
 
 CREATE TABLE HapVars (
 	HapID text,
-	VarID text,
-	AltAllele text,
-	MutType text
+	VarName text,
+	AltAllele text
 );
 
