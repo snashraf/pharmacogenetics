@@ -1,6 +1,6 @@
 CREATE TABLE Drugs (
 	DrugID text,
-	ChemName text
+	ChemName text,
 	ChemFormula text
 );
 

@@ -81,9 +81,12 @@ class DataCollector(Database):
 
 			data = getJson(uri, self.authobj)
 			
-			self.insertSQL("drugs").render(json = data)
+			sql = self.insertSQL("drugs").render(json = data)
+			
+			self.sql.executescript(sql)
 
-			self.conn.commit()
+
+		self.conn.commit()
 
 
 	def GetGeneData(self):

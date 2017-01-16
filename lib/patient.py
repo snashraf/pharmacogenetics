@@ -65,6 +65,7 @@ class Patient(Database):
 	
 	   #     self.conn.commit()
 
+# --------------------------------- SNP parsing ----------------------------------------
 
     def GetSNPs(self):
 	
@@ -137,6 +138,28 @@ class Patient(Database):
 			sql = self.insertSQL("patannotations").render(json = data, patallele = allele)
 		
 			self.sql.executescript(sql)
+
+			# FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
+			
+			overviewQuery = '''
+			select d.chemname, g.genename, a.anid, p.patallele, loe
+			from patannotations p
+			join annotations a
+			on p.anid = a.anid
+			join pairs p
+			on a.drugid = p.drugid
+			join drugs d
+			on p.drugid = d.drugid
+			join genes g
+			on g.geneid = p.geneid
+			order by g.genename;
+			'''
+
+# ---------------------------- Indel Parsing --------------------------------------
+
+# TBA
+
+# ---------------------------- Haplotype parsing -------------------------------
 
 
     def Hapmatcher(self):
