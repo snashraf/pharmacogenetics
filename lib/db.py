@@ -6,39 +6,42 @@ import os
 import re
 import glob
 from jinja2 import Template, FileSystemLoader, Environment
-
 from modules.pgkb_functions import *
 
 # --------------------------------------------------------------------------
 
 class Database(object):
 
-    '''
+	'''
  Database class. Initializes database and takes care of doing big changes.
 
- '''
+	'''
 
-    def __init__(self, dbpath):
+	def __init__(self, dbpath):
 
-        self.tempfolder = "/".join(dbpath.split("/")[0:-1]).replace( 'db', 'templates')
+		path = os.path.dirname(dbpath)
 
-	self.conn = sqlite3.connect(dbpath)  # connect to db- if it doesn't exist, create it
+		self.tempfolder = path.replace("db", "templates")
 
-        self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
+		self.conn = sqlite3.connect(dbpath)  # connect to db- if it doesn't exist, create it
 
-
-    def loadSQL(self, path):
-
-        sql = ''
-
-        with open(path, 'r') as f:
-            for line in f.readlines():
-                sql += re.sub('[\n\t]', '', line)
-
-        return sql
+		self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
 
-    def insertSQL(self, tabname):
+	def loadSQL(self, path):
+
+		sql = ''
+
+		with open(path, 'r') as f:
+
+			for line in f.readlines():
+			
+				sql += re.sub('[\n\t]', '', line)
+
+		return sql
+
+
+	def insertSQL(self, tabname):
 
 		templateLoader = FileSystemLoader( searchpath=self.tempfolder)
 		
@@ -51,44 +54,45 @@ class Database(object):
 		return template
 	
 
-    def setDefaults(self):
+	def setDefaults(self):
 
-        dropTables = glob.glob(os.path.join(self.tempfolder, "*.rm"))
-        createTables = glob.glob(os.path.join(self.tempfolder, "*.tab"))
+		dropTables = glob.glob(os.path.join(self.tempfolder, "*.rm"))
+		
+		createTables = glob.glob(os.path.join(self.tempfolder, "*.tab"))
 
-        for template in dropTables + createTables:
-        	        	
-        	sql = self.loadSQL(template)
+		for template in dropTables + createTables:
+						
+			sql = self.loadSQL(template)
 
 		self.sql.executescript(sql)
 		
-	self.conn.commit()
+		self.conn.commit()
 
 
-    def removeTable(self, tabname):
+	def removeTable(self, tabname):
 
-        sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.rm'))
+		sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.rm'))
 
-        self.sql.executescript(sql)
+		self.sql.executescript(sql)
 
-        self.conn.commit()
-
-
-    def createTable(self, tabname):
-
-        sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.tab'))
-
-        self.sql.executescript(sql)
-
-        self.conn.commit()
+		self.conn.commit()
 
 
-    def remakeTable(self, tabname):
+	def createTable(self, tabname):
 
-        self.removeTable(tabname)
+		sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.tab'))
 
-        self.createTable(tabname)
+		self.sql.executescript(sql)
 
-        self.conn.commit()
+		self.conn.commit()
+
+
+	def remakeTable(self, tabname):
+
+		self.removeTable(tabname)
+
+		self.createTable(tabname)
+
+		self.conn.commit()
 
 # -----------------------------------------------------

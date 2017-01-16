@@ -8,6 +8,7 @@ import json
 from tqdm import tqdm
 from db import Database
 import pprint as pp
+import os
 
 # ---------------------------------------------------------------------
 
@@ -21,7 +22,17 @@ class DataCollector(Database):
 		"""
 		takes database object to work on!
 		"""
-		Database.__init__(self, dbname)
+		path = os.path.dirname(__file__)
+
+		if len(path) == 0:
+
+			path = os.getcwd()
+
+		dbfolder = os.path.join(path, 'db')
+
+		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
+
+		Database.__init__(self, dbpath)
 
 
 	def Authenticate(self):

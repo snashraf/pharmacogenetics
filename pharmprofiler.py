@@ -59,15 +59,7 @@ def CreateDB(dbname, tables):
 
 # --------------------------------------------------------------------------
 
-        path = os.path.dirname(__file__)
-
-	dbfolder = os.path.join(path, 'lib', 'db')
-
-	dbpath = os.path.join(dbfolder, '%s.db' % dbname)
-
-# --------------------------------------------------------------------------
-
-	d = DataCollector(dbpath)
+	d = DataCollector(dbname)
 
 # --------------------------------------------------------------------------
 

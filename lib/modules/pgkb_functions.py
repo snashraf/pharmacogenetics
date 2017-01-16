@@ -210,6 +210,7 @@ def seqMaker(rsidorder, reference, rsids):
 
 
 def Aligner(seqlist):
+	
 	pass
 
 
@@ -233,9 +234,11 @@ def getRef(loc, start, end):
 
 	return r.text
 
+
 def hg19conv(rsid, gid, alt):
 
 	d = {}
+
 	# find chromosome number
 
 	d['loc'] = rsid.split(':')[0]
