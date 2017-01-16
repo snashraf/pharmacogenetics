@@ -58,6 +58,7 @@ def main():
 def CreateDB(dbname, tables):
 
 # --------------------------------------------------------------------------
+
         path = os.path.dirname(__file__)
 
 	dbfolder = os.path.join(path, 'lib', 'db')

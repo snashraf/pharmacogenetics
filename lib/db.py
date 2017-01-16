@@ -26,6 +26,7 @@ class Database(object):
 
         self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
+
     def loadSQL(self, path):
 
         sql = ''

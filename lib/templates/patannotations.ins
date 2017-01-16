@@ -1,0 +1,14 @@
+{% for phen in json.allelePhenotypes %}
+
+	{% if phen.allele == patallele %}
+
+		INSERT INTO PatAnnotations VALUES(
+			"{{json.id}}",
+			"{{patallele}}",
+			"{{phen.id}}",
+			"{{phen.phenotype}}"
+		);
+
+	{% endif %}
+
+{% endfor %}
