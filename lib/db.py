@@ -18,28 +18,23 @@ class Database(object):
 
  '''
 
-    def __init__(self, dbname):
+    def __init__(self, dbpath):
 
-        self.conn = sqlite3.connect('%s.db' % dbname)  # connect to db- if it doesn't exist, create it
+        self.tempfolder = "/".join(dbpath.split("/")[0:-1]).replace( 'db', 'templates')
+
+	self.conn = sqlite3.connect(dbpath)  # connect to db- if it doesn't exist, create it
 
         self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
-        self.path = os.getcwd()
-
-        self.tempfolder = self.path + '\\lib\\templates'
-
-        self.setDefaults()
-
     def loadSQL(self, path):
 
-        conv = ''
-        filt = '\t\n'
+        sql = ''
 
         with open(path, 'r') as f:
             for line in f.readlines():
-                conv += re.sub('[\n\t]', '', line)
+                sql += re.sub('[\n\t]', '', line)
 
-        return conv
+        return sql
 
 
     def insertSQL(self, tabname):
@@ -53,25 +48,25 @@ class Database(object):
 		template = templateEnv.get_template( TEMPLATE_FILE )
 
 		return template
-
+	
 
     def setDefaults(self):
 
-        dropTables = glob.glob(self.tempfolder + "*.rm")
-        createTables = glob.glob(self.tempfolder + "*.tab")
+        dropTables = glob.glob(os.path.join(self.tempfolder, "*.rm"))
+        createTables = glob.glob(os.path.join(self.tempfolder, "*.tab"))
 
         for template in dropTables + createTables:
+        	        	
+        	sql = self.loadSQL(template)
 
-            sql = self.loadSQL(template)
-
-            self.sql.executescript(sql)
-
-        self.conn.commit()
+		self.sql.executescript(sql)
+		
+	self.conn.commit()
 
 
     def removeTable(self, tabname):
 
-        sql = self.loadSQL(self.tempfolder + '\\' + tabname + '.rm')
+        sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.rm'))
 
         self.sql.executescript(sql)
 
@@ -80,11 +75,12 @@ class Database(object):
 
     def createTable(self, tabname):
 
-        sql = self.loadSQL(self.tempfolder + '\\' + tabname + '.tab')
+        sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.tab'))
 
         self.sql.executescript(sql)
 
         self.conn.commit()
+
 
     def remakeTable(self, tabname):
 
@@ -95,5 +91,3 @@ class Database(object):
         self.conn.commit()
 
 # -----------------------------------------------------
-
-db = Database('test')

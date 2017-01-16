@@ -1,6 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from data import *
+import os
+import vcf
+from tqdm import tqdm
+
 # ---------------------------------------------------------------------
 
 class Patient(Database):
@@ -21,8 +26,18 @@ class Patient(Database):
 
         print 'Initiating patient...'
 
-        Database.__init__(self, dbname)
+        path = os.path.dirname(__file__)
 
+        dbfolder = os.path.join(path, 'db')
+
+	dbpath = os.path.join(dbfolder, '%s.db' % dbname)
+	
+	print dbpath
+
+        Database.__init__(self, dbpath)
+
+	# -------------------------------------------------------------
+	
         self.f = f
 
         self.reader = vcf.Reader(open(f, 'r'))
@@ -47,7 +62,7 @@ class Patient(Database):
 
         self.ImportData()
 
-        self.GetIDs()
+        self.GetSNPs()
 
         self.conn.commit()
 
@@ -67,58 +82,44 @@ class Patient(Database):
         self.remakeTable("patientvars")
 
 
-    def GetIDs(self):
+    def GetSNPs(self):
 
         """
         Gets patient variables, reads into patientvars table
         :return:
         """
 
-        print 'Reading patient variants...'
+	print 'Reading patient variants...'
 
         # create list of positions to localize in patient
 
-        for record in self.reader:
+ 	self.sql.execute('''
+					SELECT DISTINCT l.Chromosome, l.Start, l.End, l.RefAllele, v.MutType
+					FROM LocPGKB l
+					JOIN Variants v
+					ON v.VarID = l.VarID
+		                    	WHERE v.MutType = "snp"
+		                    ''')
 
-            self.sql.execute("SELECT DISTINCT loc, start, end, ref, alt, muttype FROM variants")
+        positions = self.sql.fetchall()
 
-            positions = self.sql.fetchall()
+	print "Fetching patient variants... o(* ^ *o)"
+	
+        for (loc, start, end, ref, muttype) in tqdm(positions):
+        	        			
+            	records = self.reader.fetch(str(loc.lstrip("chr")), start-1, end=end)
+			
+            # TODO PLEASE DO NOT DO THIS
 
-            for (loc, start, end, ref, alt, muttype) in positions:
+		for record in records: # doctest: +SKIP
 
-                records = self.reader.fetch(str(loc), start-1, end=end)
+	            	sql = self.insertSQL("patientvars").render(record = record)
+							
+			self.sql.executescript(sql)
 
-                # TODO PLEASE DO NOT DO THIS
-
-                for record in records: # doctest: +SKIP
-
-                    ref = str(record.REF)
-
-                    start = record.POS
-
-                    end = start + 1
-
-                    alt = (str(record.ALT[0])).replace("<NON_REF>",".")
-
-                    for sample in record.samples:
-
-                        call = str(sample['GT'])  # 1/0 etc, phasing found here
-
-                        try:
-
-                            pid = str(sample['PID'])
-
-                            pgt = str(sample['PGT'])
-
-                        except KeyError:
-
-                            pid = "nyan"
-
-                            pgt = "nyan"
-
-                    item = (loc, start, end, ref, alt, call, pid, pgt)
-
-                    self.insertValues("patientvars", item)
+	def AnnotateSNPs(self):
+		
+		pass
 
 
     def Hapmatcher(self):
@@ -131,7 +132,7 @@ class Patient(Database):
 
         self.remakeTable('patienthaps')
 
-        self.sql.execute("SELECT DISTINCT gid from genes")
+        self.sql.execute("SELECT DISTINCT GeneID from Genes")
 
         gids = [tup[0] for tup in self.sql.fetchall()]
 
@@ -141,17 +142,17 @@ class Patient(Database):
 
             sequences = []
 
-            self.sql.execute("SELECT a.rsid, a.alt, a.hapid from alleles a join variants v on a.rsid=v.rsid where a.hgvs like '%=%' and a.gid=? order by v.start", (gid,))
+            self.sql.execute('''SELECT h.VarName, h.AltAllele, h.HapID
+                    from HapVars h
+                    join Variants v
+                    on h.VarName = v.RSID
+                    join Haplotypes t
+                    ON t.HapID = h.HapID
+                    where t.HGVS like '%=%'
+                    and h.GID=?
+                    order by v.start''', (gid,))
 
             refrsids = self.sql.fetchall()
-
-            if not refrsids[0][2]:
-
-                continue
-
-            else:
-
-                refid = refrsids[0][2]
 
             rsidorder = [rsid for (rsid, alt, hapid) in refrsids]
 
@@ -290,7 +291,7 @@ class Patient(Database):
             for clade in tree.find_clades():
 
                 if clade.name and clade.name not in names:
-                	
+
                         names.append(clade.name)
 
             tree.root_with_outgroup({refid})

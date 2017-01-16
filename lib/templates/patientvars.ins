@@ -1,0 +1,13 @@
+{% for sample in record.samples %}
+
+	INSERT INTO PatientVars VALUES (
+		"{{record.CHROM}}",
+		"{{record.POS}}",
+		"{{record.REF}}",
+		"{{record.ALT[0]}}",
+		"{{sample.GT}}",
+		"{{sample.PID}}",
+		"{{sample.PGT}}"
+	);
+
+{% endfor %}

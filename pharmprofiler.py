@@ -4,6 +4,7 @@
 from optparse import OptionParser
 
 from lib.data import *
+from lib.patient import *
 
 # --------------------------------------------------------------------------
 
@@ -57,8 +58,15 @@ def main():
 def CreateDB(dbname, tables):
 
 # --------------------------------------------------------------------------
+        path = os.path.dirname(__file__)
 
-	d = DataCollector(dbname)
+	dbfolder = os.path.join(path, 'lib', 'db')
+
+	dbpath = os.path.join(dbfolder, '%s.db' % dbname)
+
+# --------------------------------------------------------------------------
+
+	d = DataCollector(dbpath)
 
 # --------------------------------------------------------------------------
 
@@ -74,7 +82,11 @@ def CreateDB(dbname, tables):
 		
 		("hapvars", d.GetNonRS),
 		
-		("drugs", d.GetDrugData)])
+		("drugs", d.GetDrugData),
+		
+		("annotations", d.GetAnnotations)
+		
+		])
 
 	options['vars'] = [options["rsvars"], options["hapvars"]]
 
