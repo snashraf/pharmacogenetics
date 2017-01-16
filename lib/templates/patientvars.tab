@@ -3,7 +3,8 @@ CREATE TABLE PatientVars (
 	Start integer,
 	RefAllele text,
 	AltAllele text,
-	Call text,
+	CallNum text,
+	CallBase text,
 	PID text,
 	PGT text
 );

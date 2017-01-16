@@ -6,13 +6,12 @@ INSERT INTO Variants VALUES(
 );
 
 {% if json.location %}
-	{% set seq = json.location.sequence.name.split(']')[1] %}
-	{% set chr = seq.split('chr') %}
-		
+	{% set seq = json.location.sequence.name.split(']') %}
+	
 		INSERT INTO LocPGKB VALUES(
 			"{{json.id}}",
 			"{{json.location.name}}",
-			"{{chr[1]}}",
+			"{{seq[1] | replace("chr", "")}}",
 			"{{json.location.begin}}",
 			"{{json.location.end}}",
 			"{{json.location.reference}}"
