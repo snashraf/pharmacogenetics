@@ -1,0 +1,16 @@
+{% if json.varid %}
+
+	INSERT INTO LocVCF VALUES(
+		"{{json.varid}}",
+		"{{json.genome}}",
+		"{{json.chromosome}}",
+		"{{json.start}}",
+		"{{json.end}}",
+		"{{json.ref}}"
+	);
+			
+	UPDATE AltAlleles SET AltVCF
+			= "{{json.alt}}"
+			WHERE AltPGKB = "{{alt}}";
+
+{% endif %}

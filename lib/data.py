@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
-from modules.pgkb_functions import Authenticate, hg19conv, getJson
+from modules.pgkb_functions import Authenticate, hg19conv, getJson, getRef
 import urllib2
 import json
 from tqdm import tqdm
@@ -203,8 +203,6 @@ class DataCollector(Database):
 
 			sql = self.insertSQL("variants").render(json = data[0])
 
-			print sql
-
 			self.sql.executescript(sql)
 
 		self.conn.commit()
@@ -230,8 +228,6 @@ class DataCollector(Database):
 
 			sql = self.insertSQL("othervars").render(json = d)
 
-			print sql
-
 			self.sql.executescript(sql)
 
 		self.conn.commit()
@@ -239,79 +235,77 @@ class DataCollector(Database):
 
 	def ConvertIndels(self):
 
-		self.sql.execute('''
-				SELECT DISTINCT VarID, Chromosome, Begin, End FROM Variants
-				WHERE MutType = "in-del";				
-				''')
+		self.remakeTable("indels")
 
-		for (varid, loc, begin, end) in self.sql.fetchall():
+		self.sql.execute('''
+						SELECT DISTINCT 
+						l.VarID, RefGenome, Chromosome, Start, End, RefAllele, AltPGKB
+						FROM LocPGKB l
+						JOIN Variants v
+						ON l.VarID = v.VarID
+						JOIN AltAlleles a
+						ON v.VarID = a.VarID
+						WHERE v.MutType = "in-del"
+						AND v.RSID LIKE "rs%"
+						''')
+		print "Converting indels.. \(>w <)/"
+
+		for (varid, genome, loc, start, end, ref, alt) in tqdm(self.sql.fetchall()):
 			
-			alts = []
-			
+			# create json for template usage
+
+			shifted = {"varid":varid, "chromosome":loc, "genome":genome}
+
 			# left shift position by 1
 	
-			self.nbegin = self.begin - 1
+			shifted['start'] = start - 1
 	
-			self.nend = self.end
+			shifted['end'] = end
 	
 			# get reference nucleotide at that position
 	
-			prevbase = getRef(self.chr, self.nbegin, self.nbegin)
+			prevbase = getRef(loc, shifted['start'], shifted['start'])
 	
-			# set defaults
+			# insertion or deletion?
+
+			if ref == "-":
+
+				# insertion scenario
+
+				shifted['ref'] = prevbase
 	
-			if self.ref == "-":
+				shifted['alt'] = prevbase + alt	
+
+			elif alt == "-":
+
+				# deletion scenario
+
+				shifted['ref'] = prevbase + ref
 	
-			# scenario 1: insertion (REF - ALT A)
+				if alt == "-":
 	
-				self.nref = prevbase
+					salt = prevbase
 	
-				for alt in self.alt.split(","):
-					
-					alt = prevbase + alt
+				if alt == ref:
 	
-					alts.append(alt)
+					salt = shifted['ref']
 	
-				self.nalt = ", ".join(alts)
-	
-			# scenario 2: deletion ( REF A, ALT -, A)
-	
-			elif "-" in self.alt:
-	
-				self.nref = prevbase + self.ref
-	
-				for alt in self.alt.split(","):
-	
-					if alt == "-":
-	
-						alt = prevbase
-	
-					if alt == self.ref:
-	
-						alt = self.nref
-	
-					else:
-	
-						alts.append(alt)
-			
-			elif "(" in self.ref:
-	
-				# TA repeats
-	
-				# manual for now
-	
-				self.nref = prevbase + "TA"
-	
-				# subtract ref TAs
-	
-				alts.append(prevbase)
-	
-				alts.append(prevbase + "TATA")
-	
-				alts.append(prevbase + "TATATA")
-	
-			self.nalt = ",".join(alts)
-	
+				shifted['alt'] = salt
+
+			else:
+				print "nope"
+				continue
+
+			# render sql
+
+			sql = self.insertSQL("indels").render(alt = alt, json = shifted)
+
+			print sql
+
+			self.sql.executescript(sql)
+
+
+		
 
 # ------------------------------------------------------------------------------------------------------------
 

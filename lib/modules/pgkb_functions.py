@@ -239,6 +239,8 @@ def hg19conv(rsid, alt, gid):
 
 	d = {}
 
+	d['id'] = rsid
+
 	# find chromosome number
 
 	d['loc'] = rsid.split(':')[0]
@@ -255,7 +257,11 @@ def hg19conv(rsid, alt, gid):
 
 	d['alt'] = alt
 
-	if d['ref'] == alt or 'delGENE' in alt:
+	if 'delGENE' in alt:
+
+		return None
+
+	if d['ref'] == alt:
 
 		return None
 
@@ -282,11 +288,5 @@ def hg19conv(rsid, alt, gid):
 		d['muttype'] = 'in-del'
 
 		d['end'] = d['begin'] + len(d['ref'])
-
-	else:
-
-		return None
-
-	print d
 
 	return d

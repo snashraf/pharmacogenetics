@@ -1,4 +1,4 @@
-{% if json.id %}
+{% if json.id and json.muttype %}
 
 	INSERT INTO VARIANTS VALUES(
 		"{{json.id}}",
@@ -9,18 +9,18 @@
 
 	INSERT INTO LocPGKB VALUES(
 		"{{json.id}}",
-		"{{json.id}}"
-		"{{json.loc}}",
+		"{{json.id}}",
+		"{{json.loc | replace("chr", "")}}",
 		"{{json.begin}}",
 		"{{json.end}}",
-		"{{json.reference}}",
+		"{{json.ref}}"
 	);
 			
 	INSERT INTO AltAlleles VALUES(
 			"{{json.id}}",
-			"{{var}}",
+			"{{json.alt}}",
 			{% if json.muttype == "snp" %}
-			"{{var}}"
+			"{{json.alt}}"
 			{% elif json.muttype != "snp" %}
 			"NeedsConverting"
 			{% endif %}

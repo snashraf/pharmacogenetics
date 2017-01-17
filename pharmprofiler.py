@@ -77,7 +77,9 @@ def CreateDB(dbname, tables):
 		
 		("drugs", d.GetDrugData),
 		
-		("annotations", d.GetAnnotations)
+		("annotations", d.GetAnnotations),
+
+		("indels", d.ConvertIndels)
 		
 		])
 

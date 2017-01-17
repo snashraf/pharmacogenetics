@@ -24,12 +24,11 @@ INSERT INTO Variants VALUES(
 					"{{var}}",
 					{% if json.type != "snp" %}
 					"NeedsConverting"
-					"{% endif %}""
-					{% if json.type == "snp" %}
+					{% elif json.type == "snp" %}
 					"{{var}}"
 					{% endif %}
 			);
 		
-	{% endfor %}
+		{% endfor %}
 
 {% endif %}
