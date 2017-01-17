@@ -1,14 +1,29 @@
 {% if json.id %}
 
+	INSERT INTO VARIANTS VALUES(
+		"{{json.id}}",
+		"Unknown",
+		"Unknown",
+		"{{json.muttype}}"
+	);
+
 	INSERT INTO LocPGKB VALUES(
 		"{{json.id}}",
+		"{{json.id}}"
 		"{{json.loc}}",
 		"{{json.begin}}",
 		"{{json.end}}",
 		"{{json.reference}}",
-		"{{json.muttype}}"
 	);
 			
-	UPDATE AltAlleles SET AltPGKB = "{{json.alt}}" WHERE VarID = "{{json.id}}";
+	INSERT INTO AltAlleles VALUES(
+			"{{json.id}}",
+			"{{var}}",
+			{% if json.muttype == "snp" %}
+			"{{var}}"
+			{% elif json.muttype != "snp" %}
+			"NeedsConverting"
+			{% endif %}
+	);
 
 {% endif %}

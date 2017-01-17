@@ -203,6 +203,8 @@ class DataCollector(Database):
 
 			sql = self.insertSQL("variants").render(json = data[0])
 
+			print sql
+
 			self.sql.executescript(sql)
 
 		self.conn.commit()
@@ -218,16 +220,13 @@ class DataCollector(Database):
 				JOIN Genes g on h.GeneID = g.GeneID
 				WHERE v.VarName LIKE "%chr%"
 				ORDER BY h.GeneID;
-				'''
-				 )
+				''')
 
 		print 'Parsing non-rs variants...'
 
 		for (rsid, gid, alt) in tqdm(self.sql.fetchall()):
 
 			d = hg19conv(rsid, gid, alt)
-
-			print d
 
 			sql = self.insertSQL("othervars").render(json = d)
 

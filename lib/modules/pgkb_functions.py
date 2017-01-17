@@ -235,7 +235,7 @@ def getRef(loc, start, end):
 	return r.text
 
 
-def hg19conv(rsid, gid, alt):
+def hg19conv(rsid, alt, gid):
 
 	d = {}
 
@@ -253,6 +253,8 @@ def hg19conv(rsid, gid, alt):
 
 	d['ref'] = getRef(d['loc'], d['begin'], d['begin'])
 
+	d['alt'] = alt
+
 	if d['ref'] == alt or 'delGENE' in alt:
 
 		return None
@@ -263,27 +265,19 @@ def hg19conv(rsid, gid, alt):
 
 	if 'ins' in alt:
 
-		d['alt'] = alt.replace('ins', d['ref'])
+		d['begin'] += 1
 
-		muttype = 'in-del'
+		d['ref'] = "-"
+
+		d['alt'] = alt.replace('ins', "")
+
+		d['muttype'] = 'in-del'
 
 		d['end'] = d['begin'] + len(alt)
 
 	elif 'del' in alt:
 
-		d['begin'] -= 1
-
-		prev = getRef(d['loc'], d['begin'], d['begin'])
-
-		if alt == 'del':
-
-			d['ref'] = prev + d['ref']
-		
-		else:
-
-			d['ref'] = prev + alt.lstrip('del')
-
-		d['alt'] = prev
+		d['alt'] = "-"
 
 		d['muttype'] = 'in-del'
 
@@ -291,7 +285,8 @@ def hg19conv(rsid, gid, alt):
 
 	else:
 
-		print 'oops'
 		return None
+
+	print d
 
 	return d

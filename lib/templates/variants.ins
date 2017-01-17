@@ -22,7 +22,12 @@ INSERT INTO Variants VALUES(
 			INSERT INTO AltAlleles VALUES(
 					"{{json.id}}",
 					"{{var}}",
+					{% if json.type != "snp" %}
+					"NeedsConverting"
+					"{% endif %}""
+					{% if json.type == "snp" %}
 					"{{var}}"
+					{% endif %}
 			);
 		
 	{% endfor %}
