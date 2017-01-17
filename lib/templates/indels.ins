@@ -11,6 +11,7 @@
 			
 	UPDATE AltAlleles SET AltVCF
 			= "{{json.alt}}"
-			WHERE AltPGKB = "{{alt}}";
+			WHERE AltPGKB = "{{alt}}"
+			AND VarID = "{{json.varid}}";
 
 {% endif %}

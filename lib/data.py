@@ -245,8 +245,6 @@ class DataCollector(Database):
 						ON l.VarID = v.VarID
 						JOIN AltAlleles a
 						ON v.VarID = a.VarID
-						WHERE v.MutType = "in-del"
-						AND v.RSID LIKE "rs%"
 						''')
 		print "Converting indels.. \(>w <)/"
 
@@ -254,21 +252,31 @@ class DataCollector(Database):
 			
 			# create json for template usage
 
-			shifted = {"varid":varid, "chromosome":loc, "genome":genome}
+			shifted = {"varid":varid, 
+					"chromosome":loc, 
+					"genome":genome, 
+					"ref":ref, 
+					"alt":alt, 
+					"start":start, 
+					"end":end}
 
-			# left shift position by 1
-	
-			shifted['start'] = start - 1
-	
-			shifted['end'] = end
-	
-			# get reference nucleotide at that position
-	
-			prevbase = getRef(loc, shifted['start'], shifted['start'])
-	
 			# insertion or deletion?
 
+			if alt == ref:
+
+				continue
+
 			if ref == "-":
+
+				# left shift position by 1
+		
+				shifted['start'] = start - 1
+		
+				shifted['end'] = end
+		
+				# get reference nucleotide at that position
+		
+				prevbase = getRef(loc, shifted['start'], shifted['start'])
 
 				# insertion scenario
 
@@ -278,24 +286,27 @@ class DataCollector(Database):
 
 			elif alt == "-":
 
-				# deletion scenario
+				# left shift position by 1
+		
+				shifted['start'] = start - 1
+		
+				shifted['end'] = end
+		
+				# get reference nucleotide at that position
+		
+				prevbase = getRef(loc, shifted['start'], shifted['start'])
+
+				# deletion scenario A -
 
 				shifted['ref'] = prevbase + ref
 	
-				if alt == "-":
-	
-					salt = prevbase
-	
-				if alt == ref:
-	
-					salt = shifted['ref']
+				salt = prevbase
 	
 				shifted['alt'] = salt
 
 			else:
-				print "nope"
-				continue
 
+				pass
 			# render sql
 
 			sql = self.insertSQL("indels").render(alt = alt, json = shifted)
@@ -304,8 +315,6 @@ class DataCollector(Database):
 
 			self.sql.executescript(sql)
 
-
-		
 
 # ------------------------------------------------------------------------------------------------------------
 

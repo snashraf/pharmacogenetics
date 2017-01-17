@@ -6,6 +6,9 @@ import os
 import vcf
 from tqdm import tqdm
 from modules.pgkb_functions import *
+import subprocess as s
+import pprint as pp
+from Bio import Phylo
 
 # ---------------------------------------------------------------------
 
@@ -27,9 +30,9 @@ class Patient(Database):
 
 		print 'Initiating patient...'
 
-		path = os.path.dirname(__file__)
+		self.path = os.path.dirname(__file__)
 
-		dbfolder = os.path.join(path, 'db')
+		dbfolder = os.path.join(self.path, 'db')
 		
 		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
 		
@@ -51,15 +54,15 @@ class Patient(Database):
 		:return:
 		"""
 
-		self.GetSNPs()
+		#self.GetSNPs()
 	
 		self.conn.commit()
 	
-		self.AnnotateSNPs()
+		#self.AnnotateSNPs()
 	
-	 #       self.Hapmatcher()
+		self.Hapmatcher()
 	
-	   #     self.conn.commit()
+	   #self.conn.commit()
 
 # --------------------------------- SNP parsing ----------------------------------------
 
@@ -163,49 +166,97 @@ class Patient(Database):
 			:return:
 			"""
 	
-			self.remakeTable('patienthaps')
+			self.remakeTable('pathaplotypes')
 	
 			self.sql.execute("SELECT DISTINCT GeneID from Genes")
 	
 			gids = [tup[0] for tup in self.sql.fetchall()]
+
+			# create view with everything
+			self.sql.executescript('''
+						DROP VIEW Overview;
+
+						CREATE VIEW Overview AS
+						    SELECT hap.geneid AS geneid,
+						           gen.genesymbol AS genesymbol,
+						           h.hapid AS hapid,
+						           varname AS varname,
+						           h.altallele AS hapallele,
+						           pat.start AS start,
+						           pat.refallele AS pat_ref,
+						           pat.altallele AS pat_alt,
+						           pat.callNum AS call,
+						           hap.hapname AS hapname,
+						           hap.starname AS starname,
+						           hap.hgvs AS hgvs
+						      FROM hapvars h
+						           JOIN
+						           variants v ON v.rsid = h.VarName
+						           JOIN
+						           locvcf loc ON loc.varid = v.varid
+						           JOIN
+						           patientvars pat ON pat.start = loc.start
+						           JOIN
+						           haplotypes hap ON hap.hapid = h.HapID
+						           JOIN
+						           genes gen ON gen.geneid = hap.geneid;
+								''')
 	
 			# get list of all gids
 	
-			for gid in gids:
+			print "Haplotyping patient... (\\' n')\\*scribble*"
+
+			for gid in tqdm(gids):
 	
 				sequences = []
-	
-				self.sql.execute('''SELECT h.VarName, h.AltAllele, h.HapID
-						from HapVars h
-						join Variants v
-						on h.VarName = v.RSID
-						join Haplotypes t
-						ON t.HapID = h.HapID
-						where t.HGVS like '%=%'
-						and h.GID=?
-						order by v.start''', (gid,))
+
+				self.sql.execute('''
+								select varname, hapname, hapid, hapallele
+								from overview where geneid = ?
+								and hgvs like "%=%"
+								order by start asc
+								''', (gid,))
 	
 				refrsids = self.sql.fetchall()
-	
-				rsidorder = [rsid for (rsid, alt, hapid) in refrsids]
-	
-				reference = { rsid : alt for (rsid, alt, hapid) in refrsids}
-	
+
+				if len(refrsids) == 0:
+					continue
+
+				refid = refrsids[0][2]
+				
+				rsidorder = []
+				reference = {}
+
+				for (rsid, hap_name, hapid, hap_ref) in refrsids:
+
+					rsidorder.append(rsid)
+					
+					reference[rsid] = hap_ref
+
 				refseq = seqMaker(rsidorder, reference, reference)
 	
-				newline =  ">{}\n{}\n".format(refid, refseq)
-	
-				sequences.append(newline)
+				sequences.append(">{}\n{}\n".format(refid, refseq))
 	
 				# get list of all hapids for this gene
 	
-				self.sql.execute("SELECT DISTINCT hapid, starname, hgvs from alleles where gid=? and hgvs not like '%=%'", (gid,))
+				self.sql.execute('''
+								SELECT DISTINCT HapID, hapname, HGVS
+								from Overview 
+								where GeneID = ? 
+								and hgvs not like "%=%"
+								''', 
+								(gid,))
+
+				selection = self.sql.fetchall()
 	
-				for (hapid, starhap, hgvs) in self.sql.fetchall():
+				for (hapid, starhap, hgvs) in selection:
 	
 					# get haplotype alleles and create complete dictionary
 	
-					self.sql.execute("SELECT rsid, alt from alleles where hapid=? and rsid like '%rs%'", (hapid,))
+					self.sql.execute('''SELECT VarName, hapallele 
+										from Overview 
+										where HapID = ?  
+										''', (hapid,))
 	
 					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 	
@@ -230,13 +281,12 @@ class Patient(Database):
 						else:
 	
 							# get patient rsids
-	
-							self.sql.execute("select distinct v.rsid, p.alt from variants v \
-											join patientvars p on p.start = v.start \
-											join alleles a on v.gid = a.gid \
-											where p.call = '1/1' \
-											and a.hapid = ? \
-											and v.rsid like '%rs%'", (hapid,))
+
+							self.sql.execute('''SELECT VarName, pat_alt 
+												from Overview 
+												where HapID = ?
+												and call = "1/1"  
+											''', (hapid,))
 	
 							patrsids_base = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 	
@@ -249,10 +299,12 @@ class Patient(Database):
 							score_al1 = len(modified)
 	
 							# --------------------------------------------------------------------------------------------------
-	
-							self.sql.execute("select distinct v.rsid, p.alt from variants v \
-												join patientvars p on p.start=v.start join alleles a on v.gid=a.gid \
-												where p.call = '0/1' and a.hapid = ? and v.rsid like '%rs%'", (hapid,))
+							
+							self.sql.execute('''SELECT VarName, pat_alt 
+												from Overview 
+												where HapID = ?
+												and call = "0/1"  
+											''', (hapid,))
 	
 							patrsids_add = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 	
@@ -279,21 +331,19 @@ class Patient(Database):
 								else:
 	
 									continue
-	
+
 				sequences.append(">Patient_allele1\n" + patseq1 + "\n")
 	
 				sequences.append(">Patient_allele2\n" + patseq2 + "\n")
+				
+				output = "/output/alignments/"
 	
-				path = "data/alignments/"
-	
-				fn = path + gid + "_aln.fasta"
+				fn = self.path + output + gid + "_aln.fasta"
 	
 				with open(fn, "w") as f:
 	
 					f.writelines(sequences)
-	
-				print fn
-	
+		
 				try:
 	
 					self.HapScorer(fn, "phylo", refid)
@@ -315,25 +365,24 @@ class Patient(Database):
 
 			with open(fn, "rb") as infile, open(of, "wb") as outfile:
 
-				s.check_call("plugins/clustalo -i %s -o %s --auto --force --guidetree-out=%s" %(fn, of, tn),  shell=True)
+				s.check_call("{}/plugins/clustalo -i {} -o {} --auto --force --guidetree-out={}"
+					.format(self.path, fn, of, tn),  shell=True)
 
 			tree = Phylo.read(tn, "newick")
 
 			names = []
 
+			tree.root_with_outgroup({refid})
+			
 			for clade in tree.find_clades():
 
 				if clade.name and clade.name not in names:
 
 						names.append(clade.name)
 
-			tree.root_with_outgroup({refid})
-
-			Phylo.draw_ascii(tree)
-
-			distances = {}
-
 			for hap in names:
+
+				distances = {"hapid":hap}
 
 				if "Patient" in hap:
 
@@ -343,18 +392,17 @@ class Patient(Database):
 
 					for i in range(1,3):
 
-						matches = []
-
 						dist = tree.distance("Patient_allele%i" %i, hap)
 
 						distances["al%i" %i] = dist
 
-					item = (hap, distances["al1"], distances["al2"])
+					sql = self.insertSQL("pathaplotypes").render(json = distances)
+				
+					self.sql.executescript(sql)
 
-					self.insertValues("patienthaps", item)
+					# commit to db
 
 			self.conn.commit()
-
 
 		else:
 			# standard mode
