@@ -68,6 +68,7 @@ class Database(object):
 		
 		self.conn.commit()
 
+		# test
 
 	def removeTable(self, tabname):
 

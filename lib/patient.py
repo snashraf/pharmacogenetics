@@ -372,6 +372,8 @@ class Patient(Database):
 
 			names = []
 
+			# modified
+
 			tree.root_with_outgroup({refid})
 			
 			for clade in tree.find_clades():
