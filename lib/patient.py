@@ -44,26 +44,6 @@ class Patient(Database):
 
 		self.reader = vcf.Reader(open(f, 'r'))
 
-		self.Load()
-
-
-	def Load(self):
-
-		"""
-		Function for loading the most important startup functions
-		:return:
-		"""
-
-		#self.GetSNPs()
-	
-		self.conn.commit()
-	
-		#self.AnnotateSNPs()
-	
-		self.Hapmatcher()
-	
-	   #self.conn.commit()
-
 # --------------------------------- SNP parsing ----------------------------------------
 
 	def GetSNPs(self):
@@ -102,55 +82,6 @@ class Patient(Database):
 			
 				self.sql.executescript(sql)
 		
-
-	def AnnotateSNPs(self):
-
-		self.authobj = Authenticate()
-		
-		self.remakeTable("patannotations")
-
-		self.sql.execute('''
-						SELECT v.VarID, p.CallBase, a.AnID
-						FROM LocPGKB l
-						JOIN PatientVars p
-						ON p.Start = l.Start
-						JOIN Variants v on l.VarId = v.VarId
-						JOIN Annotations a
-						ON a.VarHapId = v.VarId
-						''')
-						
-		print "Annotating SNPs... /(* ` ^ `*/)"
-		
-		for (VarID, CallBase, AnID) in tqdm(self.sql.fetchall()):
-			
-			uri = \
-			'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
-			.format(AnID)
-
-			data = getJson(uri, self.authobj)
-			
-			allele = CallBase.replace("/", "")
-			
-			sql = self.insertSQL("patannotations").render(json = data, patallele = allele)
-		
-			self.sql.executescript(sql)
-
-			# FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
-			
-			overviewQuery = '''
-			select distinct d.chemname, g.genename, p.phenotype, p.patallele, loe
-			from patannotations p
-			join annotations a
-			on p.anid = a.anid
-			join pairs p
-			on a.drugid = p.drugid
-			join drugs d
-			on p.drugid = d.drugid
-			join genes g
-			on g.geneid = p.geneid
-			order by g.genename;
-			'''
-
 # ---------------------------- Indel Parsing -------------------------------------
 
 
@@ -158,7 +89,7 @@ class Patient(Database):
 # ---------------------------- Haplotype parsing -------------------------------
 
 
-	def Hapmatcher(self):
+	def GetHaplotypes(self):
 
 			"""
 			Matches rsids per gene to known haplotypes for that gene.
@@ -400,6 +331,8 @@ class Patient(Database):
 
 					sql = self.insertSQL("pathaplotypes").render(json = distances)
 				
+					print sql
+
 					self.sql.executescript(sql)
 
 					# commit to db
@@ -411,3 +344,61 @@ class Patient(Database):
 			pass
 
 		self.conn.commit()
+
+# ------------------------ annotations ------------------------------
+
+def GetAnnotations(self):
+
+		self.authobj = Authenticate()
+		
+		self.remakeTable("patannotations")
+
+		self.sql.execute('''
+						SELECT v.VarID, p.CallBase, a.AnID
+						FROM LocPGKB l
+						JOIN PatientVars p
+						ON p.Start = l.Start
+						JOIN Variants v on l.VarId = v.VarId
+						JOIN Annotations a
+						ON a.VarHapId = v.VarId
+						''')
+						
+		print "Annotating SNPs... /(* ` ^ `*/)"
+		
+		for (VarID, CallBase, AnID) in tqdm(self.sql.fetchall()):
+			
+			uri = \
+			'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
+			.format(AnID)
+
+			data = getJson(uri, self.authobj)
+			
+			allele = CallBase.replace("/", "")
+			
+			sql = self.insertSQL("patannotations").render(json = data, patallele = allele)
+		
+			self.sql.executescript(sql)
+
+			# FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
+			
+			overviewQuery = '''
+			select distinct d.chemname, g.genename, p.phenotype, p.patallele, loe
+			from patannotations p
+			join annotations a
+			on p.anid = a.anid
+			join pairs p
+			on a.drugid = p.drugid
+			join drugs d
+			on p.drugid = d.drugid
+			join genes g
+			on g.geneid = p.geneid
+			order by g.genename;
+			'''
+
+			queryHaplotypeScores = '''
+			select geneid, hapid, hapname, distance1, distance2 from pathaplotypes p
+			join haplotypes h
+			on p.HapID = h.hapid
+			join genes g
+			on h.geneid = g.geneid;
+			'''

@@ -15,11 +15,16 @@ def main():
 	{"short":"n" , "long":"name", "action":"store","dest":"dbname", "default":"database",
 			"help":"Specify database name. This will be used to create/access a database. Default is 'database'"},
 				
-	{"short":"t" , "long":"table", "action":"append","dest":"tables", "default":[],
+	{"short":"b" , "long":"build", "action":"append","dest":"dbtasks", "default":[],
 			"help":"Download database (specify tables, default is do whole database.\
 			Options are pairs (gene-drug pairs), genes, vars (allvars/rsvars/hapvars) \
 			and drugs(chemicals"},
-				
+	
+	{"short":"a" , "long":"action", "action":"append","dest":"pattasks", "default":[],
+		"help":"Which actions to perform on patient file. Current options: 'import' \
+		(import important snp sites from vcf), 'haplotype' (phylogenetically haplotype patient),\
+		'annotate' (annotate found changes and identified patient haplotypes)."},
+
 	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
 			"help":"Patient compressed vcf [g.vcf.gz] file to parse"}
 ]
@@ -40,9 +45,9 @@ def main():
 
 	(options, args) = parser.parse_args()
 
-	if len(options.tables) > 0:
+	if len(options.dbtasks) > 0:
 
-		CreateDB(options.dbname, options.tables)
+		CreateDB(options.dbname, options.dbtasks)
 
 	if options.gvcf:
 
@@ -52,7 +57,7 @@ def main():
 
 		else:
 
-			CreatePatient(options.dbname, options.gvcf)
+			CreatePatient(options.dbname, options.gvcf, options.pattasks)
 
 
 def CreateDB(dbname, tables):
@@ -122,9 +127,53 @@ def CreateDB(dbname, tables):
 	d.conn.commit()
 
 
-def CreatePatient(dbname, gvcf):
+def CreatePatient(dbname, gvcf, tables):
 
 	p = Patient(dbname, gvcf)
+
+	options = OrderedDict ([
+	
+	("import", p.GetSNPs),
+
+	("haplotype", p.GetHaplotypes),
+	
+	("annotate", p.GetAnnotations)
+	
+	])
+
+	options['all'] = options.values()
+
+# ----------------------------------------------
+
+	for table in tables:
+		
+		print table
+
+		try:
+		
+			o = options[table]
+			
+			if not hasattr( d, "authobj"):
+	
+				d.Authenticate()
+				
+			if type(o) is not list:
+				
+				options[table]()
+			
+			elif type(o) is list:
+			
+				for item in o:
+			
+					item()
+					
+		except:
+			
+			raise
+			
+			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
+
+	d.conn.commit()
 
 # --------------------------------------------------------------------------------
 
