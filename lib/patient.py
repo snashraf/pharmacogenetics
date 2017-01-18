@@ -60,10 +60,9 @@ class Patient(Database):
 	
 		self.sql.execute('''
 						SELECT DISTINCT l.Chromosome, l.Start, l.End, l.RefAllele, v.MutType
-						FROM LocPGKB l
+						FROM LocVCF l
 						JOIN Variants v
 						ON v.VarID = l.VarID
-						WHERE v.MutType = "snp"
 						''')
 	
 		positions = self.sql.fetchall()
@@ -347,58 +346,73 @@ class Patient(Database):
 
 # ------------------------ annotations ------------------------------
 
-def GetAnnotations(self):
+	def GetSNPAnnotations(self):
 
-		self.authobj = Authenticate()
-		
-		self.remakeTable("patannotations")
+			self.authobj = Authenticate()
+			
+			self.remakeTable("patannotations")
 
-		self.sql.execute('''
-						SELECT v.VarID, p.CallBase, a.AnID
-						FROM LocPGKB l
-						JOIN PatientVars p
-						ON p.Start = l.Start
-						JOIN Variants v on l.VarId = v.VarId
-						JOIN Annotations a
-						ON a.VarHapId = v.VarId
+			self.sql.execute('''
+							SELECT v.VarID, p.CallBase, a.AnID
+							FROM LocPGKB l
+							JOIN PatientVars p
+							ON p.Start = l.Start
+							JOIN Variants v on l.VarId = v.VarId
+							JOIN Annotations a
+							ON a.VarHapId = v.VarId
+							''')
+							
+			print "Annotating SNPs... /(* ` ^ `*/)"
+			
+			for (VarID, CallBase, AnID) in tqdm(self.sql.fetchall()):
+				
+				uri = \
+				'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
+				.format(AnID)
+
+				data = getJson(uri, self.authobj)
+				
+				allele = CallBase.replace("/", "")
+				
+				sql = self.insertSQL("patannotations").render(json = data, patallele = allele)
+			
+				self.sql.executescript(sql)
+
+				# FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
+				
+				overviewQuery = '''
+				select distinct d.chemname, g.genename, p.phenotype, p.patallele, loe
+				from patannotations p
+				join annotations a
+				on p.anid = a.anid
+				join pairs p
+				on a.drugid = p.drugid
+				join drugs d
+				on p.drugid = d.drugid
+				join genes g
+				on g.geneid = p.geneid
+				order by g.genename;
+				'''
+
+				queryHaplotypeScores = '''
+				select geneid, hapid, hapname, distance1, distance2 from pathaplotypes p
+				join haplotypes h
+				on p.HapID = h.hapid
+				join genes g
+				on h.geneid = g.geneid;
+				'''
+
+	def GetHapAnnotations(self):
+		self.sql.executescript('''
+			CREATE VIEW HapAnnotations AS
+			    SELECT DISTINCT *
+			      FROM pathaplotypes h
+			           JOIN
+			           annotations a ON a.varhapid = h.hapid
+			           JOIN
+			           haplotypes t ON t.hapid = h.HapID
+			           JOIN
+			           genes g ON g.geneid = t.geneid
+			     WHERE hgvs NOT LIKE "%[0]%"
+			     ORDER BY geneid;
 						''')
-						
-		print "Annotating SNPs... /(* ` ^ `*/)"
-		
-		for (VarID, CallBase, AnID) in tqdm(self.sql.fetchall()):
-			
-			uri = \
-			'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
-			.format(AnID)
-
-			data = getJson(uri, self.authobj)
-			
-			allele = CallBase.replace("/", "")
-			
-			sql = self.insertSQL("patannotations").render(json = data, patallele = allele)
-		
-			self.sql.executescript(sql)
-
-			# FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
-			
-			overviewQuery = '''
-			select distinct d.chemname, g.genename, p.phenotype, p.patallele, loe
-			from patannotations p
-			join annotations a
-			on p.anid = a.anid
-			join pairs p
-			on a.drugid = p.drugid
-			join drugs d
-			on p.drugid = d.drugid
-			join genes g
-			on g.geneid = p.geneid
-			order by g.genename;
-			'''
-
-			queryHaplotypeScores = '''
-			select geneid, hapid, hapname, distance1, distance2 from pathaplotypes p
-			join haplotypes h
-			on p.HapID = h.hapid
-			join genes g
-			on h.geneid = g.geneid;
-			'''

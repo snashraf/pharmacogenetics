@@ -137,7 +137,7 @@ def CreatePatient(dbname, gvcf, tables):
 
 	("haplotype", p.GetHaplotypes),
 	
-	("annotate", p.GetAnnotations)
+	("annotate", p.GetSNPAnnotations)
 	
 	])
 
@@ -152,10 +152,6 @@ def CreatePatient(dbname, gvcf, tables):
 		try:
 		
 			o = options[table]
-			
-			if not hasattr( d, "authobj"):
-	
-				d.Authenticate()
 				
 			if type(o) is not list:
 				
@@ -173,7 +169,7 @@ def CreatePatient(dbname, gvcf, tables):
 			
 			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
 
-	d.conn.commit()
+	p.conn.commit()
 
 # --------------------------------------------------------------------------------
 

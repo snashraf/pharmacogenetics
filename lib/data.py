@@ -368,6 +368,7 @@ class DataCollector(Database):
 		self.conn.commit()
 
 
+
 	def BedFile(self):
 
 		# creates bed file for subsetting .BAM files.
