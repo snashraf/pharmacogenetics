@@ -1,0 +1,54 @@
+{% if json %}
+
+	{% for doc in json %}
+
+		INSERT INTO Guidelines VALUES(
+			"{{doc.id}}",
+			"{{did}}",
+			"{{gid}}",
+			"{{doc.source}}"
+		);
+
+		{% for group in doc.groups%}
+		
+			INSERT INTO HapGroups VALUES(
+				"{{doc.id}}",
+				"{{group.id}}",
+				"{{group.name}}"
+			);
+			
+			{% for option in group.genotypes %}
+				
+				{% set genotypes = option.split(';') %}
+				
+				{% for genotype in genotypes %}
+				
+					{% set split_genotype = genotype.split(':') %}
+					
+					{% set haplotypes = split_genotype[1].split('/') %}
+					
+					INSERT INTO GroupGenotypes VALUES(
+						"{{group.id}}",
+						"{{split_genotype[0]}}",
+						"{{haplotypes[0]}}",
+						"{{haplotypes[1]}}"
+					);
+			
+				{% endfor %}
+				
+			{% endfor %}
+			
+			{% for ann in group.annotations %}
+			
+				INSERT INTO GroupAnnotations VALUES(
+					"{{group.id}}",
+					'{{ann.markdown.markdown}}'
+				);
+				
+			{% endfor %}
+
+		{% endfor %}
+		
+	{% endfor %}
+
+{% endif %}

@@ -15,15 +15,19 @@
 		"{{json.end}}",
 		"{{json.ref}}"
 	);
+
+	{% if json.ref != json.alt %}
 			
-	INSERT INTO AltAlleles VALUES(
-			"{{json.id}}",
-			"{{json.alt}}",
-			{% if json.muttype == "snp" %}
-			"{{json.alt}}"
-			{% elif json.muttype != "snp" %}
-			"NeedsConverting"
-			{% endif %}
-	);
+		INSERT INTO AltAlleles VALUES(
+				"{{json.id}}",
+				"{{json.alt}}",
+				{% if json.muttype == "snp" %}
+				"{{json.alt}}"
+				{% elif json.muttype != "snp" %}
+				"NeedsConverting"
+				{% endif %}
+		);
+
+	{% endif %}
 
 {% endif %}

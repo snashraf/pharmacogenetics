@@ -84,7 +84,9 @@ def CreateDB(dbname, tables):
 		
 		("annotations", d.GetAnnotations),
 
-		("indels", d.ConvertIndels)
+		("indels", d.ConvertIndels),
+		
+		("guidelines", d.GetGuidelines)
 		
 		])
 
@@ -133,7 +135,7 @@ def CreatePatient(dbname, gvcf, tables):
 
 	options = OrderedDict ([
 	
-	("import", p.GetSNPs),
+	("import", p.GetPositions),
 
 	("haplotype", p.GetHaplotypes),
 	

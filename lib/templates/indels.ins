@@ -8,10 +8,14 @@
 		"{{json.end}}",
 		"{{json.ref}}"
 	);
-			
-	UPDATE AltAlleles SET AltVCF
-			= "{{json.alt}}"
-			WHERE AltPGKB = "{{alt}}"
-			AND VarID = "{{json.varid}}";
+
+	{% if json.ref != json.alt %}
+
+		UPDATE AltAlleles SET AltVCF
+				= "{{json.alt}}"
+				WHERE AltPGKB = "{{alt}}"
+				AND VarID = "{{json.varid}}";
+	
+	{% endif %}
 
 {% endif %}

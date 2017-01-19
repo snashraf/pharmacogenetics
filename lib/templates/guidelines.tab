@@ -1,0 +1,24 @@
+CREATE TABLE Guidelines (
+	GuID text,
+	GeneID text,
+	DrugID text,
+	Source text
+);
+
+CREATE TABLE HapGroups (
+	GuID text,
+	GroupID text,
+	GroupName text
+	);
+
+CREATE TABLE GroupGenotypes (
+	GroupID text,
+	GeneSymbol text,
+	Hap1 text,
+	Hap2 text
+);
+
+CREATE TABLE GroupAnnotations (
+	GroupID text,
+	Markdown text
+);

@@ -19,11 +19,15 @@ INSERT INTO Variants VALUES(
 	
 		{% for var in json.location.variants %}
 			
-			INSERT INTO AltAlleles VALUES(
-					"{{json.id}}",
-					"{{var}}",
-					"{{var}}"
-			);
+			{% if json.location.reference != var %}
+			
+				INSERT INTO AltAlleles VALUES(
+						"{{json.id}}",
+						"{{var}}",
+						"{{var}}"
+				);
+				
+			{% endif %}
 		
 		{% endfor %}
 

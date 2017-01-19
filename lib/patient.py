@@ -46,24 +46,24 @@ class Patient(Database):
 
 # --------------------------------- SNP parsing ----------------------------------------
 
-	def GetSNPs(self):
+	def GetPositions(self):
 	
 		"""
 		Gets patient variables, reads into patientvars table
 		:return:
 		"""
 	
-		self.remakeTable("patientvars")
+		self.remakeTable("patvars")
 	
 	
 			# create list of positions to localize in patient
 	
 		self.sql.execute('''
-						SELECT DISTINCT l.Chromosome, l.Start, l.End, l.RefAllele, v.MutType
-						FROM LocVCF l
-						JOIN Variants v
-						ON v.VarID = l.VarID
-						''')
+			SELECT DISTINCT l.Chromosome, l.Start, l.End, l.RefAllele, v.MutType
+			FROM LocVCF l
+			JOIN Variants v
+			ON v.VarID = l.VarID
+			''')
 	
 		positions = self.sql.fetchall()
 	
@@ -77,13 +77,10 @@ class Patient(Database):
 
 			for record in records: # doctest: +SKIP
 
-				sql = self.insertSQL("patientvars").render(record = record)
+				sql = self.insertSQL("patvars").render(record = record)
 			
 				self.sql.executescript(sql)
 		
-# ---------------------------- Indel Parsing -------------------------------------
-
-
 
 # ---------------------------- Haplotype parsing -------------------------------
 
@@ -104,33 +101,44 @@ class Patient(Database):
 
 			# create view with everything
 			self.sql.executescript('''
-						DROP VIEW Overview;
-
-						CREATE VIEW Overview AS
-						    SELECT hap.geneid AS geneid,
-						           gen.genesymbol AS genesymbol,
-						           h.hapid AS hapid,
-						           varname AS varname,
-						           h.altallele AS hapallele,
-						           pat.start AS start,
-						           pat.refallele AS pat_ref,
-						           pat.altallele AS pat_alt,
-						           pat.callNum AS call,
-						           hap.hapname AS hapname,
-						           hap.starname AS starname,
-						           hap.hgvs AS hgvs
-						      FROM hapvars h
-						           JOIN
-						           variants v ON v.rsid = h.VarName
-						           JOIN
-						           locvcf loc ON loc.varid = v.varid
-						           JOIN
-						           patientvars pat ON pat.start = loc.start
-						           JOIN
-						           haplotypes hap ON hap.hapid = h.HapID
-						           JOIN
-						           genes gen ON gen.geneid = hap.geneid;
-								''')
+					DROP VIEW Overview;
+					
+					CREATE VIEW Overview AS
+					SELECT  DISTINCT
+					
+					hap.GeneID as GeneID,
+					hap.HapID as HapID,
+					hap.HGVS as HGVS,
+					VarName, MutType,
+					h.AltAllele as HapAllele,
+					locb.RefAllele as RefPGKB,
+					a.AltPGKB as AltPGKB,
+					locv.RefAllele as RefVCF,
+					a.AltVCF as AltVCF,
+					pat.RefAllele as PatRef,
+					pat.AltAllele as PatAlt,
+					CallNum,
+					locv.start as start
+					
+					FROM hapvars h
+					   JOIN
+					   variants v ON v.rsid = h.VarName
+					   JOIN
+					   locvcf locv ON locv.varid = v.varid
+					   JOIN
+					   patientvars pat ON pat.start = locv.start
+					   JOIN
+					   haplotypes hap ON hap.hapid = h.HapID
+					   JOIN
+					   genes gen ON gen.geneid = hap.geneid
+					   JOIN
+					   locpgkb locb ON locb.varid = locv.varid
+					   JOIN
+					   altalleles a on a.VarID = locv.VarID
+					   WHERE HapAllele = AltPGKB
+					   OR HapAllele = RefPGKB
+					   ORDER BY locv.start asc;
+							''')
 	
 			# get list of all gids
 	
@@ -138,31 +146,81 @@ class Patient(Database):
 
 			for gid in tqdm(gids):
 	
+				print "--------------%s--------------" %gid
 				sequences = []
 
-				self.sql.execute('''
-								select varname, hapname, hapid, hapallele
-								from overview where geneid = ?
-								and hgvs like "%=%"
-								order by start asc
-								''', (gid,))
-	
-				refrsids = self.sql.fetchall()
-
-				if len(refrsids) == 0:
-					continue
-
-				refid = refrsids[0][2]
+				# First: collect SNPs
 				
-				rsidorder = []
-				reference = {}
+				self.sql.execute('''
+					SELECT DISTINCT VarName
+					FROM Overview
+					WHERE GeneID = ?
+					AND HGVS LIKE "%[=]%"
+					ORDER BY Start ASC
+					''', (gid,))
+	
+				rsidorder = [rsid for rsid in self.sql.fetchall()]
+				
+				print rsidorder
+				
+				# Fetch SNPs and add to dictionary
+				
+				self.sql.execute('''
+					SELECT DISTINCT VarName, HapAllele
+					from overview
+					where geneid = ?
+					and hgvs like "%=%"
+					and muttype = "snp"
+					order by start asc
+					''', (gid,))
 
-				for (rsid, hap_name, hapid, hap_ref) in refrsids:
 
-					rsidorder.append(rsid)
-					
-					reference[rsid] = hap_ref
+				snps = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
+				
+				print snps
+				
+				# Fetch indels that match RefPGKB and bind them to RefVCF
+				
+				self.sql.execute('''
+					SELECT DISTINCT VarName, RefVCF
+					FROM overview where geneid = ?
+					and hgvs like "%=%"
+					and muttype = "in-del"
+					and hapallele = refpgkb
+					order by start asc
+					''', (gid,))
+				
+				indels_ref  = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
+				
+				print indels_ref
+				
+				# Fetch indels that match AltPGKB and bind them to ALtVCF
+				
+				self.sql.execute('''
+					SELECT DISTINCT VarName, AltVCF
+					FROM overview where geneid = ?
+					and hgvs like "%=%"
+					and muttype = "in-del"
+					and hapallele = altpgkb
+					order by start asc
+					''', (gid,))
+				
+				indels_alt  = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
+				
+				print indels_alt
+				
+				# Join these three dictionaries and feed to seqMaker
+				
+				reference = merge_dicts(snps, indels_ref, indels_alt)
+				
+				print reference
+				
+				raw_input("Press enter to continue...")
+				
+				continue
 
+				# SeqMaker makes a fictive piece of DNA consisting of the haplotype defining RSIDS
+				
 				refseq = seqMaker(rsidorder, reference, reference)
 	
 				sequences.append(">{}\n{}\n".format(refid, refseq))
@@ -170,12 +228,12 @@ class Patient(Database):
 				# get list of all hapids for this gene
 	
 				self.sql.execute('''
-								SELECT DISTINCT HapID, hapname, HGVS
-								from Overview 
-								where GeneID = ? 
-								and hgvs not like "%=%"
-								''', 
-								(gid,))
+					SELECT DISTINCT HapID, hapname, HGVS
+					from Overview
+					where GeneID = ?
+					and hgvs not like "%=%"
+					''',
+					(gid,))
 
 				selection = self.sql.fetchall()
 	
@@ -183,10 +241,11 @@ class Patient(Database):
 	
 					# get haplotype alleles and create complete dictionary
 	
-					self.sql.execute('''SELECT VarName, hapallele 
-										from Overview 
-										where HapID = ?  
-										''', (hapid,))
+					self.sql.execute('''SELECT VarName, AltVCF
+							from Overview
+							where HapID = ?
+							and HapAllele = AltPGKB
+							''', (hapid,))
 	
 					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 	
@@ -212,11 +271,11 @@ class Patient(Database):
 	
 							# get patient rsids
 
-							self.sql.execute('''SELECT VarName, pat_alt 
-												from Overview 
-												where HapID = ?
-												and call = "1/1"  
-											''', (hapid,))
+							self.sql.execute('''SELECT VarName, pat_alt
+									from Overview
+									where HapID = ?
+									and call = "1/1"
+									''', (hapid,))
 	
 							patrsids_base = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 	
@@ -230,11 +289,11 @@ class Patient(Database):
 	
 							# --------------------------------------------------------------------------------------------------
 							
-							self.sql.execute('''SELECT VarName, pat_alt 
-												from Overview 
-												where HapID = ?
-												and call = "0/1"  
-											''', (hapid,))
+							self.sql.execute('''SELECT VarName, pat_alt
+									from Overview
+									where HapID = ?
+									and call = "0/1"
+									''', (hapid,))
 	
 							patrsids_add = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 	

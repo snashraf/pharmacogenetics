@@ -160,7 +160,7 @@ class DataCollector(Database):
 			for response in data:
 
 				sql = self.insertSQL("haplotypes").render(json = response)
-
+				
 				self.sql.executescript(sql)
 
 		self.conn.commit()
@@ -238,7 +238,7 @@ class DataCollector(Database):
 		self.remakeTable("indels")
 
 		self.sql.execute('''
-						SELECT DISTINCT 
+						SELECT DISTINCT
 						l.VarID, RefGenome, Chromosome, Start, End, RefAllele, AltPGKB
 						FROM LocPGKB l
 						JOIN Variants v
@@ -252,12 +252,12 @@ class DataCollector(Database):
 			
 			# create json for template usage
 
-			shifted = {"varid":varid, 
-					"chromosome":loc, 
-					"genome":genome, 
-					"ref":ref, 
-					"alt":alt, 
-					"start":start, 
+			shifted = {"varid":varid,
+					"chromosome":loc,
+					"genome":genome,
+					"ref":ref,
+					"alt":alt,
+					"start":start,
 					"end":end}
 
 			# insertion or deletion?
@@ -340,30 +340,22 @@ class DataCollector(Database):
 		self.conn.commit()
 
 
-
 	def GetGuidelines(self):
+		
+		self.remakeTable("guidelines")
 		
 		self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
 
-		for (DrugID, GeneID) in self.sql.fetchall():
+		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
+						
+			uri = 'https://api.pharmgkb.org/v1/data/guideline?&relatedChemicals.accessionId={}&relatedGenes.accessionId={}&view=max' \
+					.format(DrugID, GeneID)
+
+			data = getJson(uri, self.authobj)
 			
-			sources = ['cpic', 'dpwg', 'pro']
-			
-			for source in sources:
-				
-				uri = \
-					'https://api.pharmgkb.org/v1/data/guideline?source={}&relatedChemicals.accessionId={}&relatedGenes.accessionId={}&view=max' \
-					.format(source, DrugID, GeneID)
-	
-				data = getJson(uri, authobj)
-	
-				pp.pprint(data)
-				
-				sql = self.insertSQL("guidelines").render(json = d)
-	
-				print sql
-	
-				self.sql.executescript(sql)
+			sql = self.insertSQL("guidelines").render(json = data, did = DrugID, gid = GeneID)
+									
+			self.sql.executescript(sql)
 
 		self.conn.commit()
 
