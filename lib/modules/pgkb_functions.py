@@ -167,51 +167,15 @@ def seqMaker(rsidorder, reference, rsids):
 	for rsid in rsidorder:
 
 		try:
-
 			base = rsids[rsid]
 
 		except KeyError:
 
 			base = reference[rsid]
 
-		if 'del' in base or base == '-':
-
-			continue
-
-		if ',' in base:
-
-			bases = base.split(',')
-
-			base = bases[0]
-
-		elif '[' in base or '(' in base:
-
-			# find bracketed objects
-
-			filt = re.split('\[(.*?)\]|\((.*?)\)', base)
-
-			for frag in filt:
-
-				if frag is not None:
-
-					try:
-
-						num = int(frag)
-
-					except:
-
-						motif = frag
-
-			base = motif * num
-
 		seq += base
 			
 	return seq
-
-
-def Aligner(seqlist):
-	
-	pass
 
 
 def getRef(loc, start, end):

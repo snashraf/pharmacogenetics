@@ -4,6 +4,7 @@ CREATE TABLE Guidelines (
 	DrugID text,
 	Source text
 );
+<<<<<<< HEAD
 
 CREATE TABLE HapGroups (
 	GuID text,
@@ -20,3 +21,5 @@ CREATE TABLE GroupAnnotations (
 	GroupID text,
 	Markdown text
 );
+=======
+>>>>>>> b00c19f362a80f284a99c1d4ace98f73dcd9e9ac

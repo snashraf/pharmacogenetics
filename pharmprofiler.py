@@ -85,7 +85,17 @@ def CreateDB(dbname, tables):
 
         ("annotations", d.GetAnnotations),
 
+<<<<<<< HEAD
         ("indels", d.ConvertIndels),
+=======
+		("indels", d.ConvertIndels),
+		
+		("guidelines", d.GetGuidelines),
+		
+		("guideoptions", d.GetGuideOptions)
+		
+		])
+>>>>>>> b00c19f362a80f284a99c1d4ace98f73dcd9e9ac
 
         ("guidelines", d.GetGuidelines)
 
@@ -136,7 +146,17 @@ def CreatePatient(dbname, gvcf, tables):
 
     options = OrderedDict([
 
+<<<<<<< HEAD
         ("import", p.GetPositions),
+=======
+	("haplotype", p.GetHaplotypes),
+	
+	("annotate", p.GetSNPAnnotations),
+	
+	("interpret", p.Interpret)
+	
+	])
+>>>>>>> b00c19f362a80f284a99c1d4ace98f73dcd9e9ac
 
         ("haplotype", p.GetHaplotypes),
 

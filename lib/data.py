@@ -296,6 +296,7 @@ class DataCollector(Database):
 
                 # deletion scenario A -
 
+<<<<<<< HEAD
                 shifted['ref'] = prevbase + ref
 
                 salt = prevbase
@@ -312,6 +313,9 @@ class DataCollector(Database):
             print sql
 
             self.sql.executescript(sql)
+=======
+			self.sql.executescript(sql)
+>>>>>>> b00c19f362a80f284a99c1d4ace98f73dcd9e9ac
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -350,12 +354,50 @@ class DataCollector(Database):
 
             data = getJson(uri, self.authobj)
 
+<<<<<<< HEAD
             sql = self.insertSQL("guidelines").render(
                 json=data, did=DrugID, gid=GeneID)
+=======
+			data = getJson(uri, self.authobj)
+			
+			if data is None:
+				
+				continue
+			
+			sql = self.insertSQL("guidelines").render(json = data, did = DrugID, gid = GeneID)
+								
+			self.sql.executescript(sql)
+>>>>>>> b00c19f362a80f284a99c1d4ace98f73dcd9e9ac
 
             print sql
 
+<<<<<<< HEAD
             self.sql.executescript(sql)
+=======
+	
+	def GetGuideOptions(self):
+		
+		self.remakeTable("guideoptions")
+		
+		self.sql.execute("SELECT DISTINCT GuID from Guidelines;")
+		
+		for (guid, ) in tqdm(self.sql.fetchall()):
+			
+			uri = "https://api.pharmgkb.org/v1/report/guideline/{}/options" \
+			.format(guid)
+			
+			data = getJson(uri, self.authobj)
+			
+			if data is None:
+				
+				continue
+			
+			sql = self.insertSQL("guideoptions").render(guid = guid, json = data)
+			
+			self.sql.executescript(sql)
+		
+		self.conn.commit()
+>>>>>>> b00c19f362a80f284a99c1d4ace98f73dcd9e9ac
 
         self.conn.commit()
 
