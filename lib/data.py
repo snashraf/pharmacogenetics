@@ -311,8 +311,6 @@ class DataCollector(Database):
 
 			sql = self.insertSQL("indels").render(alt = alt, json = shifted)
 
-			print sql
-
 			self.sql.executescript(sql)
 
 
@@ -353,12 +351,39 @@ class DataCollector(Database):
 
 			data = getJson(uri, self.authobj)
 			
+			if data is None:
+				
+				continue
+			
 			sql = self.insertSQL("guidelines").render(json = data, did = DrugID, gid = GeneID)
-									
+								
 			self.sql.executescript(sql)
 
 		self.conn.commit()
 
+	
+	def GetGuideOptions(self):
+		
+		self.remakeTable("guideoptions")
+		
+		self.sql.execute("SELECT DISTINCT GuID from Guidelines;")
+		
+		for (guid, ) in tqdm(self.sql.fetchall()):
+			
+			uri = "https://api.pharmgkb.org/v1/report/guideline/{}/options" \
+			.format(guid)
+			
+			data = getJson(uri, self.authobj)
+			
+			if data is None:
+				
+				continue
+			
+			sql = self.insertSQL("guideoptions").render(guid = guid, json = data)
+			
+			self.sql.executescript(sql)
+		
+		self.conn.commit()
 
 
 	def BedFile(self):

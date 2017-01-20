@@ -1,7 +1,1 @@
 DROP TABLE IF EXISTS Guidelines;
-
-DROP TABLE IF EXISTS HapGroups;
-
-DROP TABLE IF EXISTS GroupGenotypes;
-
-DROP TABLE IF EXISTS GroupAnnotations;

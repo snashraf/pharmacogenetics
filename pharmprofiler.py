@@ -86,7 +86,9 @@ def CreateDB(dbname, tables):
 
 		("indels", d.ConvertIndels),
 		
-		("guidelines", d.GetGuidelines)
+		("guidelines", d.GetGuidelines),
+		
+		("guideoptions", d.GetGuideOptions)
 		
 		])
 
@@ -139,7 +141,9 @@ def CreatePatient(dbname, gvcf, tables):
 
 	("haplotype", p.GetHaplotypes),
 	
-	("annotate", p.GetSNPAnnotations)
+	("annotate", p.GetSNPAnnotations),
+	
+	("interpret", p.Interpret)
 	
 	])
 
