@@ -17,25 +17,13 @@
 				"{{group.name}}"
 			);
 			
-			{% for option in group.genotypes %}
-				
-				{% set genotypes = option.split(';') %}
-				
-				{% for genotype in genotypes %}
-				
-					{% set split_genotype = genotype.split(':') %}
-					
-					{% set haplotypes = split_genotype[1].split('/') %}
+			{% for genotype in group.genotypes %}
 					
 					INSERT INTO GroupGenotypes VALUES(
 						"{{group.id}}",
-						"{{split_genotype[0]}}",
-						"{{haplotypes[0]}}",
-						"{{haplotypes[1]}}"
+						"{{genotype}}"
 					);
-			
-				{% endfor %}
-				
+							
 			{% endfor %}
 			
 			{% for ann in group.annotations %}

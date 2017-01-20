@@ -13,9 +13,7 @@ CREATE TABLE HapGroups (
 
 CREATE TABLE GroupGenotypes (
 	GroupID text,
-	GeneSymbol text,
-	Hap1 text,
-	Hap2 text
+	Genotype text
 );
 
 CREATE TABLE GroupAnnotations (

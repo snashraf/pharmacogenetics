@@ -354,7 +354,9 @@ class DataCollector(Database):
 			data = getJson(uri, self.authobj)
 			
 			sql = self.insertSQL("guidelines").render(json = data, did = DrugID, gid = GeneID)
-									
+					
+			print sql
+							
 			self.sql.executescript(sql)
 
 		self.conn.commit()
