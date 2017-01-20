@@ -3,6 +3,7 @@
 
 # --------------------------------------------------------------------------
 
+
 class Interpreter:
 
     def __init__(self, patientObj):
@@ -35,12 +36,12 @@ class Interpreter:
 
                 print i
 
-                    # get exact matches:
+                # get exact matches:
 
                 self.sql.execute("select distinct a.starname, p.hapid, %s from patienthaps p \
 											join alleles a on a.hapid=p.hapid \
 											where gid=? order by %s asc"
-                                  % (i, i), (gid, ))
+                                 % (i, i), (gid, ))
 
                 results = self.sql.fetchall()
 
@@ -53,8 +54,8 @@ class Interpreter:
 
                         lastval = []
 
-                        self.sql.execute('select distinct starhaps, guid from drugpairs where gid = ?'
-                                , (gid, ))
+                        self.sql.execute(
+                            'select distinct starhaps, guid from drugpairs where gid = ?', (gid, ))
 
                         vals = self.sql.fetchall()
 
@@ -92,7 +93,7 @@ class Interpreter:
             alt,
             call,
             start,
-            ) in self.sql.fetchall():
+        ) in self.sql.fetchall():
 
             if call == '0/0':
 
@@ -125,8 +126,8 @@ class Interpreter:
                             print 'Level of evidence:', loe
                             print advice
 
-                            self.sql.execute('insert into annotations values(?,?,?,?,?)'
-                                    , item)
+                            self.sql.execute(
+                                'insert into annotations values(?,?,?,?,?)', item)
                         else:
 
                             pass

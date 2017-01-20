@@ -12,207 +12,206 @@ import os
 
 # ---------------------------------------------------------------------
 
+
 class DataCollector(Database):
 
-	'''
-	This class imports a design VCF and creates a database with these positions, using PharmGKB.
-	'''
+    '''
+    This class imports a design VCF and creates a database with these positions, using PharmGKB.
+    '''
 
-	def __init__(self, dbname):
-		"""
-		takes database object to work on!
-		"""
-		path = os.path.dirname(__file__)
+    def __init__(self, dbname):
+        """
+        takes database object to work on!
+        """
+        path = os.path.dirname(__file__)
 
-		if len(path) == 0:
+        if len(path) == 0:
 
-			path = os.getcwd()
+            path = os.getcwd()
 
-		dbfolder = os.path.join(path, 'db')
+        dbfolder = os.path.join(path, 'db')
 
-		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
+        dbpath = os.path.join(dbfolder, '%s.db' % dbname)
 
-		Database.__init__(self, dbpath)
+        Database.__init__(self, dbpath)
 
+    def Authenticate(self):
 
-	def Authenticate(self):
-		
-		self.authobj = Authenticate()
+        self.authobj = Authenticate()
 
+    def GetPairs(self):
+        """
+        Create table for drug-gene pairs, to be used later to fetch drug data
+        :return:
+        """
 
-	def GetPairs(self):
-		"""
-		Create table for drug-gene pairs, to be used later to fetch drug data
-		:return:
-		"""
+        self.remakeTable('pairs')
 
-		self.remakeTable('pairs')
+        print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
 
-		print 'Getting gene-drug pairs... ~( * v*)/\\(^w ^)~'
+        # get the uri for finding well-annotated pairs (given by pharmgkb)
 
-		# get the uri for finding well-annotated pairs (given by pharmgkb)
+        uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
 
-		uri = 'https://api.pharmgkb.org/v1/report/selectPairs'
+        data = getJson(uri, self.authobj)
 
-		data = getJson(uri, self.authobj)
+        for response in tqdm(data):
 
-		for response in tqdm(data):
+            sql = self.insertSQL("pairs").render(json=response)
 
-			sql = self.insertSQL("pairs").render(json = response)
-			
-			self.sql.executescript(sql)
+            self.sql.executescript(sql)
 
-			self.conn.commit()
+            self.conn.commit()
 
+    def GetDrugData(self):
+        """
+        Gets info on seperate drugs, such as name and associated terms
+        terms give info on what the drug does
+        :return:
+        """
 
-	def GetDrugData(self):
-		"""
-		Gets info on seperate drugs, such as name and associated terms
-		terms give info on what the drug does
-		:return:
-		"""
+        print 'Getting drug data /(>_<)\\}'
 
-		print 'Getting drug data /(>_<)\\}'
+        # drop and re-create table drugs
 
-		# drop and re-create table drugs
+        self.remakeTable("drugs")
 
-		self.remakeTable("drugs")
+        # get all the important drug ids (dids) from
+        # the known gene-drug connections table
 
-		# get all the important drug ids (dids) from
-		# the known gene-drug connections table
+        self.sql.execute('SELECT DISTINCT DrugID FROM Pairs')
 
-		self.sql.execute('SELECT DISTINCT DrugID FROM Pairs')
+        # fetch matching did and use to create uri for query
 
-		# fetch matching did and use to create uri for query
+        for (did,) in tqdm(self.sql.fetchall()):
 
-		for (did,) in tqdm(self.sql.fetchall()):
+            uri = \
+                'https://api.pharmgkb.org/v1/data/chemical/{}?view=max'.format(
+                    did)
 
-			uri = \
-			'https://api.pharmgkb.org/v1/data/chemical/{}?view=max'.format(did)
+            data = getJson(uri, self.authobj)
 
-			data = getJson(uri, self.authobj)
-			
-			sql = self.insertSQL("drugs").render(json = data)
-			
-			self.sql.executescript(sql)
+            sql = self.insertSQL("drugs").render(json=data)
 
+            self.sql.executescript(sql)
 
-		self.conn.commit()
+        self.conn.commit()
 
+    def GetGeneData(self):
+        '''
+        Fetches data on given gene IDs.
+        :return:
+        '''
 
-	def GetGeneData(self):
-		'''
-		Fetches data on given gene IDs.
-		:return:
-		'''
+        print 'Getting gene data... (/o*)'
 
-		print 'Getting gene data... (/o*)'
+        self.remakeTable("genes")
 
-		self.remakeTable("genes")
+        # get all unique gene ids from the variant table
 
-		# get all unique gene ids from the variant table
+        self.sql.execute('SELECT DISTINCT GeneID FROM Pairs')
 
-		self.sql.execute('SELECT DISTINCT GeneID FROM Pairs')
-		
-		# TODO CATCH TABLE DOES NOT EXIST
+        # TODO CATCH TABLE DOES NOT EXIST
 
-		genes = self.sql.fetchall()
+        genes = self.sql.fetchall()
 
-		# go through results and creat e gene objects for each GID with PA (so it can be found on pharmgkb)
+        # go through results and creat e gene objects for each GID with PA (so
+        # it can be found on pharmgkb)
 
-		for (gid,) in tqdm(genes):
-			
-			uri = 'https://api.pharmgkb.org/v1/data/gene/{}?view=max'.format(gid)
+        for (gid,) in tqdm(genes):
 
-			data = urllib2.urlopen(uri)
+            uri = 'https://api.pharmgkb.org/v1/data/gene/{}?view=max'.format(
+                gid)
 
-			response = json.load(data)
+            data = urllib2.urlopen(uri)
 
-			sql = self.insertSQL("genes").render(json = response)
+            response = json.load(data)
 
-			self.sql.executescript(sql)
+            sql = self.insertSQL("genes").render(json=response)
 
-			self.conn.commit()
+            self.sql.executescript(sql)
 
+            self.conn.commit()
 
-	def GetHaplotypes(self):
+    def GetHaplotypes(self):
 
-		self.remakeTable("haplotypes")
+        self.remakeTable("haplotypes")
 
-		self.sql.execute('SELECT DISTINCT GeneID FROM Genes')
-		
-		# TODO CATCH TABLE DOES NOT EXIST
+        self.sql.execute('SELECT DISTINCT GeneID FROM Genes')
 
-		genes = self.sql.fetchall()
+        # TODO CATCH TABLE DOES NOT EXIST
 
-		# go through results and create gene objects for each GID with PA (so it can be found on pharmgkb)
+        genes = self.sql.fetchall()
 
-		for (gid,) in tqdm(genes):
+        # go through results and create gene objects for each GID with PA (so
+        # it can be found on pharmgkb)
 
-			uri = 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max'.format(gid)
+        for (gid,) in tqdm(genes):
 
-			data = getJson(uri, self.authobj)
-			
-			if not data:
-				
-				continue
-				
-			for response in data:
+            uri = 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max'.format(
+                gid)
 
-				sql = self.insertSQL("haplotypes").render(json = response)
-				
-				self.sql.executescript(sql)
+            data = getJson(uri, self.authobj)
 
-		self.conn.commit()
+            if not data:
 
+                continue
 
-	def GetVarData(self):
-		"""
-		Using Variant objects, this function fetches data on variants from the PharmGKB servers,
-		if not available uses the Entrez servers, possibilities are limited for now.
-		:return:
-		"""
+            for response in data:
 
-		print 'Getting variant data... ~(^_^)~'
+                sql = self.insertSQL("haplotypes").render(json=response)
 
-		self.remakeTable("variants")
+                self.sql.executescript(sql)
 
-		# get all rsids in the design vcf
+        self.conn.commit()
 
-		self.sql.execute('''
+    def GetVarData(self):
+        """
+        Using Variant objects, this function fetches data on variants from the PharmGKB servers,
+        if not available uses the Entrez servers, possibilities are limited for now.
+        :return:
+        """
+
+        print 'Getting variant data... ~(^_^)~'
+
+        self.remakeTable("variants")
+
+        # get all rsids in the design vcf
+
+        self.sql.execute('''
 					SELECT DISTINCT v.VarName from HapVars v
 					JOIN Haplotypes h ON v.HapID = h.HapID
 					JOIN Genes g on h.GeneID = g.GeneID
 					WHERE v.VarName LIKE "rs%"
 					ORDER BY h.GeneID;
 					'''
-					)
+                         )
 
-		# rotate through rsids and create variant objects to fetch information
+        # rotate through rsids and create variant objects to fetch information
 
-		for (rsid,) in tqdm(self.sql.fetchall()):
+        for (rsid,) in tqdm(self.sql.fetchall()):
 
-			# create variant instances with the given rsid.
+            # create variant instances with the given rsid.
 
-			uri = \
-				'https://api.pharmgkb.org/v1/data/variant/?symbol={}&view=max'.format(rsid)
+            uri = \
+                'https://api.pharmgkb.org/v1/data/variant/?symbol={}&view=max'.format(
+                    rsid)
 
-			data = getJson(uri, self.authobj)
+            data = getJson(uri, self.authobj)
 
-			# pp.pprint(response)
+            # pp.pprint(response)
 
-			sql = self.insertSQL("variants").render(json = data[0])
+            sql = self.insertSQL("variants").render(json=data[0])
 
-			self.sql.executescript(sql)
+            self.sql.executescript(sql)
 
-		self.conn.commit()
+        self.conn.commit()
 
+    def GetNonRS(self):
 
-	def GetNonRS(self):
+        self.remakeTable("othervars")
 
-		self.remakeTable("othervars")
-
-		self.sql.execute('''
+        self.sql.execute('''
 				SELECT DISTINCT v.VarName, v.AltAllele, h.GeneID from HapVars v
 				JOIN Haplotypes h ON v.HapID = h.HapID
 				JOIN Genes g on h.GeneID = g.GeneID
@@ -220,24 +219,23 @@ class DataCollector(Database):
 				ORDER BY h.GeneID;
 				''')
 
-		print 'Parsing non-rs variants...'
+        print 'Parsing non-rs variants...'
 
-		for (rsid, gid, alt) in tqdm(self.sql.fetchall()):
+        for (rsid, gid, alt) in tqdm(self.sql.fetchall()):
 
-			d = hg19conv(rsid, gid, alt)
+            d = hg19conv(rsid, gid, alt)
 
-			sql = self.insertSQL("othervars").render(json = d)
+            sql = self.insertSQL("othervars").render(json=d)
 
-			self.sql.executescript(sql)
+            self.sql.executescript(sql)
 
-		self.conn.commit()
+        self.conn.commit()
 
+    def ConvertIndels(self):
 
-	def ConvertIndels(self):
+        self.remakeTable("indels")
 
-		self.remakeTable("indels")
-
-		self.sql.execute('''
+        self.sql.execute('''
 						SELECT DISTINCT
 						l.VarID, RefGenome, Chromosome, Start, End, RefAllele, AltPGKB
 						FROM LocPGKB l
@@ -246,134 +244,132 @@ class DataCollector(Database):
 						JOIN AltAlleles a
 						ON v.VarID = a.VarID
 						''')
-		print "Converting indels.. \(>w <)/"
+        print "Converting indels.. \(>w <)/"
 
-		for (varid, genome, loc, start, end, ref, alt) in tqdm(self.sql.fetchall()):
-			
-			# create json for template usage
+        for (varid, genome, loc, start, end, ref, alt) in tqdm(self.sql.fetchall()):
 
-			shifted = {"varid":varid,
-					"chromosome":loc,
-					"genome":genome,
-					"ref":ref,
-					"alt":alt,
-					"start":start,
-					"end":end}
+            # create json for template usage
 
-			# insertion or deletion?
+            shifted = {"varid": varid,
+                       "chromosome": loc,
+                       "genome": genome,
+                       "ref": ref,
+                       "alt": alt,
+                       "start": start,
+                       "end": end}
 
-			if alt == ref:
+            # insertion or deletion?
 
-				continue
+            if alt == ref:
 
-			if ref == "-":
+                continue
 
-				# left shift position by 1
-		
-				shifted['start'] = start - 1
-		
-				shifted['end'] = end
-		
-				# get reference nucleotide at that position
-		
-				prevbase = getRef(loc, shifted['start'], shifted['start'])
+            if ref == "-":
 
-				# insertion scenario
+                # left shift position by 1
 
-				shifted['ref'] = prevbase
-	
-				shifted['alt'] = prevbase + alt	
+                shifted['start'] = start - 1
 
-			elif alt == "-":
+                shifted['end'] = end
 
-				# left shift position by 1
-		
-				shifted['start'] = start - 1
-		
-				shifted['end'] = end
-		
-				# get reference nucleotide at that position
-		
-				prevbase = getRef(loc, shifted['start'], shifted['start'])
+                # get reference nucleotide at that position
 
-				# deletion scenario A -
+                prevbase = getRef(loc, shifted['start'], shifted['start'])
 
-				shifted['ref'] = prevbase + ref
-	
-				salt = prevbase
-	
-				shifted['alt'] = salt
+                # insertion scenario
 
-			else:
+                shifted['ref'] = prevbase
 
-				pass
-			# render sql
+                shifted['alt'] = prevbase + alt
 
-			sql = self.insertSQL("indels").render(alt = alt, json = shifted)
+            elif alt == "-":
 
-			print sql
+                # left shift position by 1
 
-			self.sql.executescript(sql)
+                shifted['start'] = start - 1
+
+                shifted['end'] = end
+
+                # get reference nucleotide at that position
+
+                prevbase = getRef(loc, shifted['start'], shifted['start'])
+
+                # deletion scenario A -
+
+                shifted['ref'] = prevbase + ref
+
+                salt = prevbase
+
+                shifted['alt'] = salt
+
+            else:
+
+                pass
+            # render sql
+
+            sql = self.insertSQL("indels").render(alt=alt, json=shifted)
+
+            print sql
+
+            self.sql.executescript(sql)
 
 
 # ------------------------------------------------------------------------------------------------------------
 
+    def GetAnnotations(self):
 
-	def GetAnnotations(self):
-		
-		self.remakeTable("annotations")
+        self.remakeTable("annotations")
 
-		self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
+        self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
 
-		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
-			
-			uri = \
-			'https://api.pharmgkb.org/v1/report/pair/{}/{}/clinicalAnnotation?view=max' \
-			.format(DrugID, GeneID)
+        for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
 
-			data = getJson(uri, self.authobj)
-						
-			sql = self.insertSQL("annotations").render(json = data, DrugID = DrugID)
-		
-			self.sql.executescript(sql)
+            uri = \
+                'https://api.pharmgkb.org/v1/report/pair/{}/{}/clinicalAnnotation?view=max' \
+                .format(DrugID, GeneID)
 
-		self.conn.commit()
+            data = getJson(uri, self.authobj)
 
+            sql = self.insertSQL("annotations").render(
+                json=data, DrugID=DrugID)
 
-	def GetGuidelines(self):
-		
-		self.remakeTable("guidelines")
-		
-		self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
+            self.sql.executescript(sql)
 
-		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
-						
-			uri = 'https://api.pharmgkb.org/v1/data/guideline?&relatedChemicals.accessionId={}&relatedGenes.accessionId={}&view=max' \
-					.format(DrugID, GeneID)
+        self.conn.commit()
 
-			data = getJson(uri, self.authobj)
-			
-			sql = self.insertSQL("guidelines").render(json = data, did = DrugID, gid = GeneID)
-					
-			print sql
-							
-			self.sql.executescript(sql)
+    def GetGuidelines(self):
 
-		self.conn.commit()
+        self.remakeTable("guidelines")
 
+        self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
 
+        for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
 
-	def BedFile(self):
+            uri = 'https://api.pharmgkb.org/v1/data/guideline?&relatedChemicals.accessionId={}&relatedGenes.accessionId={}&view=max' \
+                .format(DrugID, GeneID)
 
-		# creates bed file for subsetting .BAM files.
+            data = getJson(uri, self.authobj)
 
-		self.sql.execute('SELECT chr, start, stop, symbol FROM genes ORDER BY length(chr), chr'
-						 )
+            sql = self.insertSQL("guidelines").render(
+                json=data, did=DrugID, gid=GeneID)
 
-		with open('PharmacogenomicGenes_PGKB.bed', 'w') as bed:
+            print sql
 
-			for tup in self.sql.fetchall():
+            self.sql.executescript(sql)
 
-				bed.write('\t'.join(map(str, tup)) + '\n')
+        self.conn.commit()
+
+    def BedFile(self):
+
+        # creates bed file for subsetting .BAM files.
+
+        self.sql.execute('SELECT chr, start, stop, symbol FROM genes ORDER BY length(chr), chr'
+                         )
+
+        with open('PharmacogenomicGenes_PGKB.bed', 'w') as bed:
+
+            for tup in self.sql.fetchall():
+
+                bed.write('\t'.join(map(str, tup)) + '\n')
 
 # -----------------------------------------------------------------

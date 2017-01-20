@@ -12,95 +12,92 @@ from Bio import Phylo
 
 # ---------------------------------------------------------------------
 
+
 class Patient(Database):
 
-	'''
-	This class imports a design VCF and an input VCF.
-	'''
+    '''
+    This class imports a design VCF and an input VCF.
+    '''
 
-	def __init__(self, dbname, f):
+    def __init__(self, dbname, f):
+        """
+        f = given VCF input file
+        GetDesign imports the test design and matches rs values to
+        positions
+        Import imports the input vcf
+        GetIDs finds changed positions and matches them to the design.
+        """
 
-		"""
-		f = given VCF input file
-		GetDesign imports the test design and matches rs values to
-		positions
-		Import imports the input vcf
-		GetIDs finds changed positions and matches them to the design.
-		"""
+        print 'Initiating patient...'
 
-		print 'Initiating patient...'
+        self.path = os.path.dirname(__file__)
 
-		self.path = os.path.dirname(__file__)
+        dbfolder = os.path.join(self.path, 'db')
 
-		dbfolder = os.path.join(self.path, 'db')
-		
-		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
-		
-		Database.__init__(self, dbpath)
+        dbpath = os.path.join(dbfolder, '%s.db' % dbname)
+
+        Database.__init__(self, dbpath)
 
 # -------------------------------------------------------------
-	
-		self.f = f
 
-		self.reader = vcf.Reader(open(f, 'r'))
+        self.f = f
 
-# --------------------------------- SNP parsing ----------------------------------------
+        self.reader = vcf.Reader(open(f, 'r'))
 
-	def GetPositions(self):
-	
-		"""
-		Gets patient variables, reads into patientvars table
-		:return:
-		"""
-	
-		self.remakeTable("patvars")
-	
-	
-			# create list of positions to localize in patient
-	
-		self.sql.execute('''
+# --------------------------------- SNP parsing --------------------------
+
+    def GetPositions(self):
+        """
+        Gets patient variables, reads into patientvars table
+        :return:
+        """
+
+        self.remakeTable("patvars")
+
+        # create list of positions to localize in patient
+
+        self.sql.execute('''
 			SELECT DISTINCT l.Chromosome, l.Start, l.End, l.RefAllele, v.MutType
 			FROM LocVCF l
 			JOIN Variants v
 			ON v.VarID = l.VarID
 			''')
-	
-		positions = self.sql.fetchall()
-	
-		print "Fetching patient variants... o(* ^ *o)"
-		
-		for (loc, start, end, ref, muttype) in tqdm(positions):
-								
-			records = self.reader.fetch(str(loc.lstrip("chr")), start-1, end=end)
-			
-			# TODO PLEASE DO NOT DO THIS
 
-			for record in records: # doctest: +SKIP
+        positions = self.sql.fetchall()
 
-				sql = self.insertSQL("patvars").render(record = record)
-			
-				self.sql.executescript(sql)
-		
+        print "Fetching patient variants... o(* ^ *o)"
 
-# ---------------------------- Haplotype parsing -------------------------------
+        for (loc, start, end, ref, muttype) in tqdm(positions):
+
+            records = self.reader.fetch(
+                str(loc.lstrip("chr")), start - 1, end=end)
+
+            # TODO PLEASE DO NOT DO THIS
+
+            for record in records:  # doctest: +SKIP
+
+                sql = self.insertSQL("patvars").render(record=record)
+
+                self.sql.executescript(sql)
 
 
-	def GetHaplotypes(self):
+# ---------------------------- Haplotype parsing -------------------------
 
-			"""
-			Matches rsids per gene to known haplotypes for that gene.
-			Results are stored in a list...
-			:return:
-			"""
-	
-			self.remakeTable('pathaplotypes')
-	
-			self.sql.execute("SELECT DISTINCT GeneID from Genes")
-	
-			gids = [tup[0] for tup in self.sql.fetchall()]
+    def GetHaplotypes(self):
+        """
+        Matches rsids per gene to known haplotypes for that gene.
+        Results are stored in a list...
+        :return:
+        """
 
-			# create view with everything
-			self.sql.executescript('''
+        self.remakeTable('pathaplotypes')
+
+        self.sql.execute("SELECT DISTINCT GeneID from Genes")
+
+        gids = [tup[0] for tup in self.sql.fetchall()]
+
+        # create view with everything
+        self.sql.executescript('''
 					DROP VIEW Overview;
 					
 					CREATE VIEW Overview AS
@@ -139,33 +136,33 @@ class Patient(Database):
 					   OR HapAllele = RefPGKB
 					   ORDER BY locv.start asc;
 							''')
-	
-			# get list of all gids
-	
-			print "Haplotyping patient... (\\' n')\\*scribble*"
 
-			for gid in tqdm(gids):
-	
-				print "--------------%s--------------" %gid
-				sequences = []
+        # get list of all gids
 
-				# First: collect SNPs
-				
-				self.sql.execute('''
+        print "Haplotyping patient... (\\' n')\\*scribble*"
+
+        for gid in tqdm(gids):
+
+            print "--------------%s--------------" % gid
+            sequences = []
+
+            # First: collect SNPs
+
+            self.sql.execute('''
 					SELECT DISTINCT VarName
 					FROM Overview
 					WHERE GeneID = ?
 					AND HGVS LIKE "%[=]%"
 					ORDER BY Start ASC
 					''', (gid,))
-	
-				rsidorder = [rsid for rsid in self.sql.fetchall()]
-				
-				print rsidorder
-				
-				# Fetch SNPs and add to dictionary
-				
-				self.sql.execute('''
+
+            rsidorder = [rsid for rsid in self.sql.fetchall()]
+
+            print rsidorder
+
+            # Fetch SNPs and add to dictionary
+
+            self.sql.execute('''
 					SELECT DISTINCT VarName, HapAllele
 					from overview
 					where geneid = ?
@@ -174,14 +171,13 @@ class Patient(Database):
 					order by start asc
 					''', (gid,))
 
+            snps = {rsid: allele for (rsid, allele) in self.sql.fetchall()}
 
-				snps = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
-				
-				print snps
-				
-				# Fetch indels that match RefPGKB and bind them to RefVCF
-				
-				self.sql.execute('''
+            print snps
+
+            # Fetch indels that match RefPGKB and bind them to RefVCF
+
+            self.sql.execute('''
 					SELECT DISTINCT VarName, RefVCF
 					FROM overview where geneid = ?
 					and hgvs like "%=%"
@@ -189,14 +185,15 @@ class Patient(Database):
 					and hapallele = refpgkb
 					order by start asc
 					''', (gid,))
-				
-				indels_ref  = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
-				
-				print indels_ref
-				
-				# Fetch indels that match AltPGKB and bind them to ALtVCF
-				
-				self.sql.execute('''
+
+            indels_ref = {rsid: allele for (
+                rsid, allele) in self.sql.fetchall()}
+
+            print indels_ref
+
+            # Fetch indels that match AltPGKB and bind them to ALtVCF
+
+            self.sql.execute('''
 					SELECT DISTINCT VarName, AltVCF
 					FROM overview where geneid = ?
 					and hgvs like "%=%"
@@ -204,214 +201,221 @@ class Patient(Database):
 					and hapallele = altpgkb
 					order by start asc
 					''', (gid,))
-				
-				indels_alt  = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
-				
-				print indels_alt
-				
-				# Join these three dictionaries and feed to seqMaker
-				
-				reference = merge_dicts(snps, indels_ref, indels_alt)
-				
-				print reference
-				
-				raw_input("Press enter to continue...")
-				
-				continue
 
-				# SeqMaker makes a fictive piece of DNA consisting of the haplotype defining RSIDS
-				
-				refseq = seqMaker(rsidorder, reference, reference)
-	
-				sequences.append(">{}\n{}\n".format(refid, refseq))
-	
-				# get list of all hapids for this gene
-	
-				self.sql.execute('''
+            indels_alt = {rsid: allele for (
+                rsid, allele) in self.sql.fetchall()}
+
+            print indels_alt
+
+            # Join these three dictionaries and feed to seqMaker
+
+            reference = merge_dicts(snps, indels_ref, indels_alt)
+
+            print reference
+
+            raw_input("Press enter to continue...")
+
+            continue
+
+            # SeqMaker makes a fictive piece of DNA consisting of the haplotype
+            # defining RSIDS
+
+            refseq = seqMaker(rsidorder, reference, reference)
+
+            sequences.append(">{}\n{}\n".format(refid, refseq))
+
+            # get list of all hapids for this gene
+
+            self.sql.execute('''
 					SELECT DISTINCT HapID, hapname, HGVS
 					from Overview
 					where GeneID = ?
 					and hgvs not like "%=%"
 					''',
-					(gid,))
+                             (gid,))
 
-				selection = self.sql.fetchall()
-	
-				for (hapid, starhap, hgvs) in selection:
-	
-					# get haplotype alleles and create complete dictionary
-	
-					self.sql.execute('''SELECT VarName, AltVCF
+            selection = self.sql.fetchall()
+
+            for (hapid, starhap, hgvs) in selection:
+
+                # get haplotype alleles and create complete dictionary
+
+                self.sql.execute('''SELECT VarName, AltVCF
 							from Overview
 							where HapID = ?
 							and HapAllele = AltPGKB
 							''', (hapid,))
-	
-					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
-	
-					if len(haprsids) == 0:
-	
-						continue
-	
-					else:
-	
-						haprsids = dict(reference, **haprsids)
-	
-						hapseq = seqMaker(rsidorder, reference, haprsids)
-	
-						modified = {k : (reference[k], haprsids[k]) for k in reference.keys() if reference[k] != haprsids[k]}
-	
-						score_ref = len(modified)
-	
-						if score_ref == 0:
-	
-							continue
-	
-						else:
-	
-							# get patient rsids
 
-							self.sql.execute('''SELECT VarName, pat_alt
+                haprsids = {rsid: alt for (rsid, alt) in self.sql.fetchall()}
+
+                if len(haprsids) == 0:
+
+                    continue
+
+                else:
+
+                    haprsids = dict(reference, **haprsids)
+
+                    hapseq = seqMaker(rsidorder, reference, haprsids)
+
+                    modified = {k: (reference[k], haprsids[k]) for k in reference.keys(
+                    ) if reference[k] != haprsids[k]}
+
+                    score_ref = len(modified)
+
+                    if score_ref == 0:
+
+                        continue
+
+                    else:
+
+                        # get patient rsids
+
+                        self.sql.execute('''SELECT VarName, pat_alt
 									from Overview
 									where HapID = ?
 									and call = "1/1"
 									''', (hapid,))
-	
-							patrsids_base = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
-	
-							patrsids_al1 = dict(reference, **patrsids_base)
-	
-							patseq1 = seqMaker(rsidorder, reference, patrsids_al1)
-	
-							modified = {k : (patrsids_al1[k], haprsids[k]) for k in patrsids_al1.keys() if patrsids_al1[k] != haprsids[k]}
-	
-							score_al1 = len(modified)
-	
-							# --------------------------------------------------------------------------------------------------
-							
-							self.sql.execute('''SELECT VarName, pat_alt
+
+                        patrsids_base = {rsid: alt for (
+                            rsid, alt) in self.sql.fetchall()}
+
+                        patrsids_al1 = dict(reference, **patrsids_base)
+
+                        patseq1 = seqMaker(rsidorder, reference, patrsids_al1)
+
+                        modified = {k: (patrsids_al1[k], haprsids[k]) for k in patrsids_al1.keys(
+                        ) if patrsids_al1[k] != haprsids[k]}
+
+                        score_al1 = len(modified)
+
+                        # --------------------------------------------------------------------------------------------------
+
+                        self.sql.execute('''SELECT VarName, pat_alt
 									from Overview
 									where HapID = ?
 									and call = "0/1"
 									''', (hapid,))
-	
-							patrsids_add = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
-	
-							patrsids_al2 = dict(patrsids_base, **patrsids_add)
-	
-							patseq2 = seqMaker(rsidorder, reference, patrsids_al2)
-	
-							modified = {k : (patrsids_al2[k], haprsids[k]) for k in patrsids_al2.keys() if patrsids_al2[k] != haprsids[k]}
-	
-							score_al2 = len(modified)
-	
-							if len(patrsids_base) == 0 and len(patrsids_add) == 0:
-	
-								continue
-	
-							else:
-	
-								hapline = ">%s\n %s\n" %(hapid, hapseq)
-	
-								if hapline not in sequences and hapseq != "":
-	
-									sequences.append(hapline)
-	
-								else:
-	
-									continue
 
-				sequences.append(">Patient_allele1\n" + patseq1 + "\n")
-	
-				sequences.append(">Patient_allele2\n" + patseq2 + "\n")
-				
-				output = "/output/alignments/"
-	
-				fn = self.path + output + gid + "_aln.fasta"
-	
-				with open(fn, "w") as f:
-	
-					f.writelines(sequences)
-		
-				try:
-	
-					self.HapScorer(fn, "phylo", refid)
-	
-				except:
-	
-					raise
+                        patrsids_add = {rsid: alt for (
+                            rsid, alt) in self.sql.fetchall()}
 
+                        patrsids_al2 = dict(patrsids_base, **patrsids_add)
 
-	def HapScorer(self, fn, mode, refid):
+                        patseq2 = seqMaker(rsidorder, reference, patrsids_al2)
 
-		if mode == "phylo":
+                        modified = {k: (patrsids_al2[k], haprsids[k]) for k in patrsids_al2.keys(
+                        ) if patrsids_al2[k] != haprsids[k]}
 
-			# phylogenetic tree
+                        score_al2 = len(modified)
 
-			of = fn.replace("alignments/", "alignments/aligned/")
+                        if len(patrsids_base) == 0 and len(patrsids_add) == 0:
 
-			tn = of.strip(".fasta")+"_tree.dnd"
+                            continue
 
-			with open(fn, "rb") as infile, open(of, "wb") as outfile:
+                        else:
 
-				s.check_call("{}/plugins/clustalo -i {} -o {} --auto --force --guidetree-out={}"
-					.format(self.path, fn, of, tn),  shell=True)
+                            hapline = ">%s\n %s\n" % (hapid, hapseq)
 
-			tree = Phylo.read(tn, "newick")
+                            if hapline not in sequences and hapseq != "":
 
-			names = []
+                                sequences.append(hapline)
 
-			# modified
+                            else:
 
-			tree.root_with_outgroup({refid})
-			
-			for clade in tree.find_clades():
+                                continue
 
-				if clade.name and clade.name not in names:
+            sequences.append(">Patient_allele1\n" + patseq1 + "\n")
 
-						names.append(clade.name)
+            sequences.append(">Patient_allele2\n" + patseq2 + "\n")
 
-			for hap in names:
+            output = "/output/alignments/"
 
-				distances = {"hapid":hap}
+            fn = self.path + output + gid + "_aln.fasta"
 
-				if "Patient" in hap:
+            with open(fn, "w") as f:
 
-					continue
+                f.writelines(sequences)
 
-				else:
+            try:
 
-					for i in range(1,3):
+                self.HapScorer(fn, "phylo", refid)
 
-						dist = tree.distance("Patient_allele%i" %i, hap)
+            except:
 
-						distances["al%i" %i] = dist
+                raise
 
-					sql = self.insertSQL("pathaplotypes").render(json = distances)
-				
-					print sql
+    def HapScorer(self, fn, mode, refid):
 
-					self.sql.executescript(sql)
+        if mode == "phylo":
 
-					# commit to db
+            # phylogenetic tree
 
-			self.conn.commit()
+            of = fn.replace("alignments/", "alignments/aligned/")
 
-		else:
-			# standard mode
-			pass
+            tn = of.strip(".fasta") + "_tree.dnd"
 
-		self.conn.commit()
+            with open(fn, "rb") as infile, open(of, "wb") as outfile:
+
+                s.check_call("{}/plugins/clustalo -i {} -o {} --auto --force --guidetree-out={}"
+                             .format(self.path, fn, of, tn),  shell=True)
+
+            tree = Phylo.read(tn, "newick")
+
+            names = []
+
+            # modified
+
+            tree.root_with_outgroup({refid})
+
+            for clade in tree.find_clades():
+
+                if clade.name and clade.name not in names:
+
+                    names.append(clade.name)
+
+            for hap in names:
+
+                distances = {"hapid": hap}
+
+                if "Patient" in hap:
+
+                    continue
+
+                else:
+
+                    for i in range(1, 3):
+
+                        dist = tree.distance("Patient_allele%i" % i, hap)
+
+                        distances["al%i" % i] = dist
+
+                    sql = self.insertSQL(
+                        "pathaplotypes").render(json=distances)
+
+                    print sql
+
+                    self.sql.executescript(sql)
+
+                    # commit to db
+
+            self.conn.commit()
+
+        else:
+            # standard mode
+            pass
+
+        self.conn.commit()
 
 # ------------------------ annotations ------------------------------
 
-	def GetSNPAnnotations(self):
+    def GetSNPAnnotations(self):
 
-			self.authobj = Authenticate()
-			
-			self.remakeTable("patannotations")
+        self.authobj = Authenticate()
 
-			self.sql.execute('''
+        self.remakeTable("patannotations")
+
+        self.sql.execute('''
 							SELECT v.VarID, p.CallBase, a.AnID
 							FROM LocPGKB l
 							JOIN PatientVars p
@@ -420,26 +424,27 @@ class Patient(Database):
 							JOIN Annotations a
 							ON a.VarHapId = v.VarId
 							''')
-							
-			print "Annotating SNPs... /(* ` ^ `*/)"
-			
-			for (VarID, CallBase, AnID) in tqdm(self.sql.fetchall()):
-				
-				uri = \
-				'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
-				.format(AnID)
 
-				data = getJson(uri, self.authobj)
-				
-				allele = CallBase.replace("/", "")
-				
-				sql = self.insertSQL("patannotations").render(json = data, patallele = allele)
-			
-				self.sql.executescript(sql)
+        print "Annotating SNPs... /(* ` ^ `*/)"
 
-				# FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
-				
-				overviewQuery = '''
+        for (VarID, CallBase, AnID) in tqdm(self.sql.fetchall()):
+
+            uri = \
+                'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
+                .format(AnID)
+
+            data = getJson(uri, self.authobj)
+
+            allele = CallBase.replace("/", "")
+
+            sql = self.insertSQL("patannotations").render(
+                json=data, patallele=allele)
+
+            self.sql.executescript(sql)
+
+            # FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
+
+            overviewQuery = '''
 				select distinct d.chemname, g.genename, p.phenotype, p.patallele, loe
 				from patannotations p
 				join annotations a
@@ -453,7 +458,7 @@ class Patient(Database):
 				order by g.genename;
 				'''
 
-				queryHaplotypeScores = '''
+            queryHaplotypeScores = '''
 				select geneid, hapid, hapname, distance1, distance2 from pathaplotypes p
 				join haplotypes h
 				on p.HapID = h.hapid
@@ -461,8 +466,8 @@ class Patient(Database):
 				on h.geneid = g.geneid;
 				'''
 
-	def GetHapAnnotations(self):
-		self.sql.executescript('''
+    def GetHapAnnotations(self):
+        self.sql.executescript('''
 			CREATE VIEW HapAnnotations AS
 			    SELECT DISTINCT *
 			      FROM pathaplotypes h
