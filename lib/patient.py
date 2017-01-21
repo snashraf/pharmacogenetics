@@ -8,7 +8,7 @@ from tqdm import tqdm
 from modules.pgkb_functions import *
 import subprocess as s
 import pprint as pp
-from Bio import Phylo
+from Bio import Phylo, AlignIO
 from collections import OrderedDict
 from interpreter import Interpreter
 
@@ -103,10 +103,10 @@ class Patient(Database):
 
 			# create view with everything
 			self.sql.executescript('''
-					DROP VIEW Overview;
+					DROP VIEW IF EXISTS Overview;
 					
 					CREATE VIEW Overview AS
-					SELECT  DISTINCT
+					SELECT DISTINCT
 					
 					hap.GeneID as GeneID,
 					hap.HapID as HapID,
@@ -271,7 +271,7 @@ class Patient(Database):
 				prev_seqs = []
 				
 				self.sql.executescript('''
-					DROP VIEW HapView;
+					DROP VIEW IF EXISTS HapView;
 					
 					CREATE VIEW HapView AS
 					
@@ -281,6 +281,7 @@ class Patient(Database):
 					JOIN Haplotypes h
 					On G.GeneID = h.GeneID
 					AND o.Starname = h.Starname
+
 					''')
 				
 				self.sql.execute("SELECT DISTINCT HapID FROM HapView WHERE GeneID = ?", (gid,))
@@ -299,7 +300,7 @@ class Patient(Database):
 						
 						seq = seqMaker(rsidorder, varValues[refid], values)
 
-						if (seq not in prev_seqs and var not in options) or (var == 'a1' or var == 'a2'):
+						if (seq not in prev_seqs) or (var == 'a1' or var == 'a2'):
 								
 							f.write(">{}\n{}\n".format(var, seq))
 
@@ -319,10 +320,10 @@ class Patient(Database):
 
 			tn = of.strip(".fasta")+"_tree.dnd"
 
-			with open(fn, "rb") as infile, open(of, "wb") as outfile:
+			s.check_call("{}/plugins/clustalo -i {} -o {} -t DNA --dealign --force"
+					.format(self.path, fn, of),  shell=True)
 
-				s.check_call("{}/plugins/clustalo -i {} -o {} --auto --force --guidetree-out={}"
-					.format(self.path, fn, of, tn),  shell=True)
+			s.check_call("{}/plugins/FastTree -quiet -nopr -gtr -nt {} > {}".format(self.path, of, tn), shell=True)
 
 			tree = Phylo.read(tn, "newick")
 			
@@ -339,6 +340,7 @@ class Patient(Database):
 				if clade.name and clade.name not in names:
 
 						names.append(clade.name)
+
 			for hap in names:
 
 				distances = {"hapid":hap}
@@ -364,7 +366,9 @@ class Patient(Database):
 			self.conn.commit()
 
 		else:
+
 			# standard mode
+			
 			pass
 
 		self.conn.commit()
@@ -376,79 +380,3 @@ class Patient(Database):
 		i = Interpreter(self)
 		
 		i.Genotyper()
-
-# ------------------------ annotations ------------------------------
-
-	def GetSNPAnnotations(self):
-
-			# only when there is no haplotype available?
-			
-			self.authobj = Authenticate()
-			
-			self.remakeTable("patannotations")
-
-			self.sql.execute('''
-							SELECT v.VarID, p.CallBase, a.AnID
-							FROM LocPGKB l
-							JOIN PatientVars p
-							ON p.Start = l.Start
-							JOIN Variants v on l.VarId = v.VarId
-							JOIN Annotations a
-							ON a.VarHapId = v.VarId
-							''')
-							
-			print "Annotating SNPs... /(* ` ^ `*/)"
-			
-			for (VarID, CallBase, AnID) in tqdm(self.sql.fetchall()):
-				
-				uri = \
-				'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
-				.format(AnID)
-
-				data = getJson(uri, self.authobj)
-				
-				allele = CallBase.replace("/", "")
-				
-				sql = self.insertSQL("patannotations").render(json = data, patallele = allele)
-			
-				self.sql.executescript(sql)
-
-				# FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
-				
-				overviewQuery = '''
-				select distinct d.chemname, g.genename, p.phenotype, p.patallele, loe
-				from patannotations p
-				join annotations a
-				on p.anid = a.anid
-				join pairs p
-				on a.drugid = p.drugid
-				join drugs d
-				on p.drugid = d.drugid
-				join genes g
-				on g.geneid = p.geneid
-				order by g.genename;
-				'''
-
-				queryHaplotypeScores = '''
-				select geneid, hapid, hapname, distance1, distance2 from pathaplotypes p
-				join haplotypes h
-				on p.HapID = h.hapid
-				join genes g
-				on h.geneid = g.geneid;
-				'''
-
-
-	def GetHapAnnotations(self):
-		self.sql.executescript('''
-			CREATE VIEW HapAnnotations AS
-			    SELECT DISTINCT *
-			      FROM pathaplotypes h
-			           JOIN
-			           annotations a ON a.varhapid = h.hapid
-			           JOIN
-			           haplotypes t ON t.hapid = h.HapID
-			           JOIN
-			           genes g ON g.geneid = t.geneid
-			     WHERE hgvs NOT LIKE "%[0]%"
-			     ORDER BY geneid;
-						''')
