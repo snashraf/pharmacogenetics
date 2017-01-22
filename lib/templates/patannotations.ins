@@ -1,6 +1,6 @@
 {% for phen in json.allelePhenotypes %}
 
-	{% if phen.allele == patallele %}
+	{% if patallele in phen.allele or revallele in phen.allele %}
 
 		INSERT INTO PatAnnotations VALUES(
 			"{{json.id}}",

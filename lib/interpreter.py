@@ -1,52 +1,56 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from modules.pgkb_functions import *
+from tqdm import tqdm
+import pprint as pp
 # --------------------------------------------------------------------------
 
 class Interpreter:
 
 	def __init__(self, p):
 
+		self.p = p
+
 		self.advice = {}
 
-		self.conn = p.conn
+		self.authobj = Authenticate()
 
-		self.sql = p.conn.cursor()
-
-		self.conn.commit()
+		self.p.conn.commit()
 
 
 	def Genotyper(self):
 		
+		self.p.remakeTable("patguidelines")
 		# For each drug:
 			
-		self.sql.execute("SELECT DISTINCT DrugID FROM Pairs")
+		self.p.sql.execute("SELECT DISTINCT DrugID FROM Pairs")
 		
-		for (did,) in self.sql.fetchall():
+		for (did,) in self.p.sql.fetchall():
 			
 			# Select guidelines involved
 			
-			self.sql.execute("SELECT DISTINCT GuID from Guidelines WHERE DrugID = ?", (did,))
+			self.p.sql.execute("SELECT DISTINCT GuID from Guidelines WHERE DrugID = ?", (did,))
 			
-			for (guid,) in self.sql.fetchall():
+			for (guid,) in self.p.sql.fetchall():
 		
 				# fetch involved genes
 		
-				self.sql.execute("SELECT DISTINCT GeneID, o.GeneSymbol FROM GuideOptions o JOIN Genes g on g.GeneSymbol = o.GeneSymbol WHERE GuID = ?", (guid,))
+				self.p.sql.execute("SELECT DISTINCT GeneID, o.GeneSymbol FROM GuideOptions o JOIN Genes g on g.GeneSymbol = o.GeneSymbol WHERE GuID = ?", (guid,))
 					
 				# Fetch involved haplotypes and scores
 			
 				genotype = {}
 		
-				for (gid, genesymbol) in self.sql.fetchall():
+				for (gid, genesymbol) in self.p.sql.fetchall():
 			
-					self.sql.execute("SELECT DISTINCT p.HapID, Distance1, Distance2,h.hgvs, starname FROM PatHaplotypes p JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
+					self.p.sql.execute("SELECT DISTINCT p.HapID, Distance1, Distance2,h.hgvs, starname FROM PatHaplotypes p JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
 					
-					haplotypes = self.sql.fetchall()
+					haplotypes = self.p.sql.fetchall()
 					
-					self.sql.execute("SELECT DISTINCT Starname FROM GuideOptions o JOIN Genes g on g.GeneSymbol = o.GeneSymbol WHERE GuID = ?", (guid,))
+					self.p.sql.execute("SELECT DISTINCT Starname FROM GuideOptions o JOIN Genes g on g.GeneSymbol = o.GeneSymbol WHERE GuID = ?", (guid,))
 					
-					options = [starname[0] for starname in self.sql.fetchall()]
+					options = [starname[0] for starname in self.p.sql.fetchall()]
 										
 					if len(haplotypes) == 0:
 						
@@ -81,8 +85,6 @@ class Interpreter:
 
 					# -----------------------------------------------------
 					
-					print genotype[genesymbol]
-
 					formatted_genotype = []
 					
 					for i, (gene, allele) in enumerate(genotype.items()):
@@ -93,11 +95,9 @@ class Interpreter:
 							
 							refVal = ref["al{}".format(i+1)]
 
-							print float(subdict['distance']), float(refVal)
-
 							if float(subdict["distance"]) >= float(refVal):
 
-								alleles.append(ref["starname"].replace("1A", "1"))
+								alleles.append(ref["starname"])
 
 							else:	
 								
@@ -108,113 +108,88 @@ class Interpreter:
 						formatted_genotype.append(":".join([gene, allele_string]))
 						
 					string_genotype = ";".join(formatted_genotype)
-						
-					print guid
-					
-					print string_genotype
-						
-					raw_input("Print enter to continue...")
-								
+														
 					# Find matching advice
+
+					uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype) 
 						
-					# Save to advice table 'PatGuidelines' (DrugID, GeneID, Category(Metabolizer type), Advice)
-
-
-	def AnnFinder(self):
+					data = getJson(uri, self.authobj)
 		
-		pass
-		
-		# For each drug:
-			
-			#  Find involved genes
-			
-			# FOR GENE IN LIST:
-			
-				# Is there an identified guideline for the patient?
-			
-				# IF YES:
-			
-					# continue with next gene
-			
-				# IF NO:
-			
-					# can i find a haplotype for this gene?
-			
-					# if yes:
-			
-						# which closest haplotype has an annotation available?
-			
-					# if no:
-			
-						# continue on
-			
-			# go through 'variant'-tagged annotations
-			
-			# Find involved annotations and match with patientvars
-			
-			# DO SNPS and OTHERS seperately! GA/G becomes A/- for example, we need this for the annotation
-			
-			# Look up annotation
-			
-			# Get result (jinja?) and add to PatAnnotations
+					if data == None:
 
-	def GetSNPAnnotations(self):
+						uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype.replace("1A", "1"))
+
+						data = getJson(uri, self.authobj)
+
+					sql = self.p.insertSQL("patguidelines").render(guid = guid, genotype = string_genotype, json = data)
+					
+					self.p.sql.executescript(sql)
+
+				self.p.conn.commit()
+
+				# Save to advice table 'PatGuidelines' (DrugID, GeneID, Category(Metabolizer type), Advice)
+
+
+	def Annotate(self):
 
 			# only when there is no haplotype available?
-			
-			self.authobj = Authenticate()
-			
-			self.remakeTable("patannotations")
+						
+			self.p.remakeTable("patannotations")
 
-			self.sql.execute('''
-							SELECT v.VarID, p.CallBase, a.AnID
-							FROM LocPGKB l
-							JOIN PatientVars p
-							ON p.Start = l.Start
-							JOIN Variants v on l.VarId = v.VarId
+			self.p.sql.execute('''
+							SELECT DISTINCT       
+        							a.AnID,							
+        							VarName,
+        							VarID,
+            						MutType,
+									RefPGKB,
+									AltPGKB,
+									RefVCF,
+									AltVCF,
+									PatRef,
+									PatAlt,
+									CallNum,
+									Start
+							FROM Overview
 							JOIN Annotations a
-							ON a.VarHapId = v.VarId
-							''')
+							on a.VarHapID = VarID
+							WHERE RefVCF = PatRef''')
+
 							
 			print "Annotating SNPs... /(* ` ^ `*/)"
 			
-			for (VarID, CallBase, AnID) in tqdm(self.sql.fetchall()):
+			for (anid, rsid, varid, muttype, refP, altP, refV, altV, ref, alt, call, start) \
+			in tqdm(self.p.sql.fetchall()):
 				
 				uri = \
 				'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
-				.format(AnID)
+				.format(anid)
 
 				data = getJson(uri, self.authobj)
 				
-				allele = CallBase.replace("/", "")
+				# --------------------------------------
+
+				if muttype == "snp":
+					
+					call = call.replace("/", "")
+					allele = call.replace("0", ref)
+					allele = allele.replace("1", alt)
+					revAllele = allele[::-1]
+
+				elif muttype != "snp":
+
+					allele = call.replace("0", refP.replace("-", "del"))
+					allele = allele.replace("1", altP.replace("-", "del"))
+					s_allele = allele.split("/")
+					revAllele = s_allele[1] + "/" + s_allele[0]
+
+				# --------------------------------------
 				
-				sql = self.insertSQL("patannotations").render(json = data, patallele = allele)
+				sql = self.p.insertSQL("patannotations").render(json = data, revallele = revAllele, patallele = allele)
 			
-				self.sql.executescript(sql)
+				self.p.sql.executescript(sql)
 
-				# FOR SOMETHING THAT CREATES OVERVIEWS (new class? GUI? webserv?)
-				
-				overviewQuery = '''
-				select distinct d.chemname, g.genename, p.phenotype, p.patallele, loe
-				from patannotations p
-				join annotations a
-				on p.anid = a.anid
-				join pairs p
-				on a.drugid = p.drugid
-				join drugs d
-				on p.drugid = d.drugid
-				join genes g
-				on g.geneid = p.geneid
-				order by g.genename;
-				'''
-
-				queryHaplotypeScores = '''
-				select geneid, hapid, hapname, distance1, distance2 from pathaplotypes p
-				join haplotypes h
-				on p.HapID = h.hapid
-				join genes g
-				on h.geneid = g.geneid;
-				'''
+			self.p.conn.commit()
 			
 
 # ---------------------------- NEXT STEP: ReportMaker --------------------------------

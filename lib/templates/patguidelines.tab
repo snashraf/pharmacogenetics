@@ -1,0 +1,8 @@
+CREATE TABLE PatGuidelines (
+	GuID text,
+	Genotype text,
+	MetaCat text,
+	Strength text,
+	AnnType text,
+	Annotation text
+);

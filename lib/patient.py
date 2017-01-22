@@ -113,6 +113,7 @@ class Patient(Database):
 					hap.HGVS as HGVS,
 					hap.starname as starname,
 					VarName, MutType,
+					v.VarID as VarID,
 					h.AltAllele as HapAllele,
 					locb.RefAllele as RefPGKB,
 					a.AltPGKB as AltPGKB,
@@ -373,6 +374,7 @@ class Patient(Database):
 
 		self.conn.commit()
 		
+		
 	def Interpret(self):
 		
 		# Check for reference alleles
@@ -380,3 +382,5 @@ class Patient(Database):
 		i = Interpreter(self)
 		
 		i.Genotyper()
+
+		i.Annotate()
