@@ -1,5 +1,5 @@
-CREATE TABLE Variants (
-	VarID text,
+CREATE TABLE IF NOT EXISTS Variants (
+	VarID text PRIMARY KEY ON CONFLICT IGNORE,
 	RSID text,
 	Significance text,
 	MutType text

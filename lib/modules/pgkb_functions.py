@@ -65,7 +65,7 @@ def Authenticate():
 	# create an authorized session and
 	# return this session
 
-	client = OAuth2Session(token=token)
+	client = OAuth2Session(token=token, auto_refresh_url=url)
 
 	return client
 

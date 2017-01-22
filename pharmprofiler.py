@@ -75,10 +75,12 @@ def CreateDB(dbname, tables):
 		("genes", d.GetGeneData),
 
 		("haplotypes", d.GetHaplotypes),
+
+        ("drugvars", d.GetDrugVars),
 		
-		("rsvars", d.GetVarData),
+		("hapvars", d.GetHapVars),
 		
-		("hapvars", d.GetNonRS),
+		("etcvars", d.GetNonRS),
 		
 		("drugs", d.GetDrugData),
 		
@@ -92,7 +94,7 @@ def CreateDB(dbname, tables):
 		
 		])
 
-	options['vars'] = [options["rsvars"], options["hapvars"]]
+	options['vars'] = [options['drugvars'], options["hapvars"], options["etcvars"]]
 
 	options['all'] = options.values()
 

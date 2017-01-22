@@ -1,0 +1,4 @@
+CREATE TABLE DrugVars(
+	VarID text PRIMARY KEY ON CONFLICT IGNORE,
+	VarName text
+);

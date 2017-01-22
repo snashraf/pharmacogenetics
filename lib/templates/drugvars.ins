@@ -1,0 +1,16 @@
+{% if json %}
+
+	{% for obj in json %}
+
+		{% if "ClinicalAnnotation" in obj.connectionTypes %}
+		
+			INSERT INTO DrugVars VALUES(
+				"{{obj.connectedOject.id}}",
+				"{{obj.connectedOject.name}}"
+			);
+		
+		{% endif %}
+
+	{% endfor %}
+
+{% endif %}

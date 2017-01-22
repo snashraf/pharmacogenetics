@@ -30,9 +30,9 @@ class DataCollector(Database):
 
 		dbfolder = os.path.join(path, 'db')
 
-		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
+		self.dbpath = os.path.join(dbfolder, '%s.db' % dbname)
 
-		Database.__init__(self, dbpath)
+		Database.__init__(self, self.dbpath)
 
 
 	def Authenticate(self):
@@ -56,9 +56,11 @@ class DataCollector(Database):
 
 		data = getJson(uri, self.authobj)
 
+		template = self.insertSQL("pairs")
+
 		for response in tqdm(data):
 
-			sql = self.insertSQL("pairs").render(json = response)
+			sql = template.render(json = response)
 			
 			self.sql.executescript(sql)
 
@@ -76,6 +78,8 @@ class DataCollector(Database):
 
 		# drop and re-create table drugs
 
+		template = self.insertSQL("drugs")
+
 		self.remakeTable("drugs")
 
 		# get all the important drug ids (dids) from
@@ -92,10 +96,64 @@ class DataCollector(Database):
 
 			data = getJson(uri, self.authobj)
 			
-			sql = self.insertSQL("drugs").render(json = data)
+			sql = template.render(json = data)
 			
 			self.sql.executescript(sql)
 
+		self.conn.commit()
+
+
+	def GetDrugVars(self):
+
+		'''
+		print "Getting variants connected to drugs... (- w-)b"
+
+		self.remakeTable("drugvars")
+
+		self.sql.execute("SELECT DISTINCT DrugID from Pairs")
+
+		for (did,) in tqdm(self.sql.fetchall()):
+
+			uri = 'https://api.pharmgkb.org/v1/report/connectedObjects/{}/Variant'\
+				.format(did)
+
+			data = getJson(uri, self.authobj)
+
+			# INSERT INTO HAPVARS WITH N/A HAPLOTYPE FOR NOW
+
+			sql = self.insertSQL("drugvars").render(json = data)
+
+			print sql
+
+			self.sql.executescript(sql)
+		'''
+
+		template = self.insertSQL("variants")
+		
+
+		self.sql.execute('''
+					SELECT DISTINCT VarID from DrugVars;
+					'''
+					)
+
+		# rotate through rsids and create variant objects to fetch information
+
+		print "Getting more info on these variants..."
+
+		for (varid,) in tqdm(self.sql.fetchall()):
+
+			# create variant instances with the given rsid.
+
+			uri = \
+				'https://api.pharmgkb.org/v1/data/variant/{}?&view=max'.format(varid)
+
+			data = getJson(uri, self.authobj)
+
+			# pp.pprint(response)
+
+			sql = template.render(json = data)
+
+			self.sql.executescript(sql)
 
 		self.conn.commit()
 
@@ -140,6 +198,8 @@ class DataCollector(Database):
 		self.remakeTable("haplotypes")
 
 		self.sql.execute('SELECT DISTINCT GeneID FROM Genes')
+
+		template = self.insertSQL("haplotypes")
 		
 		# TODO CATCH TABLE DOES NOT EXIST
 
@@ -159,34 +219,37 @@ class DataCollector(Database):
 				
 			for response in data:
 
-				sql = self.insertSQL("haplotypes").render(json = response)
+				sql = template.render(json = response)
 				
 				self.sql.executescript(sql)
 
 		self.conn.commit()
 
 
-	def GetVarData(self):
+	def GetHapVars(self):
 		"""
 		Using Variant objects, this function fetches data on variants from the PharmGKB servers,
 		if not available uses the Entrez servers, possibilities are limited for now.
 		:return:
 		"""
 
-		print 'Getting variant data... ~(^_^)~'
-
 		self.remakeTable("variants")
+
+		print 'Getting variants connected to haplotypes... ~(^_^)~'
 
 		# get all rsids in the design vcf
 
 		self.sql.execute('''
-					SELECT DISTINCT v.VarName from HapVars v
+					SELECT DISTINCT d.VarName from HapVars v
 					JOIN Haplotypes h ON v.HapID = h.HapID
 					JOIN Genes g on h.GeneID = g.GeneID
-					WHERE v.VarName LIKE "rs%"
+					JOIN DrugVars d on d.VarName = v.VarName
+					WHERE d.VarName LIKE "rs%"
 					ORDER BY h.GeneID;
 					'''
 					)
+
+		template = self.insertSQL("variants")
 
 		# rotate through rsids and create variant objects to fetch information
 
@@ -201,7 +264,7 @@ class DataCollector(Database):
 
 			# pp.pprint(response)
 
-			sql = self.insertSQL("variants").render(json = data[0])
+			sql = template.render(json = data[0])
 
 			self.sql.executescript(sql)
 
@@ -222,11 +285,13 @@ class DataCollector(Database):
 
 		print 'Parsing non-rs variants...'
 
+		template = self.insertSQL("othervars")
+
 		for (rsid, gid, alt) in tqdm(self.sql.fetchall()):
 
 			d = hg19conv(rsid, gid, alt)
 
-			sql = self.insertSQL("othervars").render(json = d)
+			sql = template.render(json = d)
 
 			self.sql.executescript(sql)
 
@@ -234,6 +299,8 @@ class DataCollector(Database):
 
 
 	def ConvertIndels(self):
+
+		template = self.insertSQL("indels")
 
 		self.remakeTable("indels")
 
@@ -309,7 +376,7 @@ class DataCollector(Database):
 				pass
 			# render sql
 
-			sql = self.insertSQL("indels").render(alt = alt, json = shifted)
+			sql = template.render(alt = alt, json = shifted)
 
 			self.sql.executescript(sql)
 
@@ -339,6 +406,8 @@ class DataCollector(Database):
 
 
 	def GetGuidelines(self):
+
+		template = self.insertSQL("guidelines")
 		
 		self.remakeTable("guidelines")
 		
@@ -355,7 +424,7 @@ class DataCollector(Database):
 				
 				continue
 			
-			sql = self.insertSQL("guidelines").render(json = data, did = DrugID, gid = GeneID)
+			sql = template.render(json = data, did = DrugID, gid = GeneID)
 								
 			self.sql.executescript(sql)
 
@@ -363,6 +432,8 @@ class DataCollector(Database):
 
 	
 	def GetGuideOptions(self):
+
+		template = self.insertSQL("guideoptions")
 		
 		self.remakeTable("guideoptions")
 		
@@ -379,7 +450,7 @@ class DataCollector(Database):
 				
 				continue
 			
-			sql = self.insertSQL("guideoptions").render(guid = guid, json = data)
+			sql = template.render(guid = guid, json = data)
 			
 			self.sql.executescript(sql)
 		
