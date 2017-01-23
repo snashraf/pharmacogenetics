@@ -39,7 +39,7 @@ class DataCollector(Database):
 
 
 	def Authenticate(self):
-		
+
 		self.authobj = Authenticate()
 
 
@@ -64,17 +64,19 @@ class DataCollector(Database):
 		for response in tqdm(data):
 
 			sql = template.render(json = response)
-			
+
 			self.sql.executescript(sql)
 
 			self.conn.commit()
 
 
-	def GetAllDrugs(self):
+	def GetDrugs(self):
+
+		self.remakeTable("drugs")
 
 		self.drugs = []
 
-		csv.field_size_limit(sys.maxsize)
+		csv.field_size_limit(sys.maxint)
 
 		with open(self.path+"/drugs/drugs.tsv", "rb") as f:
 
@@ -83,57 +85,29 @@ class DataCollector(Database):
 				for row in tsv:
 
 					did = row[0]
-					print did
-					self.drugs.append(did)
 
+					name = row[1]
 
-	def GetDrugData(self):
-		"""
-		Gets info on seperate drugs, such as name and associated terms
-		terms give info on what the drug does
-		:return:
-		"""
+					smiles = row[6]
 
-		print 'Getting drug data /(>_<)\\}'
-
-		# drop and re-create table drugs
-
-		template = self.insertSQL("drugs")
-
-		self.remakeTable("drugs")
-
-		# get all the important drug ids (dids) from
-		# the known gene-drug connections table
-
-		self.sql.execute('SELECT DISTINCT DrugID FROM Pairs')
-
-		# fetch matching did and use to create uri for query
-
-		for (did) in tqdm(self.drugs):
-
-			uri = \
-			'https://api.pharmgkb.org/v1/data/chemical/{}?view=max'.format(did)
-
-			data = getJson(uri, self.authobj)
-			
-			sql = template.render(json = data)
-			
-			self.sql.executescript(sql)
+					self.sql.execute("INSERT INTO DRUGS VALUES(?,?,?)",(did, name, smiles))
 
 		self.conn.commit()
 
 
-	def GetDrugVars(self):
-
-		self.remakeTable("variants")
+	def GetDrugMatches(self):
 
 		print "Getting variants connected to drugs... (- w-)b"
 
-		self.remakeTable("drugvars")
+		#self.remakeTable("drugvars")
 
-		self.sql.execute("SELECT DISTINCT DrugID from Pairs")
+		self.sql.execute('''
+			SELECT DISTINCT DrugID FROM Drugs
+			WHERE DrugID NOT IN
+			(SELECT DrugID FROM	DrugVars)
+		''')
 
-		for (did) in tqdm(self.drugs):
+		for (did,) in tqdm(self.sql.fetchall()):
 
 			uri = 'https://api.pharmgkb.org/v1/report/connectedObjects/{}/Variant'\
 				.format(did)
@@ -142,32 +116,32 @@ class DataCollector(Database):
 
 			# INSERT INTO HAPVARS WITH N/A HAPLOTYPE FOR NOW
 
-			sql = self.insertSQL("drugvars").render(json = data)
+			sql = self.insertSQL("drugvars").render(json = data, did=did)
 
-			print sql
+			if "INSERT" in sql:
+				print sql
 
-			try:
+			self.sql.executescript(sql)
 
-				self.sql.executescript(sql)
+			self.conn.commit()
 
-			except:
 
-				self.conn = sqlite3.connect(self.dbpath)  # connect to db- if it doesn't exist, create it
-
-				self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
-
-				self.sql.executescript(sql)
+	def GetDrugVars(self):
 
 		template = self.insertSQL("variants")
-		
+
 		self.sql.execute('''
-					SELECT DISTINCT VarID from DrugVars;
-					'''
+					SELECT DISTINCT VarID from DrugVars
+					WHERE VarID NOT IN (
+					SELECT DISTINCT VarID from Variants
+					);'''
 					)
 
 		# rotate through rsids and create variant objects to fetch information
 
 		print "Getting more info on these variants..."
+
+		uris = []
 
 		for (varid,) in tqdm(self.sql.fetchall()):
 
@@ -176,15 +150,15 @@ class DataCollector(Database):
 			uri = \
 				'https://api.pharmgkb.org/v1/data/variant/{}?&view=max'.format(varid)
 
-			data = getJson(uri, self.authobj)
+			uris.append(uri)
 
-			# pp.pprint(response)
+			data = getJson(uri, self.authobj)
 
 			sql = template.render(json = data)
 
 			self.sql.executescript(sql)
 
-		self.conn.commit()
+			self.conn.commit()
 
 
 	def GetGeneData(self):
@@ -195,12 +169,13 @@ class DataCollector(Database):
 
 		print 'Getting gene data... (/o*)'
 
-		self.remakeTable("genes")
-
 		# get all unique gene ids from the variant table
 
-		self.sql.execute('SELECT DISTINCT GeneID FROM Variants')
-		
+		self.sql.execute('''SELECT DISTINCT GeneID FROM Variants
+		WHERE GeneID NOT IN (
+			SELECT GeneID FROM Genes
+		)''')
+
 		# TODO CATCH TABLE DOES NOT EXIST
 
 		genes = self.sql.fetchall()
@@ -208,7 +183,7 @@ class DataCollector(Database):
 		# go through results and creat e gene objects for each GID with PA (so it can be found on pharmgkb)
 
 		for (gid,) in tqdm(genes):
-			
+
 			uri = 'https://api.pharmgkb.org/v1/data/gene/{}?view=max'.format(gid)
 
 			data = urllib2.urlopen(uri)
@@ -224,12 +199,10 @@ class DataCollector(Database):
 
 	def GetHaplotypes(self):
 
-		self.remakeTable("haplotypes")
-
 		self.sql.execute('SELECT DISTINCT GeneID FROM Variants')
 
 		template = self.insertSQL("haplotypes")
-		
+
 		# TODO CATCH TABLE DOES NOT EXIST
 
 		genes = self.sql.fetchall()
@@ -241,15 +214,15 @@ class DataCollector(Database):
 			uri = 'https://api.pharmgkb.org/v1/data/haplotype?gene.accessionId={}&view=max'.format(gid)
 
 			data = getJson(uri, self.authobj)
-			
+
 			if not data:
-				
+
 				continue
-				
+
 			for response in data:
 
 				sql = template.render(json = response)
-				
+
 				print sql
 
 				self.sql.executescript(sql)
@@ -263,8 +236,6 @@ class DataCollector(Database):
 		if not available uses the Entrez servers, possibilities are limited for now.
 		:return:
 		"""
-
-		self.remakeTable("variants")
 
 		print 'Getting variants connected to haplotypes... ~(^_^)~'
 
@@ -304,14 +275,12 @@ class DataCollector(Database):
 
 	def GetNonRS(self):
 
-		self.remakeTable("othervars")
-
 		self.sql.execute('''
 				SELECT DISTINCT v.VarName, v.AltAllele, h.GeneID from HapVars v
 				JOIN Haplotypes h ON v.HapID = h.HapID
 				JOIN Genes g on h.GeneID = g.GeneID
 				WHERE v.VarName LIKE "%chr%"
-				AND v.VarName NOT LIKE "hg38" 
+				AND v.VarName NOT LIKE "hg38"
 				ORDER BY h.GeneID;
 				''')
 
@@ -348,7 +317,7 @@ class DataCollector(Database):
 		print "Converting indels.. \(>w <)/"
 
 		for (varid, genome, loc, start, end, ref, alt) in tqdm(self.sql.fetchall()):
-			
+
 			# create json for template usage
 
 			shifted = {"varid":varid,
@@ -368,39 +337,39 @@ class DataCollector(Database):
 			if ref == "-":
 
 				# left shift position by 1
-		
+
 				shifted['start'] = start - 1
-		
+
 				shifted['end'] = end
-		
+
 				# get reference nucleotide at that position
-		
+
 				prevbase = getRef(loc, shifted['start'], shifted['start'])
 
 				# insertion scenario
 
 				shifted['ref'] = prevbase
-	
-				shifted['alt'] = prevbase + alt	
+
+				shifted['alt'] = prevbase + alt
 
 			elif alt == "-":
 
 				# left shift position by 1
-		
+
 				shifted['start'] = start - 1
-		
+
 				shifted['end'] = end
-		
+
 				# get reference nucleotide at that position
-		
+
 				prevbase = getRef(loc, shifted['start'], shifted['start'])
 
 				# deletion scenario A -
 
 				shifted['ref'] = prevbase + ref
-	
+
 				salt = prevbase
-	
+
 				shifted['alt'] = salt
 
 			else:
@@ -418,21 +387,21 @@ class DataCollector(Database):
 
 
 	def GetAnnotations(self):
-		
+
 		self.remakeTable("annotations")
 
 		self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
 
 		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
-			
+
 			uri = \
 			'https://api.pharmgkb.org/v1/report/pair/{}/{}/clinicalAnnotation?view=max' \
 			.format(DrugID, GeneID)
 
 			data = getJson(uri, self.authobj)
-						
+
 			sql = self.insertSQL("annotations").render(json = data, DrugID = DrugID)
-		
+
 			self.sql.executescript(sql)
 
 		self.conn.commit()
@@ -441,52 +410,52 @@ class DataCollector(Database):
 	def GetGuidelines(self):
 
 		template = self.insertSQL("guidelines")
-		
+
 		self.remakeTable("guidelines")
-		
+
 		self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
 
 		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
-						
+
 			uri = 'https://api.pharmgkb.org/v1/data/guideline?&relatedChemicals.accessionId={}&relatedGenes.accessionId={}&view=max' \
 					.format(DrugID, GeneID)
 
 			data = getJson(uri, self.authobj)
-			
+
 			if data is None:
-				
+
 				continue
-			
+
 			sql = template.render(json = data, did = DrugID, gid = GeneID)
-								
+
 			self.sql.executescript(sql)
 
 		self.conn.commit()
 
-	
+
 	def GetGuideOptions(self):
 
 		template = self.insertSQL("guideoptions")
-		
+
 		self.remakeTable("guideoptions")
-		
+
 		self.sql.execute("SELECT DISTINCT GuID from Guidelines;")
-		
+
 		for (guid, ) in tqdm(self.sql.fetchall()):
-			
+
 			uri = "https://api.pharmgkb.org/v1/report/guideline/{}/options" \
 			.format(guid)
-			
+
 			data = getJson(uri, self.authobj)
-			
+
 			if data is None:
-				
+
 				continue
-			
+
 			sql = template.render(guid = guid, json = data)
-			
+
 			self.sql.executescript(sql)
-		
+
 		self.conn.commit()
 
 

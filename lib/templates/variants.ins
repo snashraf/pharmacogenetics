@@ -1,14 +1,16 @@
-INSERT INTO Variants VALUES(
-	"{{json.id}}",
-	"{{json.relatedGenes.id}}",
-	"{{json.name}}",
-	"{{json.clinicalSignificance}}",
-	"{{json.type}}"
-);
+{% for gene in json.relatedGenes %}
+	INSERT INTO Variants VALUES(
+		"{{json.id}}",
+		"{{gene.id}}",
+		"{{json.name}}",
+		"{{json.clinicalSignificance}}",
+		"{{json.type}}"
+	);
+{% endfor %}
 
 {% if json.location %}
 	{% set seq = json.location.sequence.name.split(']') %}
-	
+
 		INSERT INTO LocPGKB VALUES(
 			"{{json.id}}",
 			"{{json.location.name}}",
@@ -17,19 +19,19 @@ INSERT INTO Variants VALUES(
 			"{{json.location.end}}",
 			"{{json.location.reference}}"
 		);
-	
+
 		{% for var in json.location.variants %}
-			
+
 			{% if json.location.reference != var %}
-			
+
 				INSERT INTO AltAlleles VALUES(
 						"{{json.id}}",
 						"{{var}}",
 						"{{var}}"
 				);
-				
+
 			{% endif %}
-		
+
 		{% endfor %}
 
 {% endif %}

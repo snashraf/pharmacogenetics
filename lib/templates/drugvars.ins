@@ -5,6 +5,7 @@
 		{% if "ClinicalAnnotation" in obj.connectionTypes %}
 		
 			INSERT INTO DrugVars VALUES(
+				"{{did}}",
 				"{{obj.connectedOject.id}}",
 				"{{obj.connectedOject.name}}"
 			);

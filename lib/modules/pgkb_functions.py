@@ -9,7 +9,6 @@ import urllib2
 import ast
 import re
 import time
-from pyliftover import LiftOver
 
 # ---------------------------------------------------------------------
 
@@ -90,75 +89,10 @@ def getJson(uri, client):
 		data = r.json()
 
 		return data
+
 	else:
 
 		return None
-
-
-def PGKB_connect(
-	authobj,
-	mode,
-	a,
-	b,
-	):
-	"""
-	Find connections between two pharmgkb objects.
-	Usually a haplotype or rsid compared with a drug id.
-	:param authobj: authentication session resulting from Authenticate()
-	:param a: object 1 to compare
-	:param did: object 2 to compare, usually a drug id
-	:return:
-	"""
-
-	if mode == 'clinAnno':
-
-		uri = \
-			'https://api.pharmgkb.org/v1/report/pair/{}/{}/clinicalAnnotation?view=base' \
-			.format(a, b)
-
-		result = getJson(uri, authobj)
-
-		return result
-	
-	elif mode == 'clinGuide':
-
-		sources = ['cpic', 'dpwg', 'pro']
-
-		for source in sources:
-
-			# uses did and gid
-
-			uri = \
-				'https://api.pharmgkb.org/v1/data/guideline?source={}&relatedChemicals.accessionId={}&relatedGenes.accessionId={}&view=max' \
-				.format(source, a, b)
-
-			guidelines = getJson(uri, authobj)
-
-			guid = 'nan'
-
-			options = 'nan'
-
-			if guidelines == None:
-
-				continue
-
-			else:
-
-				for doc in guidelines:
-
-					if doc['objCls'] == 'Guideline':
-
-						guid = doc['id']
-
-						uri = \
-							'https://api.pharmgkb.org/v1/report/guideline/{}/options' \
-							.format(guid)
-
-						doseOptions = getJson(uri, authobj)
-
-						result = {'guid': guid, 'options': doseOptions}
-
-						return result
 
 
 def seqMaker(rsidorder, reference, rsids):
@@ -175,7 +109,7 @@ def seqMaker(rsidorder, reference, rsids):
 			base = reference[rsid]
 
 		seq += base
-			
+
 	return seq
 
 
@@ -194,14 +128,14 @@ def getRef(loc, start, end):
 		r.raise_for_status()
 
 		sys.exit()
-	
+
 	time.sleep(0.3)
 
 	return r.text
 
 
 def hg19conv(rsid, alt, gid):
-	
+
 	lo = LiftOver('hg38', 'hg19')
 
 	d = {}
@@ -255,9 +189,9 @@ def hg19conv(rsid, alt, gid):
 		d['muttype'] = 'in-del'
 
 		d['end'] = d['begin'] + len(d['ref'])
-	
+
 	return d
-	
+
 def merge_dicts(*dict_args):
     """
     Given any number of dicts, shallow copy and merge into a new dict,
