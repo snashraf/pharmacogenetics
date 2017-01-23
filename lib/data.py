@@ -125,8 +125,11 @@ class DataCollector(Database):
 
 	def GetDrugVars(self):
 
+<<<<<<< HEAD
 		self.remakeTable("variants")
 
+=======
+>>>>>>> fb29714f1993a3666dcaae57959c4eb5dc8b3441
 		print "Getting variants connected to drugs... (- w-)b"
 
 		self.remakeTable("drugvars")
@@ -146,6 +149,7 @@ class DataCollector(Database):
 
 			print sql
 
+<<<<<<< HEAD
 			try:
 
 				self.sql.executescript(sql)
@@ -157,6 +161,11 @@ class DataCollector(Database):
 				self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
 				self.sql.executescript(sql)
+=======
+			self.sql.executescript(sql)
+
+		# ------------------------------------------------------------------
+>>>>>>> fb29714f1993a3666dcaae57959c4eb5dc8b3441
 
 		template = self.insertSQL("variants")
 		
@@ -250,9 +259,11 @@ class DataCollector(Database):
 
 				sql = template.render(json = response)
 				
+				print sql
+
 				self.sql.executescript(sql)
 
-		self.conn.commit()
+			self.conn.commit()
 
 
 	def GetHapVars(self):
@@ -309,6 +320,7 @@ class DataCollector(Database):
 				JOIN Haplotypes h ON v.HapID = h.HapID
 				JOIN Genes g on h.GeneID = g.GeneID
 				WHERE v.VarName LIKE "%chr%"
+				AND v.VarName NOT LIKE "hg38" 
 				ORDER BY h.GeneID;
 				''')
 
