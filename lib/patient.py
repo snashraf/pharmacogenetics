@@ -61,7 +61,7 @@ class Patient(Database):
 			# create list of positions to localize in patient
 	
 		self.sql.execute('''
-			SELECT DISTINCT l.Chromosome, l.Start, l.End, l.RefAllele, v.MutType
+			SELECT DISTINCT l.Chromosome, l.Start, l.End, l.RefAllele, v.MutType, v.VarID
 			FROM LocVCF l
 			JOIN Variants v
 			ON v.VarID = l.VarID
@@ -71,10 +71,14 @@ class Patient(Database):
 	
 		print "Fetching patient variants... o(* ^ *o)"
 		
-		for (loc, start, end, ref, muttype) in tqdm(positions):
-								
-			records = self.reader.fetch(str(loc.lstrip("chr")), start-1, end=end)
-			
+		for (loc, start, end, ref, muttype, varid) in tqdm(positions):
+				
+			try:				
+				records = self.reader.fetch(str(loc.lstrip("chr")), start-1, end=end)
+			except:
+				print "Couldn't find {} in gvcf".format(varid)
+				continue
+						
 			# TODO PLEASE DO NOT DO THIS
 
 			for record in records: # doctest: +SKIP

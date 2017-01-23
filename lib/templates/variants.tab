@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS Variants (
 	VarID text PRIMARY KEY ON CONFLICT IGNORE,
+	GeneID text,
 	RSID text,
 	Significance text,
 	MutType text

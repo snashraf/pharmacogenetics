@@ -9,6 +9,9 @@ from tqdm import tqdm
 from db import Database
 import pprint as pp
 import os
+import sys
+import csv
+import sqlite3
 
 # ---------------------------------------------------------------------
 
@@ -22,13 +25,13 @@ class DataCollector(Database):
 		"""
 		takes database object to work on!
 		"""
-		path = os.path.dirname(__file__)
+		self.path = os.path.dirname(__file__)
 
-		if len(path) == 0:
+		if len(self.path) == 0:
 
-			path = os.getcwd()
+			self.path = os.getcwd()
 
-		dbfolder = os.path.join(path, 'db')
+		dbfolder = os.path.join(self.path, 'db')
 
 		self.dbpath = os.path.join(dbfolder, '%s.db' % dbname)
 
@@ -67,6 +70,23 @@ class DataCollector(Database):
 			self.conn.commit()
 
 
+	def GetAllDrugs(self):
+
+		self.drugs = []
+
+		csv.field_size_limit(sys.maxsize)
+
+		with open(self.path+"/drugs/drugs.tsv", "rb") as f:
+
+				tsv = csv.reader(f, delimiter='\t')
+
+				for row in tsv:
+
+					did = row[0]
+					print did
+					self.drugs.append(did)
+
+
 	def GetDrugData(self):
 		"""
 		Gets info on seperate drugs, such as name and associated terms
@@ -89,7 +109,7 @@ class DataCollector(Database):
 
 		# fetch matching did and use to create uri for query
 
-		for (did,) in tqdm(self.sql.fetchall()):
+		for (did) in tqdm(self.drugs):
 
 			uri = \
 			'https://api.pharmgkb.org/v1/data/chemical/{}?view=max'.format(did)
@@ -105,14 +125,15 @@ class DataCollector(Database):
 
 	def GetDrugVars(self):
 
-		'''
+		self.remakeTable("variants")
+
 		print "Getting variants connected to drugs... (- w-)b"
 
 		self.remakeTable("drugvars")
 
 		self.sql.execute("SELECT DISTINCT DrugID from Pairs")
 
-		for (did,) in tqdm(self.sql.fetchall()):
+		for (did) in tqdm(self.drugs):
 
 			uri = 'https://api.pharmgkb.org/v1/report/connectedObjects/{}/Variant'\
 				.format(did)
@@ -125,12 +146,20 @@ class DataCollector(Database):
 
 			print sql
 
-			self.sql.executescript(sql)
-		'''
+			try:
+
+				self.sql.executescript(sql)
+
+			except:
+
+				self.conn = sqlite3.connect(self.dbpath)  # connect to db- if it doesn't exist, create it
+
+				self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
+
+				self.sql.executescript(sql)
 
 		template = self.insertSQL("variants")
 		
-
 		self.sql.execute('''
 					SELECT DISTINCT VarID from DrugVars;
 					'''
@@ -170,7 +199,7 @@ class DataCollector(Database):
 
 		# get all unique gene ids from the variant table
 
-		self.sql.execute('SELECT DISTINCT GeneID FROM Pairs')
+		self.sql.execute('SELECT DISTINCT GeneID FROM Variants')
 		
 		# TODO CATCH TABLE DOES NOT EXIST
 
@@ -197,7 +226,7 @@ class DataCollector(Database):
 
 		self.remakeTable("haplotypes")
 
-		self.sql.execute('SELECT DISTINCT GeneID FROM Genes')
+		self.sql.execute('SELECT DISTINCT GeneID FROM Variants')
 
 		template = self.insertSQL("haplotypes")
 		
@@ -374,6 +403,7 @@ class DataCollector(Database):
 			else:
 
 				pass
+
 			# render sql
 
 			sql = template.render(alt = alt, json = shifted)

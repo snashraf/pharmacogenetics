@@ -30,7 +30,7 @@ def main():
 ]
 
 	parser = OptionParser(usage='usage: %prog [options] filename',
-																							version='%prog 1.0')
+						version='%prog 1.0')
 
 	for o in options:
 
@@ -71,6 +71,8 @@ def CreateDB(dbname, tables):
 	options = OrderedDict ([
 		
 		("pairs", d.GetPairs),
+
+		("sepdrugs", d.GetAllDrugs),
 		
 		("genes", d.GetGeneData),
 
