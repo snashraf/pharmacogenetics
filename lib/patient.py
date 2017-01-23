@@ -71,7 +71,6 @@ class Patient(Database):
 	
 		print "Fetching patient variants... o(* ^ *o)"
 		
-<<<<<<< HEAD
 		for (loc, start, end, ref, muttype, varid) in tqdm(positions):
 				
 			try:				
@@ -80,19 +79,6 @@ class Patient(Database):
 				print "Couldn't find {} in gvcf".format(varid)
 				continue
 						
-=======
-		for (loc, start, end, ref, muttype) in tqdm(positions):
-			
-			try:
-					
-				records = self.reader.fetch(str(loc.lstrip("chr")), start-1, end=end)
-			except:
-
-				print "Couldn't fetch position", loc, start, end
-
-				continue
-		
->>>>>>> fb29714f1993a3666dcaae57959c4eb5dc8b3441
 			# TODO PLEASE DO NOT DO THIS
 
 			for record in records: # doctest: +SKIP
