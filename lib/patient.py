@@ -72,9 +72,16 @@ class Patient(Database):
 		print "Fetching patient variants... o(* ^ *o)"
 		
 		for (loc, start, end, ref, muttype) in tqdm(positions):
-								
-			records = self.reader.fetch(str(loc.lstrip("chr")), start-1, end=end)
 			
+			try:
+					
+				records = self.reader.fetch(str(loc.lstrip("chr")), start-1, end=end)
+			except:
+
+				print "Couldn't fetch position", loc, start, end
+
+				continue
+		
 			# TODO PLEASE DO NOT DO THIS
 
 			for record in records: # doctest: +SKIP
@@ -139,6 +146,7 @@ class Patient(Database):
 					   locpgkb locb ON locb.varid = locv.varid
 					   JOIN
 					   altalleles a on a.VarID = locv.VarID
+
 					   ORDER BY locv.start asc;
 							''')
 	
@@ -158,6 +166,7 @@ class Patient(Database):
 					FROM Overview
 					WHERE GeneID = ?
 					AND HGVS LIKE "%[=]%"
+					AND (muttype = "snp" OR muttype = "in-del")
 					ORDER BY Start ASC
 					''', (gid,))
 					
@@ -196,7 +205,7 @@ class Patient(Database):
 					SELECT DISTINCT VarName, RefVCF
 					FROM overview where geneid = ?
 					and hgvs like "%[=]%"
-					and muttype != "snp"
+					and muttype = "in-del"
 					and hapallele = refpgkb
 					order by start asc
 					''', (gid,))
@@ -209,7 +218,7 @@ class Patient(Database):
 					SELECT DISTINCT VarName, AltVCF
 					FROM overview where geneid = ?
 					and hgvs like "%[=]%"
-					and muttype != "snp"
+					and muttype != "snp
 					and hapallele = altpgkb
 					order by start asc
 					''', (gid,))

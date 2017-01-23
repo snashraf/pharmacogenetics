@@ -8,7 +8,6 @@ INSERT INTO Haplotypes VALUES(
 
 {% for doc in json.alleles %}
 	{% if doc.allele %}
-		{% if "GRCh37" in doc.location.buildVersion or "hg19" in doc.location.displayName %}
 			INSERT INTO HapVars VALUES(
 				"{{json.id}}",
 				"{{doc.location.displayName}}",
@@ -20,6 +19,5 @@ INSERT INTO Haplotypes VALUES(
 				"{{doc.allele}}"
 				{% endif %}
 		);
-		{% endif %}
 	{% endif %}
 {% endfor %}

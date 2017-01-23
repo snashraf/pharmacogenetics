@@ -108,7 +108,8 @@ class Interpreter:
 						formatted_genotype.append(":".join([gene, allele_string]))
 						
 					string_genotype = ";".join(formatted_genotype)
-														
+					
+					print string_genotype														
 					# Find matching advice
 
 					uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype) 
@@ -122,6 +123,8 @@ class Interpreter:
 						data = getJson(uri, self.authobj)
 
 					sql = self.p.insertSQL("patguidelines").render(guid = guid, genotype = string_genotype, json = data)
+					
+					print sql
 					
 					self.p.sql.executescript(sql)
 

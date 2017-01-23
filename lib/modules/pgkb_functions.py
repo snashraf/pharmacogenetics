@@ -9,6 +9,7 @@ import urllib2
 import ast
 import re
 import time
+from pyliftover import LiftOver
 
 # ---------------------------------------------------------------------
 
@@ -200,6 +201,8 @@ def getRef(loc, start, end):
 
 
 def hg19conv(rsid, alt, gid):
+	
+	lo = LiftOver('hg38', 'hg19')
 
 	d = {}
 
@@ -252,7 +255,7 @@ def hg19conv(rsid, alt, gid):
 		d['muttype'] = 'in-del'
 
 		d['end'] = d['begin'] + len(d['ref'])
-
+	
 	return d
 	
 def merge_dicts(*dict_args):
