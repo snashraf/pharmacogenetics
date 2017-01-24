@@ -136,8 +136,6 @@ def getRef(loc, start, end):
 
 def hg19conv(rsid, alt, gid):
 
-	lo = LiftOver('hg38', 'hg19')
-
 	d = {}
 
 	d['id'] = rsid

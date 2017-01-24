@@ -102,7 +102,9 @@ def CreateDB(dbname, tables, reset):
 
 		("guidelines", d.GetGuidelines),
 
-		("guideoptions", d.GetGuideOptions)
+		("guideoptions", d.GetGuideOptions),
+
+		("bed", d.BedFile)
 
 		])
 

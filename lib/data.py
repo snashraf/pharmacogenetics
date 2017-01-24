@@ -176,21 +176,18 @@ class DataCollector(Database):
 			SELECT GeneID FROM Genes
 		)''')
 
-		# TODO CATCH TABLE DOES NOT EXIST
-
-		genes = self.sql.fetchall()
-
-		# go through results and creat e gene objects for each GID with PA (so it can be found on pharmgkb)
-
-		for (gid,) in tqdm(genes):
+		for (gid,) in tqdm(self.sql.fetchall()):
 
 			uri = 'https://api.pharmgkb.org/v1/data/gene/{}?view=max'.format(gid)
 
 			data = urllib2.urlopen(uri)
 
 			response = json.load(data)
-
-			sql = self.insertSQL("genes").render(json = response)
+			try:
+				sql = self.insertSQL("genes").render(json = response)
+			except:
+				pp.pprint(response)
+				continue
 
 			self.sql.executescript(sql)
 
@@ -199,7 +196,11 @@ class DataCollector(Database):
 
 	def GetHaplotypes(self):
 
-		self.sql.execute('SELECT DISTINCT GeneID FROM Variants')
+		self.sql.execute('''
+		SELECT DISTINCT GeneID FROM Variants
+		WHERE GeneID NOT IN (
+		SELECT GeneID FROM Haplotypes
+		)''')
 
 		template = self.insertSQL("haplotypes")
 
@@ -247,6 +248,9 @@ class DataCollector(Database):
 					JOIN Genes g on h.GeneID = g.GeneID
 					JOIN DrugVars d on d.VarName = v.VarName
 					WHERE d.VarName LIKE "rs%"
+					AND d.VarName NOT IN(
+					SELECT DISTINCT RSID FROM Variants
+					)
 					ORDER BY h.GeneID;
 					'''
 					)
@@ -264,13 +268,11 @@ class DataCollector(Database):
 
 			data = getJson(uri, self.authobj)
 
-			# pp.pprint(response)
-
 			sql = template.render(json = data[0])
 
 			self.sql.executescript(sql)
 
-		self.conn.commit()
+			self.conn.commit()
 
 
 	def GetNonRS(self):
@@ -293,6 +295,8 @@ class DataCollector(Database):
 			d = hg19conv(rsid, gid, alt)
 
 			sql = template.render(json = d)
+
+			print sql
 
 			self.sql.executescript(sql)
 
@@ -390,7 +394,7 @@ class DataCollector(Database):
 
 		self.remakeTable("annotations")
 
-		self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
+		self.sql.execute('SELECT DISTINCT d.DrugID, v.GeneID FROM DrugVars d JOIN Variants v ON d.VarID = v.VarID')
 
 		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
 
@@ -401,6 +405,8 @@ class DataCollector(Database):
 			data = getJson(uri, self.authobj)
 
 			sql = self.insertSQL("annotations").render(json = data, DrugID = DrugID)
+
+			print sql
 
 			self.sql.executescript(sql)
 
@@ -413,7 +419,7 @@ class DataCollector(Database):
 
 		self.remakeTable("guidelines")
 
-		self.sql.execute('SELECT DISTINCT DrugID, GeneID FROM Pairs')
+		self.sql.execute('SELECT DISTINCT d.DrugID, v.GeneID FROM DrugVars d JOIN Variants v ON d.VarID = v.VarID')
 
 		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
 
@@ -427,6 +433,8 @@ class DataCollector(Database):
 				continue
 
 			sql = template.render(json = data, did = DrugID, gid = GeneID)
+
+			print sql
 
 			self.sql.executescript(sql)
 
@@ -463,13 +471,25 @@ class DataCollector(Database):
 
 		# creates bed file for subsetting .BAM files.
 
-		self.sql.execute('SELECT chr, start, stop, symbol FROM genes ORDER BY length(chr), chr'
+		self.sql.execute('SELECT chromosome, start, end, genename FROM genes ORDER BY chromosome ASC, start ASC'
 						 )
 
-		with open('PharmacogenomicGenes_PGKB.bed', 'w') as bed:
+		linesINT = []
+		linesETC = []
 
-			for tup in self.sql.fetchall():
+		for (chrom, start, end, name) in self.sql.fetchall():
+			chrom = chrom.lstrip("chr")
+			try:
+				int(chrom)
+				linesINT.append('\t'.join(map(str, (chrom, start, end, name))) + '\n')
+			except:
+				linesETC.append('\t'.join(map(str, (chrom, start, end, name))) + '\n')
 
-				bed.write('\t'.join(map(str, tup)) + '\n')
+		linesINT.sort(key=lambda x: int(x.split("\t")[0]))
+
+		linesALL = linesINT + linesETC
+
+		with open('PharmacogenomicGenes_PGKB_full.bed', 'w') as bed:
+			bed.writelines(linesALL)
 
 # -----------------------------------------------------------------

@@ -4,6 +4,7 @@
 		"{{json.id}}",
 		"{{json.id}}",
 		"Unknown",
+		"Unknown",
 		"{{json.muttype}}"
 	);
 
@@ -17,7 +18,7 @@
 	);
 
 	{% if json.ref != json.alt %}
-			
+
 		INSERT INTO AltAlleles VALUES(
 				"{{json.id}}",
 				"{{json.alt}}",

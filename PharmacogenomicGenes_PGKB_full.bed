@@ -1,0 +1,768 @@
+1	11816805	11841367	chromosome 1 open reading frame 167
+1	11842787	11876160	methylenetetrahydrofolate reductase (NAD(P)H)
+1	11856153	11906201	chloride channel, voltage-sensitive 6
+1	11902766	11917840	natriuretic peptide A
+1	12217044	12272279	tumor necrosis factor receptor superfamily, member 1B
+1	19981780	20009055	5-hydroxytryptamine (serotonin) receptor 6, G protein-coupled
+1	20905444	20948401	cytidine deaminase
+1	21043225	21069133	SH2 domain containing 5
+1	22145737	22273750	heparan sulfate proteoglycan 2
+1	29128654	29193208	opioid receptor, delta 1
+1	29203603	29449558	erythrocyte membrane protein band 4.1
+1	32747708	32802227	histone deacetylase 1
+1	37258128	37509844	glutamate receptor, ionotropic, kainate 3
+1	40121793	40147710	5'-nucleotidase, cytosolic IA
+1	44434874	44459843	UDP-Gal:betaGlcNAc beta 1,4- galactosyltransferase, polypeptide 2
+1	45791914	45816142	mutY homolog
+1	46849939	46882520	fatty acid amide hydrolase
+1	47254670	47288021	cytochrome P450, family 4, subfamily B, polypeptide 1
+1	47789469	47847511	cytidine monophosphate (UMP-CMP) kinase 1, cytosolic
+1	48995527	50499626	ATP/GTP binding protein-like 4
+1	54655840	54694407	mitochondrial ribosomal protein L37
+1	65876335	66106176	leptin receptor
+1	66248193	66843262	phosphodiesterase 4B, cAMP-specific
+1	67594590	67728662	interleukin 23 receptor
+1	71315036	71523497	prostaglandin E receptor 3 (subtype EP3)
+1	75030795	75149422	glutamate-rich 3
+1	78946728	79009386	prostaglandin F receptor (FP)
+1	89819436	89856719	guanylate binding protein family, member 6
+1	92142900	92381559	transforming growth factor, beta receptor III
+1	94991732	95017413	coagulation factor III (thromboplastin, tissue factor)
+1	97540299	98396615	dihydropyrimidine dehydrogenase
+1	109782641	109821378	cadherin, EGF LAG seven-pass G-type receptor 2
+1	110220418	110243828	glutathione S-transferase mu 1
+1	110273554	110293660	glutathione S-transferase mu 3 (brain)
+1	111823474	111866188	chitinase, acidic
+1	115212719	115248239	adenosine monophosphate deaminase 1
+1	115256534	115310671	cold shock domain containing E1, RNA-binding
+1	115825537	115890857	nerve growth factor (beta polypeptide)
+1	117054156	117123715	CD58 molecule
+1	120159000	120200813	zinc finger protein 697
+1	146652884	146707390	flavin containing monooxygenase 5
+1	154367669	154444926	interleukin 6 receptor
+1	154530257	154555354	cholinergic receptor, nicotinic, beta 2 (neuronal)
+1	155268539	155293457	farnesyl diphosphate synthase
+1	156775542	156854642	neurotrophic tyrosine kinase, receptor, type 1
+1	156853496	156889226	platelet endothelial aggregation receptor 1
+1	159243678	159281014	Fc fragment of IgE, high affinity I, receptor for; alpha polypeptide
+1	159679079	159694396	C-reactive protein, pentraxin-related
+1	160507884	160559306	CD84 molecule
+1	161175087	161192038	Fc fragment of IgE, high affinity I, receptor for; gamma polypeptide
+1	161196456	161218432	nuclear receptor subfamily 1, group I, member 3
+1	161465205	161492360	Fc fragment of IgG, low affinity IIa, receptor (CD32)
+1	161508549	161530413	Fc fragment of IgG, low affinity IIIa, receptor (CD16a)
+1	162029581	162342813	nitric oxide synthase 1 (neuronal) adaptor protein
+1	163028396	163049592	regulator of G-protein signaling 4
+1	163109089	163301581	regulator of G-protein signaling 5
+1	169478192	169565769	coagulation factor V (proaccelerin, labile factor)
+1	169688781	169713220	selectin E
+1	171050018	171089961	flavin containing monooxygenase 3
+1	171207610	171258113	flavin containing monooxygenase 1
+1	186637944	186659559	prostaglandin-endoperoxide synthase 2 (prostaglandin G/H synthase and cyclooxygenase)
+1	186788032	186961113	phospholipase A2, group IVA (cytosolic, calcium-dependent)
+1	192768169	192784407	regulator of G-protein signaling 2
+1	196191913	196587690	potassium channel, subfamily T, member 2
+1	196611008	196719634	complement factor H
+1	198598098	198729605	protein tyrosine phosphatase, receptor type, C
+1	201005635	201091694	calcium channel, voltage-dependent, L type, alpha 1S subunit
+1	203086833	203139533	adenosine A1 receptor
+1	204120944	204145465	renin
+1	204475507	204599131	MDM4, p53 regulator
+1	206937948	206955839	interleukin 10
+1	207659473	207818110	complement component (3b/4b) receptor 1 (Knops blood group)
+1	209849525	209911295	hydroxysteroid (11-beta) dehydrogenase 1
+1	214151278	214217853	prospero homeobox 1
+1	225987797	226036264	epoxide hydrolase 1, microsomal (xenobiotic)
+1	230192956	230420875	polypeptide N-acetylgalactosaminyltransferase 2
+1	230835269	230860336	angiotensinogen (serpin peptidase inhibitor, clade A, member 8)
+1	236948581	237070281	5-methyltetrahydrofolate-homocysteine methyltransferase
+1	237195510	238000288	ryanodine receptor 2 (cardiac)
+1	242001491	242056241	exonuclease 1
+1	244758692	244771989	cytochrome c, somatic pseudogene 5
+2	10252695	10274546	ribonucleotide reductase M2
+2	11807705	11970535	lipin 1
+2	21221301	21276945	apolipoprotein B
+2	24704919	24996571	nuclear receptor coactivator 1
+2	25448421	25575459	DNA (cytosine-5-)-methyltransferase 3 alpha
+2	31130331	31371592	polypeptide N-acetylgalactosaminyltransferase 14
+2	31554188	31647611	xanthine dehydrogenase
+2	38291746	38313323	cytochrome P450, family 1, subfamily B, polypeptide 1
+2	44036611	44076039	ATP-binding cassette, sub-family G (WHITE), member 5
+2	45868454	46418129	protein kinase C, epsilon
+2	49186296	49391666	follicle stimulating hormone receptor
+2	50142643	51269674	neurexin 1
+2	54332410	54535437	acylphosphatase 2, muscle type
+2	65273495	65317142	centrosomal protein 68kDa
+2	68684691	68842361	aprataxin and PNKP like factor
+2	85618871	85651197	capping protein (actin filament), gelsolin-like
+2	85768978	85798657	gamma-glutamyl carboxylase
+2	88419501	88437650	fatty acid binding protein 1, liver
+2	99232569	99357589	mannosyl (alpha-1,3-)-glycoprotein beta-1,4-N-acetylglucosaminyltransferase, isozyme A
+2	100013938	100116480	REV1, polymerase (DNA directed)
+2	102304165	102514152	mitogen-activated protein kinase kinase kinase kinase 4
+2	108984413	109007296	sulfotransferase family, cytosolic, 1C, member 4
+2	111868491	111929022	BCL2-like 11 (apoptosis facilitator)
+2	113528492	113552971	interleukin 1, alpha
+2	113584337	113604356	interleukin 1, beta
+2	113858693	113894593	interleukin 1 receptor antagonist
+2	118836033	118870604	insulin induced gene 2
+2	128011866	128061752	excision repair cross-complementation group 3
+2	128165996	128189822	protein C (inactivator of coagulation factors Va and VIIIa)
+2	136868919	136885725	chemokine (C-X-C motif) receptor 4
+2	138711808	138776934	histamine N-methyltransferase
+2	159815146	160092170	tetratricopeptide repeat, ankyrin repeat and coiled-coil containing 1
+2	162996379	163018914	glucagon
+2	165976659	166251820	sodium channel, voltage-gated, type II, alpha subunit
+2	166316157	166548917	cysteine-serine-rich nuclear protein 3
+2	166842670	167015642	sodium channel, voltage-gated, type I, alpha subunit
+2	168807530	169114105	serine threonine kinase 39
+2	169302759	169634644	ceramide synthase 6
+2	169980619	170229123	low density lipoprotein receptor-related protein 2
+2	182398399	182531834	ceramide kinase-like
+2	182537833	182555392	neuronal differentiation 1
+2	185453093	185807214	zinc finger protein 804A
+2	201440731	201539218	aldehyde oxidase 1
+2	204722511	204741683	cytotoxic T-lymphocyte-associated protein 4
+2	205400516	206487886	par-3 family cell polarity regulator beta
+2	206537184	206665857	neuropilin 2
+2	208384616	208473284	cAMP responsive element binding protein 1
+2	216166679	216217496	5-aminoimidazole-4-carboxamide ribonucleotide formyltransferase/IMP cyclohydrolase
+2	216962381	217074016	X-ray repair complementing defective repair in Chinese hamster cells 5 (double-strand-break rejoining)
+2	227593033	227674545	insulin receptor substrate 1
+2	234150217	234207320	autophagy related 16-like 1 (S. cerevisiae)
+2	234516291	234684945	UDP glucuronosyltransferase 1 family, polypeptide A8
+2	234535123	234684951	UDP glucuronosyltransferase 1 family, polypeptide A10
+2	234658919	234684945	UDP glucuronosyltransferase 1 family, polypeptide A1
+2	234674376	234745069	maestro heat-like repeat family member 2A
+2	239076043	239122343	integrin-linked kinase-associated serine/threonine phosphatase
+2	241075446	241090073	otospiralin
+2	241516133	241541526	calpain 10
+3	6892802	7786218	glutamate receptor, metabotropic 7
+3	12319349	12478855	peroxisome proliferator-activated receptor gamma
+3	12622100	12715700	Raf-1 proto-oncogene, serine/threonine kinase
+3	14156440	14188180	transmembrane protein 43
+3	29312351	30054886	RNA binding motif, single stranded interacting protein 3
+3	30637994	30738634	transforming growth factor, beta receptor II (70/80kDa)
+3	38735837	38845501	sodium channel, voltage-gated, type X, alpha subunit
+3	41226401	41284939	catenin (cadherin-associated protein), beta 1, 88kDa
+3	45720754	45789901	SAC1 suppressor of actin mutations 1-like (yeast)
+3	47452184	47527603	SREBF chaperone
+3	49049832	49068504	DALR anticodon binding domain containing 3
+3	49393569	49459526	ras homolog family member A
+3	52252096	52270179	toll-like receptor 9
+3	52818784	52846025	inter-alpha-trypsin inhibitor heavy chain 3
+3	59732036	61247133	fragile histidine triad
+3	113002777	113170361	cilia and flagella associated protein 44
+3	113844499	113928254	dopamine receptor D3
+3	119489331	119555295	nuclear receptor subfamily 1, group I, member 2
+3	119537800	119823264	glycogen synthase kinase 3 beta
+3	121603171	121666034	solute carrier family 15 (oligopeptide transporter), member 2
+3	124439213	124471120	uridine monophosphate synthetase
+3	124798480	124941609	solute carrier family 12, member 8
+3	133454977	133500850	transferrin
+3	148405658	148463790	angiotensin II receptor, type 1
+3	150793452	151157465	mediator complex subunit 12-like
+3	152542736	152558845	purinergic receptor P2Y, G-protein coupled, 1
+3	154787436	154904518	membrane metallo-endopeptidase
+3	159696623	159716806	interleukin 12A
+3	165487692	165565260	butyrylcholinesterase
+3	170711137	170754768	solute carrier family 2 (facilitated glucose transporter), member 2
+3	178856311	178955500	phosphatidylinositol-4,5-bisphosphate 3-kinase, catalytic subunit alpha
+3	183634722	183745803	ATP-binding cassette, sub-family C (CFTR/MRP), member 5
+3	185358527	185552827	insulin-like growth factor 2 mRNA binding protein 2
+3	186550463	186579252	adiponectin, C1Q and collagen domain containing
+3	194072976	194100472	leucine rich repeat containing 15
+4	2784750	2845823	SH3-domain binding protein 2
+4	2835454	2934803	adducin 1 (alpha)
+4	2955232	3045474	G protein-coupled receptor kinase 4
+4	3758296	3773253	adrenoceptor alpha 2C
+4	20727234	21960424	Kv channel interacting protein 4
+4	36064620	36255979	ArfGAP with RhoGAP domain, ankyrin repeat and PH domain 2
+4	37879606	38143796	TBC1 (tre-2/USP6, BUB2, cdc16) domain family, member 1
+4	41982516	42092551	solute carrier family 30 (zinc transporter), member 9
+4	55941426	56001762	kinase insert domain receptor (a type III receptor tyrosine kinase)
+4	56291068	56423076	clock circadian regulator
+4	62056949	62941168	latrophilin 3
+4	66182281	66546529	EPH receptor A5
+4	69509315	69546494	UDP glucuronosyltransferase 2 family, polypeptide B15
+4	69671713	69700741	UDP glucuronosyltransferase 2 family, polypeptide B10
+4	69945190	69981705	UDP glucuronosyltransferase 2 family, polypeptide B7
+4	71849265	71899631	deoxycytidine kinase
+4	74596223	74612433	chemokine (C-X-C motif) ligand 8
+4	74858359	74874446	chemokine (C-X-C motif) ligand 5
+4	75300853	75323726	amphiregulin
+4	76922333	77036955	ADP-ribosyltransferase 3
+4	84181972	84216067	coenzyme Q2 4-hydroxybenzoate polyprenyltransferase
+4	89008416	89162569	ATP-binding cassette, sub-family G (WHITE), member 2 (Junior blood group)
+4	93215453	94698707	glutamate receptor, ionotropic, delta 2
+4	95363008	95592378	PDZ and LIM domain 5
+4	99388518	99589812	tetraspanin 5
+4	100224527	100252572	alcohol dehydrogenase 1B (class I), beta polypeptide
+4	100254649	100283917	alcohol dehydrogenase 1C (class I), gamma polypeptide
+4	100330418	100366667	alcohol dehydrogenase 7 (class IV), mu or sigma polypeptide
+4	100475240	100548154	microsomal triglyceride transfer protein
+4	105386463	105426058	CXXC finger protein 4
+4	106057032	106203960	tet methylcytosine dioxygenase 2
+4	110824040	110937118	epidermal growth factor
+4	123369625	123387650	interleukin 2
+4	123737568	123822390	fibroblast growth factor 2 (basic)
+4	128641555	128698447	solute carrier family 25 (mitochondrial carrier; adenine nucleotide translocator), member 31
+4	148996915	149375850	nuclear receptor subfamily 3, group C, member 2
+4	154595404	154630243	toll-like receptor 2
+4	177601689	177723899	vascular endothelial growth factor C
+4	183808244	183848630	dCMP deaminase
+4	186980309	187009252	toll-like receptor 3
+5	602405	658807	centrosomal protein 72kDa
+5	1389905	1455543	solute carrier family 6 (neurotransmitter transporter), member 3
+5	6704076	6760161	PAP associated domain containing 7
+5	7386343	7833194	adenylate cyclase 2 (brain)
+5	7856272	7879150	FAST kinase domains 3
+5	31397601	31542282	drosha, ribonuclease type III
+5	37809779	37849782	glial cell derived neurotrophic factor
+5	40670032	40699962	prostaglandin E receptor 4 (subtype EP4)
+5	52275156	52393609	integrin, alpha 2 (CD49B, alpha 2 subunit of VLA-2 receptor)
+5	56100900	56194979	mitogen-activated protein kinase kinase kinase 1, E3 ubiquitin protein ligase
+5	58261865	59793925	phosphodiesterase 4D, cAMP-specific
+5	63252875	63268119	5-hydroxytryptamine (serotonin) receptor 1A, G protein-coupled
+5	74622159	74660926	3-hydroxy-3-methylglutaryl-CoA reductase
+5	75368997	75652764	synaptic vesicle glycoprotein 2C
+5	78666647	78819659	homer homolog 1 (Drosophila)
+5	79919045	79960800	dihydrofolate reductase
+5	82363317	82652579	X-ray repair complementing defective repair in Chinese hamster cells 4
+5	89759876	89813474	polymerase (RNA) III (DNA directed) polypeptide G (32kD)
+5	107191734	107728080	F-box and leucine-rich repeat protein 17
+5	112186885	112231776	signal recognition particle 19kDa
+5	112209081	112268339	receptor accessory protein 5
+5	131620145	131682899	solute carrier family 22 (organic cation/zwitterion transporter), member 4
+5	131695396	131734306	solute carrier family 22 (organic cation/carnitine transporter), member 5
+5	131983865	131999801	interleukin 13
+5	131999678	132021370	interleukin 4
+5	140008313	140023286	CD14 molecule
+5	147538109	147558182	serine peptidase inhibitor, Kazal type 14 (putative)
+5	148196156	148257628	adrenoceptor beta 2, surface
+5	152860084	153196429	glutamate receptor, ionotropic, AMPA 1
+5	158738791	158767481	interleukin 12B
+5	161102658	161132598	gamma-aminobutyric acid (GABA) A receptor, alpha 6
+5	161264197	161329965	gamma-aminobutyric acid (GABA) A receptor, alpha 1
+5	166396083	167694162	teneurin transmembrane protein 2
+5	167903463	167949311	arginyl-tRNA synthetase
+5	169770491	170166636	Kv channel interacting protein 1
+5	170200723	170244051	gamma-aminobutyric acid (GABA) A receptor, pi
+5	172192093	172208203	dual specificity phosphatase 1
+5	174864675	174881163	dopamine receptor D1
+5	176503906	176528143	fibroblast growth factor receptor 4
+5	176826139	176846577	coagulation factor XII (Hageman factor)
+5	179209263	179226616	leukotriene C4 synthase
+5	180025506	180086624	fms-related tyrosine kinase 4
+6	2990067	3022997	NAD(P)H dehydrogenase, quinone 2
+6	3781600	3808012	major histocompatibility complex, class II, DR beta 1
+6	6141311	6330924	coagulation factor XIII, A1 polypeptide
+6	12280529	12300427	endothelin 1
+6	15520032	15673289	dystrobrevin binding protein 1
+6	16119277	16151479	myosin regulatory light chain interacting protein
+6	18125542	18165374	thiopurine S-methyltransferase
+6	20524688	21235635	CDK5 regulatory subunit associated protein 1-like 1
+6	24485197	24540435	aldehyde dehydrogenase 5 family, member A1
+6	24801512	24946275	family with sequence similarity 65, member B
+6	26077422	26099438	hemochromatosis
+6	28483789	28505728	glutathione peroxidase 5
+6	29784756	29801899	major histocompatibility complex, class I, G
+6	30447183	30464982	major histocompatibility complex, class I, E
+6	31011227	31030667	HLA complex group 22
+6	31072608	31110869	psoriasis susceptibility 1 candidate 1
+6	31107216	31136015	coiled-coil alpha-helical rod protein 1
+6	31116303	31137183	transcription factor 19
+6	31129114	31148451	POU class 5 homeobox 1
+6	31138512	31155676	psoriasis susceptibility 1 candidate 3 (non-protein coding)
+6	31233526	31249913	major histocompatibility complex, class I, C
+6	31452054	31481901	MHC class I polypeptide-related sequence B
+6	31529876	31545101	lymphotoxin alpha
+6	31533344	31549113	tumor necrosis factor
+6	31543956	31559686	leukocyte specific transcript 1
+6	31603805	31630953	BCL2-associated athanogene 6
+6	31772952	31788719	heat shock 70kDa protein 1A
+6	32595169	32615152	major histocompatibility complex, class II, DQ alpha 1
+6	32624241	32644466	major histocompatibility complex, class II, DQ beta 1
+6	33029346	33058555	major histocompatibility complex, class II, DP alpha 1
+6	33070293	33099890	major histocompatibility complex, class II, DP beta 2 (pseudogene)
+6	33256431	33277386	ral guanine nucleotide dissociation stimulator-like 2
+6	33264471	33292164	TAP binding protein (tapasin)
+6	35300335	35398968	peroxisome proliferator-activated receptor delta
+6	35538362	35706360	FK506 binding protein 5
+6	39006557	39059657	glucagon-like peptide 1 receptor
+6	39299876	39703181	kinesin family member 6
+6	42918500	42934618	glycine N-methyltransferase
+6	43385282	43421163	ATP-binding cassette, sub-family C (CFTR/MRP), member 10
+6	43727946	43757224	vascular endothelial growth factor A
+6	44177242	44204888	solute carrier family 29 (equilibrative nucleoside transporter), member 1
+6	44345251	44421161	cell division cycle 5-like
+6	52041185	52058436	interleukin 17A
+6	52653178	52678664	glutathione S-transferase alpha 1
+6	53359139	53419927	glutamate-cysteine ligase, catalytic subunit
+6	55615451	55750388	bone morphogenetic protein 5
+6	73321571	73911574	potassium voltage-gated channel, KQT-like subfamily, member 5
+6	78168948	78183120	5-hydroxytryptamine (serotonin) receptor 1B, G protein-coupled
+6	88846583	88886063	cannabinoid receptor 1 (brain)
+6	106629351	106783695	autophagy related 5
+6	110742890	110807844	solute carrier family 22 (organic cation/carnitine transporter), member 16
+6	111617234	111814421	REV3-like, polymerase (DNA directed), zeta, catalytic subunit
+6	111873581	111937477	TRAF3 interacting protein 2
+6	117793803	117894021	discoidin, CUB and LCCL domain containing 1
+6	121397627	121665646	TBC1 domain family, member 32
+6	131884344	131908472	arginase 1
+6	132881461	132895498	trace amine associated receptor 6
+6	136875184	137123656	mitogen-activated protein kinase kinase kinase 5
+6	138178325	138207451	tumor necrosis factor, alpha-induced protein 3
+6	139107248	139228207	epithelial cell transforming 2 like
+6	145943440	146067128	epilepsy, progressive myoclonus type 2A, Lafora disease (laforin)
+6	149058063	149401126	uronyl-2-sulfotransferase
+6	152001631	152427409	estrogen receptor 1
+6	153305400	153333925	mitochondrial translational release factor 1-like
+6	153329026	153462389	regulator of G-protein signaling 17
+6	154321631	154571001	opioid receptor, mu 1
+6	154472618	154687900	interaction protein for cytohesin exchange factors 1
+6	160097148	160124353	superoxide dismutase 2, mitochondrial
+6	160532821	160583147	solute carrier family 22 (organic cation transporter), member 1
+6	160634794	160689963	solute carrier family 22 (organic cation transporter), member 2
+6	160759405	160876613	solute carrier family 22 (organic cation transporter), member 3
+6	160949506	161107478	lipoprotein, Lp(a)
+6	166568144	166592157	T, brachyury homolog (mouse)
+7	1852428	2282583	MAD1 mitotic arrest deficient-like 1 (yeast)
+7	7998374	8131710	glucocorticoid induced transcript 1
+7	17328276	17388775	aryl hydrocarbon receptor
+7	20645245	20799637	ATP-binding cassette, sub-family B (MDR/TAP), member 5
+7	22154908	22406751	Rap guanine nucleotide exchange factor (GEF) 5
+7	22756766	22774621	interleukin 6
+7	30688559	30749719	corticotropin releasing hormone receptor 2
+7	33050725	33112409	5'-nucleotidase, cytosolic IIIA
+7	33934523	34198484	BMP binding endothelial regulator
+7	44549134	44590914	NPC1-like 1
+7	45948844	45970871	insulin-like growth factor binding protein 3
+7	50523134	50643154	dopa decarboxylase (aromatic L-amino acid decarboxylase)
+7	55076678	55282262	epidermal growth factor receptor
+7	70587523	71181586	Williams-Beuren syndrome chromosome region 17
+7	75534420	75619173	P450 (cytochrome) oxidoreductase
+7	80368854	80561695	sema domain, immunoglobulin domain (Ig), short basic domain, secreted, (semaphorin) 3C
+7	86263230	86497193	glutamate receptor, metabotropic 3
+7	87028361	87115019	ATP-binding cassette, sub-family B (MDR/TAP), member 4
+7	87130179	87352639	ATP-binding cassette, sub-family B (MDR/TAP), member 1
+7	94924669	94963884	paraoxonase 1
+7	95031174	95074636	paraoxonase 2
+7	99242813	99287636	cytochrome P450, family 3, subfamily A, polypeptide 5
+7	99242818	99474174	cytochrome P450, family 3, subfamily A
+7	99351583	99391811	cytochrome P450, family 3, subfamily A, polypeptide 4
+7	99415636	99466727	cytochrome P450, family 3, subfamily A, polypeptide 43
+7	99707265	99726131	canopy FGF signaling regulator 4
+7	100484615	100503754	acetylcholinesterase (Yt blood group)
+7	100760370	100785547	serpin peptidase inhibitor, clade E (nexin, plasminogen activator inhibitor type 1), member 1
+7	100996101	101205304	collagen, type XXVI, alpha 1
+7	117110017	117311719	cystic fibrosis transmembrane conductance regulator (ATP-binding cassette sub-family C, member 7)
+7	122631759	122645754	taste receptor, type 2, member 16
+7	127247346	127265982	paired box 4
+7	127871241	127900682	leptin
+7	128029331	128060045	IMP (inosine 5'-monophosphate) dehydrogenase 1
+7	128369346	128416477	calumenin
+7	129896703	129932638	carboxypeptidase A2 (pancreatic)
+7	136543399	136706720	cholinergic receptor, muscarinic 2
+7	139468047	139723125	thromboxane A synthase 1 (platelet)
+7	150639044	150685402	potassium voltage-gated channel, subfamily H (eag-related), member 2
+7	150678144	150714687	nitric oxide synthase 3 (endothelial cell)
+8	2789875	4862328	CUB and Sushi multiple domains 1
+8	11608765	11623732	chromosome 8 open reading frame 49
+8	18017971	18084198	N-acetyltransferase 1 (arylamine N-acetyltransferase)
+8	18238755	18261723	N-acetyltransferase 2 (arylamine N-acetyltransferase)
+8	19786582	19827770	lipoprotein lipase
+8	22214762	22294642	solute carrier family 39 (zinc transporter), member 14
+8	23045970	23092680	tumor necrosis factor receptor superfamily, member 10a
+8	26602667	26737003	adrenoceptor alpha 1A
+8	30532578	30595486	glutathione reductase
+8	31486820	32625558	neuregulin 1
+8	37817513	37834184	adrenoceptor beta 3
+8	39761328	39789309	indoleamine 2,3-dioxygenase 1
+8	40385109	40765345	zinc finger, matrin-type 4
+8	59399737	59422720	cytochrome P450, family 7, subfamily A, polypeptide 1
+8	62410115	62637199	aspartate beta-hydroxylase
+8	63924638	63961610	gamma-glutamyl hydrolase (conjugase, folylpolygammaglutamyl hydrolase)
+8	66070380	66102575	long intergenic non-protein coding RNA 251
+8	67085612	67100846	corticotropin releasing hormone
+8	69232957	69734258	chromosome 8 open reading frame 34
+8	103213729	103261346	ribonucleotide reductase M2 B (TP53 inducible)
+8	117952512	118191953	solute carrier family 30 (zinc transporter), member 8
+8	119954527	120122207	collectin sub-family member 10 (C-type lectin)
+8	139597478	139936236	collagen, type XXII, alpha 1
+8	143988975	144009259	cytochrome P450, family 11, subfamily B, polypeptide 2
+9	4480427	4590469	solute carrier family 1 (neuronal/epithelial high affinity glutamate transporter, system Xag), member 1
+9	6529464	6655692	glycine dehydrogenase (decarboxylating)
+9	8311246	10622723	protein tyrosine phosphatase, receptor type, D
+9	20338663	20632514	myeloid/lymphoid or mixed-lineage leukemia (trithorax homolog, Drosophila); translocated to, 3
+9	21984790	22124096	CDKN2B antisense RNA 1
+9	27322207	27540223	MOB kinase activator 3B
+9	27543543	27583864	chromosome 9 open reading frame 72
+9	75512578	75663633	aldehyde dehydrogenase 1 family, member A1
+9	78997433	79019444	riboflavin kinase
+9	86887765	86993413	solute carrier family 28 (concentrative nucleoside transporter), member 3
+9	87273417	87644985	neurotrophic tyrosine kinase, receptor, type 2
+9	90102601	90326566	death-associated protein kinase 1
+9	100434191	100469691	xeroderma pigmentosum, complementation group A
+9	104328634	104510862	glutamate receptor, ionotropic, N-methyl-D-aspartate 3A
+9	107540283	107700527	ATP-binding cassette, sub-family A (ABC1), member 1
+9	115924800	115993641	FK506 binding protein 15, 133kDa
+9	115973808	116029772	solute carrier family 31 (copper transporter), member 1
+9	117093429	117170783	AT-hook transcription factor
+9	120456453	120482769	toll-like receptor 4
+9	123661671	123701451	TNF receptor-associated factor 1
+9	123711613	123822554	complement component 5
+9	125122809	125160982	prostaglandin-endoperoxide synthase 1 (prostaglandin G/H synthase and cyclooxygenase)
+9	127994127	128013666	heat shock 70kDa protein 5 (glucose-regulated protein, 78kDa)
+9	128014073	128130290	GTPase activating protein and VPS9 domains 1
+9	130555137	130579799	folylpolyglutamate synthase
+9	132497615	132525344	prostaglandin E synthase
+9	135763735	135830094	tuberous sclerosis 1
+9	136127563	136160630	ABO blood group (transferase A, alpha 1-3-N-acetylgalactosaminyltransferase; transferase B, alpha 1-3-galactosyltransferase)
+9	136491485	136527466	dopamine beta-hydroxylase (dopamine beta-monooxygenase)
+9	137208316	137335431	retinoid X receptor, alpha
+9	140023609	140066214	glutamate receptor, ionotropic, N-methyl D-aspartate 1
+10	5080958	5152878	aldo-keto reductase family 1, member C3
+10	5228798	5263910	aldo-keto reductase family 1, member C4
+10	8077294	8120164	GATA binding protein 3
+10	12381583	12874735	calcium/calmodulin-dependent protein kinase ID
+10	33463419	33633833	neuropilin 1
+10	44862601	44890545	chemokine (C-X-C motif) ligand 12
+10	45859624	45944569	arachidonate 5-lipoxygenase
+10	50807141	50876150	choline O-acetyltransferase
+10	62528089	62557610	cyclin-dependent kinase 1
+10	63651013	63859707	AT rich interactive domain 5B (MRF1-like)
+10	67669276	69465949	catenin (cadherin-associated protein), alpha 3
+10	73714120	73776322	carbohydrate (chondroitin 6) sulfotransferase 3
+10	77181217	78320133	chromosome 10 open reading frame 11
+10	79547549	79696348	discs, large homolog 5 (Drosophila)
+10	83625070	84749935	neuregulin 3
+10	89613195	89731532	phosphatase and tensin homolog
+10	92497575	92627671	5-hydroxytryptamine (serotonin) receptor 7, adenylate cyclase-coupled
+10	96512463	96615671	cytochrome P450, family 2, subfamily C, polypeptide 19
+10	96688350	96752486	cytochrome P450, family 2, subfamily C, polypeptide 9
+10	96793529	96839255	cytochrome P450, family 2, subfamily C, polypeptide 8
+10	98754795	98955683	slit homolog 1 (Drosophila)
+10	99523508	99541756	secreted frizzled-related protein 5
+10	101532457	101614662	ATP-binding cassette, sub-family C (CFTR/MRP), member 2
+10	104844774	104963063	5'-nucleotidase, cytosolic II
+10	112826790	112843665	adrenoceptor alpha 2A
+10	114699978	114930437	transcription factor 7-like 2 (T-cell specific, HMG-box)
+10	115428921	115493668	caspase 7, apoptosis-related cysteine peptidase
+10	115793806	115809667	adrenoceptor beta 1
+10	118990584	119041941	solute carrier family 18 (vesicular monoamine transporter), member 2
+10	120791541	120850959	eukaryotic translation initiation factor 3, subunit A
+10	120957197	121218131	G protein-coupled receptor kinase 5
+10	124204179	124219868	age-related maculopathy susceptibility 2
+10	124211041	124277424	HtrA serine peptidase 1
+10	135330300	135355627	cytochrome P450, family 2, subfamily E, polypeptide 1
+11	1292598	1340892	toll interacting protein
+11	2013406	2029065	H19, imprinted maternally expressed transcript (non-protein coding)
+11	2456221	2873340	potassium voltage-gated channel, KQT-like subfamily, member 1
+11	4105791	4163116	ribonucleotide reductase M1
+11	5048146	5062304	olfactory receptor, family 52, subfamily J, member 2 pseudogene
+11	5080702	5094826	olfactory receptor, family 52, subfamily E, member 1 (gene/pseudogene)
+11	10316642	10331923	adrenomedullin
+11	11289421	11653561	polypeptide N-acetylgalactosaminyltransferase 18
+11	11370489	11384904	casein kinase 2, alpha 3 polypeptide
+11	14296466	14396052	related RAS viral (r-ras) oncogene homolog 2
+11	17411432	17508449	ATP-binding cassette, sub-family C (CFTR/MRP), member 8
+11	18039084	18072354	tryptophan hydroxylase 1
+11	19200577	19242118	cysteine and glycine-rich protein 3 (cardiac LIM protein)
+11	20610946	20679610	solute carrier family 6 (neurotransmitter transporter), member 5
+11	27518384	27722718	BDNF antisense RNA
+11	27673440	27753605	brain-derived neurotrophic factor
+11	34450472	34496607	catalase
+11	46730743	46764056	coagulation factor II (thrombin)
+11	47257853	47280457	acid phosphatase 2, lysosomal
+11	47259851	47293584	nuclear receptor subfamily 1, group H, member 3
+11	47280927	47354582	MAP-kinase activating death domain
+11	49165187	49240222	folate hydrolase (prostate-specific membrane antigen) 1
+11	62757296	62793317	solute carrier family 22 (organic anion transporter), member 8
+11	64313098	64342002	solute carrier family 22 (organic anion/urate transporter), member 11
+11	64348113	64372825	solute carrier family 22 (organic anion/urate transporter), member 12
+11	65255224	65276940	metastasis associated lung adenocarcinoma transcript 1 (non-protein coding)
+11	67341066	67357125	glutathione S-transferase pi 1
+11	67407026	67428130	aspartoacylase (aminocyclase) 3
+11	68441983	68461643	galanin/GMAP prepropeptide
+11	69445873	69472242	cyclin D1
+11	71710910	71801732	nuclear mitotic apparatus protein 1
+11	71836771	71853934	folate receptor 3 (gamma)
+11	74852032	74920445	solute carrier organic anion transporter family, member 2B1
+11	82532409	82622733	prolylcarboxypeptidase (angiotensinase C)
+11	85665214	85790923	phosphatidylinositol binding clathrin assembly protein
+11	94107477	94144585	G protein-coupled receptor 83
+11	102703528	102724342	matrix metallopeptidase 3 (stromelysin 1, progelatinase)
+11	102970160	103353591	dynein, cytoplasmic 2, heavy chain 1
+11	108083559	108242829	ATM serine/threonine kinase
+11	112010974	112044840	interleukin 18
+11	113248513	113274140	ankyrin repeat and kinase domain containing 1
+11	113277317	113356413	dopamine receptor D2
+11	113765518	113820283	5-hydroxytryptamine (serotonin) receptor 3B, ionotropic
+11	113835797	113864035	5-hydroxytryptamine (serotonin) receptor 3A, ionotropic
+11	116657086	116673136	apolipoprotein A-V
+11	116688418	116704011	apolipoprotein A-IV
+11	116690624	116706787	apolipoprotein C-III
+11	116703467	116718338	apolipoprotein A-I
+11	120372465	120862514	glutamate receptor, ionotropic, kainate 4
+11	128704909	128747268	potassium inwardly-rectifying channel, subfamily J, member 1
+12	296243	333740	solute carrier family 6 (neurotransmitter transporter), member 12
+12	851759	1023618	WNK lysine deficient protein kinase 1
+12	1018255	1109774	RAD52 homolog (S. cerevisiae)
+12	1673823	1759379	wingless-type MMTV integration site family, member 5B
+12	2069952	2810115	calcium channel, voltage-dependent, L type, alpha 1C subunit
+12	3904410	3992608	poly (ADP-ribose) polymerase family, member 11
+12	6434923	6461283	tumor necrosis factor receptor superfamily, member 1A
+12	6939375	6959564	guanine nucleotide binding protein (G protein), beta polypeptide 3
+12	6954972	6971128	cell division cycle associated 3
+12	9217304	9278558	alpha-2-macroglobulin
+12	9902082	9923497	CD69 molecule
+12	10447050	10472850	killer cell lectin-like receptor subfamily D, member 1
+12	10591863	10617215	killer cell lectin-like receptor subfamily C, member 1
+12	13710684	14143022	glutamate receptor, ionotropic, N-methyl D-aspartate 2B
+12	20838289	20909320	solute carrier organic anion transporter family, member 1C1
+12	20953638	21073019	solute carrier organic anion transporter family, member 1B3
+12	21274128	21395730	solute carrier organic anion transporter family, member 1B1
+12	21414534	21558371	solute carrier organic anion transporter family, member 1A2
+12	25355180	25413870	Kirsten rat sarcoma viral oncogene homolog
+12	32542518	32801984	FYVE, RhoGEF and PH domain containing 4
+12	34165216	34184237	ALG10, alpha-1,2-glucosyltransferase
+12	48232320	48308814	vitamin D (1,25- dihydroxyvitamin D3) receptor
+12	50334524	50355664	aquaporin 2 (collecting duct)
+12	53601350	53636040	retinoic acid receptor, gamma
+12	53763979	53813230	Sp1 transcription factor
+12	53807594	53828439	anti-Mullerian hormone receptor, type II
+12	54353092	54378740	HOX transcript antisense RNA
+12	58114544	58145984	ArfGAP with GTPase domain, ankyrin repeat and PH domain 2
+12	58138510	58156304	cyclin-dependent kinase 4
+12	58153117	58170976	cytochrome P450, family 27, subfamily B, polypeptide 1
+12	59979821	60186636	solute carrier family 16 (monocarboxylate transporter), member 7
+12	65441404	65525346	WNT inhibitory factor 1
+12	68545550	68563521	interferon, gamma
+12	69743490	69787576	YEATS domain containing 4
+12	71822931	71983090	leucine-rich repeat containing G protein-coupled receptor 5
+12	72322626	72429221	tryptophan hydroxylase 2
+12	77412026	77469360	E2F transcription factor 7
+12	89978826	90113130	ATPase, Ca++ transporting, plasma membrane 1
+12	96391531	96447298	leukotriene A4 hydrolase
+12	102587237	102601614	pro-melanin-concentrating hormone
+12	107382142	107497635	cryptochrome circadian clock 1
+12	110001500	110038071	mevalonate kinase
+12	111461828	111791358	cut-like homeobox 2
+12	112194691	112250789	aldehyde dehydrogenase 2 family (mitochondrial)
+12	121437835	121464300	chromosome 12 open reading frame 43
+12	125259174	125358519	scavenger receptor class B, member 1
+13	28574411	28692904	fms-related tyrosine kinase 3
+13	35506424	36249874	neurobeachin
+13	43126872	43185149	tumor necrosis factor (ligand) superfamily, member 11
+13	47402677	47481211	5-hydroxytryptamine (serotonin) receptor 2A, G protein-coupled
+13	48601703	48624282	nudix (nucleoside diphosphate linked moiety X)-type motif 15
+13	52503805	52596181	ATPase, Cu++ transporting, beta polypeptide
+13	60236717	60748119	diaphanous-related formin 3
+13	95669083	95963705	ATP-binding cassette, sub-family C (CFTR/MRP), member 4
+13	96450834	96715736	UDP-glucose glycoprotein glucosyltransferase 2
+13	101703130	102078813	sodium leak channel, non-selective
+13	103488191	103531351	excision repair cross-complementation group 5
+13	103693348	103729196	solute carrier family 10 (sodium/bile acid cotransporter), member 2
+13	106108216	106146383	D-amino acid oxidase activator
+14	32020591	32333430	nucleotide binding protein-like
+14	35581527	35746284	KIAA0391
+14	47305826	48154157	MAM domain containing glycosylphosphatidylinositol anchor 2
+14	51368935	51421248	phosphorylase, glycogen, liver
+14	52771016	52798324	prostaglandin E receptor 2 (subtype EP2), 53kDa
+14	55585935	55615148	lectin, galactoside-binding, soluble, 3
+14	62152118	62217977	hypoxia inducible factor 1, alpha subunit (basic helix-loop-helix transcription factor)
+14	64690751	64815268	estrogen receptor 2 (ER beta)
+14	64844754	64929725	methylenetetrahydrofolate dehydrogenase (NADP+ dependent) 1, methenyltetrahydrofolate cyclohydrolase, formyltetrahydrofolate synthetase
+14	65443507	65532370	farnesyltransferase, CAAX box, beta
+14	73383040	73431825	DDB1 and CUL4 associated factor 4
+14	73694205	73744348	papilin, proteoglycan-like sulfated glycoprotein
+14	95068639	95093395	serpin peptidase inhibitor, clade A (alpha-1 antiproteinase, antitrypsin), member 3
+14	96173304	96190533	T-cell leukemia/lymphoma 1A
+14	96661016	96713666	bradykinin receptor B2
+14	96711641	96738304	bradykinin receptor B1
+14	104085525	104170888	kinesin light chain 1
+14	105232686	105272080	v-akt murine thymoma viral oncogene homolog 1
+15	27206429	27781373	gamma-aminobutyric acid (GABA) A receptor, gamma 3
+15	32312686	32465384	cholinergic receptor, nicotinic, alpha 7 (neuronal)
+15	39883422	40085039	fibrous sheath interacting protein 1
+15	40216331	40330797	eukaryotic translation initiation factor 2 alpha kinase 4
+15	45534428	45571132	solute carrier family 28 (concentrative nucleoside transporter), member 2
+15	45650322	45680980	glycine amidinotransferase (L-arginine:glycine amidinotransferase)
+15	51497254	51640795	cytochrome P450, family 19, subfamily A, polypeptide 1
+15	56116120	56295835	neural precursor cell expressed, developmentally down-regulated 4, E3 ubiquitin protein ligase
+15	58242622	58368121	aldehyde dehydrogenase 1 family, member A2
+15	58692953	58864073	lipase, hepatic
+15	60777483	61531502	RAR-related orphan receptor A
+15	63612730	63684326	carbonic anhydrase XII
+15	75008883	75027951	cytochrome P450, family 1, subfamily A, polypeptide 1
+15	75031184	75051941	cytochrome P450, family 1, subfamily A, polypeptide 2
+15	75125459	75145552	unc-51 like kinase 3
+15	78822747	78844562	proteasome (prosome, macropain) subunit, alpha type, 4
+15	78847862	78890611	cholinergic receptor, nicotinic, alpha 5 (neuronal)
+15	78882394	78923637	cholinergic receptor, nicotinic, alpha 3 (neuronal)
+15	78913636	78943587	cholinergic receptor, nicotinic, beta 4 (neuronal)
+15	81464941	81608104	interleukin 16
+15	85417794	85492027	solute carrier family 28 (concentrative nucleoside transporter), member 1
+15	89775634	89863362	Fanconi anemia, complementation group I
+16	1373606	1402442	BAI1-associated protein 3
+16	4009650	4176186	adenylate cyclase 9
+16	5279469	7766342	RNA binding protein, fox-1 homolog (C. elegans) 1
+16	14004014	14049205	excision repair cross-complementation group 4
+16	16033434	16239931	ATP-binding cassette, sub-family C (CFTR/MRP), member 1
+16	16240422	16328083	ATP-binding cassette, sub-family C (CFTR/MRP), member 6
+16	23303591	23395620	sodium channel, non-voltage-gated 1, beta subunit
+16	23837300	24234932	protein kinase C, beta
+16	27315161	27379099	interleukin 4 receptor
+16	30924392	30963104	F-box and leucine-rich repeat protein 19
+16	30997577	31031829	syntaxin 1B
+16	31034416	31054489	syntaxin 4
+16	31091745	31110289	protease, serine, 53
+16	31099175	31116699	vitamin K epoxide reductase complex, subunit 1
+16	31109615	31127112	branched chain ketoacid dehydrogenase kinase
+16	48197782	48291479	ATP-binding cassette, sub-family C (CFTR/MRP), member 11
+16	49521515	49901830	zinc finger protein 423
+16	50717507	50769990	nucleotide-binding oligomerization domain containing 2
+16	53727875	54151379	fat mass and obesity associated
+16	55679542	55743104	solute carrier family 6 (neurotransmitter transporter), member 2
+16	55784511	55811838	carboxylesterase 1 pseudogene 1
+16	55833763	55877098	carboxylesterase 1
+16	56889119	56952762	solute carrier family 12 (sodium/chloride transporter), member 3
+16	56985835	57020757	cholesteryl ester transfer protein, plasma
+16	69129467	69155622	hyaluronan synthase 3
+16	69740304	69770849	NAD(P)H dehydrogenase, quinone 1
+16	70718342	70845074	Vac14 homolog (S. cerevisiae)
+16	72035802	72050651	ATP synthase, H+ transporting, mitochondrial F1 complex, alpha subunit 1 pseudogene 3
+16	87860629	87913100	solute carrier family 7 (amino acid transporter light chain, L system), member 5
+16	88706697	88727492	cytochrome b-245, alpha polypeptide
+16	89603324	89636237	ribosomal protein L13
+16	89974287	89990385	melanocortin 1 receptor (alpha melanocyte stimulating hormone receptor)
+17	4603789	4627795	arrestin, beta 2
+17	4825312	4841325	glycoprotein Ib (platelet), alpha polypeptide
+17	6889384	6917055	arachidonate 12-lipoxygenase
+17	7568720	7600868	tumor protein p53
+17	17574787	17717767	retinoic acid induced 1
+17	17711663	17750331	sterol regulatory element binding transcription factor 1
+17	18228187	18276856	serine hydroxymethyltransferase 1 (soluble)
+17	19427167	19485346	solute carrier family 47 (multidrug and toxin extrusion), member 1
+17	19578626	19632990	solute carrier family 47 (multidrug and toxin extrusion), member 2
+17	26080792	26137555	nitric oxide synthase 2, inducible
+17	28518337	28572986	solute carrier family 6 (neurotransmitter transporter), member 4
+17	31337105	32493825	acid-sensing (proton-gated) ion channel 2
+17	32572296	32587222	chemokine (C-C motif) ligand 2
+17	33297517	33335088	ligase III, DNA, ATP-dependent
+17	37834167	37887915	v-erb-b2 avian erythroblastic leukemia viral oncogene homolog 2
+17	38208446	38253120	thyroid hormone receptor, alpha
+17	38246037	38266978	nuclear receptor subfamily 1, group D, member 1
+17	40462342	40550586	signal transducer and activator of transcription 3 (acute-phase response factor)
+17	43199967	43224548	acyl-CoA binding domain containing 4
+17	43687710	43916194	corticotropin releasing hormone receptor 1
+17	45321208	45393077	integrin, beta 3 (platelet glycoprotein IIIa, antigen CD61)
+17	45800610	45826485	T-box 21
+17	48258457	48289003	collagen, type I, alpha 1
+17	48702205	48772063	ATP-binding cassette, sub-family C (CFTR/MRP), member 3
+17	49704674	50247377	carbonic anhydrase X
+17	54220836	54563007	ankyrin-repeat and fibronectin type III domain containing 1
+17	61033913	61508067	tetratricopeptide repeat, ankyrin repeat and coiled-coil containing 2
+17	61544422	61578741	angiotensin I converting enzyme
+17	62012914	62076876	sodium channel, voltage-gated, type IV, alpha subunit
+17	63521681	63567740	axin 2
+17	64288760	64809862	protein kinase C, alpha
+17	74463975	74507509	rhomboid 5 homolog 2 (Drosophila)
+17	79473997	79489892	actin, gamma 1
+18	646620	668340	chromosome 18 open reading frame 56
+18	647590	676499	thymidylate synthetase
+18	667324	722662	enolase superfamily member 1
+18	7557314	8409859	protein tyrosine phosphatase, receptor type, M
+18	22030593	22062921	histamine receptor H4
+18	34820003	35156000	CUGBP, Elav-like family member 4
+18	42782947	43266072	solute carrier family 14 (urea transporter), member 2
+18	48697920	48734051	mex-3 RNA binding family member C
+18	55701580	56071772	neural precursor cell expressed, developmentally down-regulated 4-like, E3 ubiquitin protein ligase
+18	58035564	58050001	melanocortin 4 receptor
+18	59982520	60057943	tumor necrosis factor receptor superfamily, member 11a, NFKB activator
+18	60787579	60997011	B-cell CLL/lymphoma 2
+18	74952008	74985098	galanin receptor 1
+19	2154148	2235577	DOT1-like histone H3K79 methyltransferase
+19	3591504	3616831	thromboxane A2 receptor
+19	7109266	7304011	insulin receptor
+19	11190037	11247506	low density lipoprotein receptor
+19	13314256	13627274	calcium channel, voltage-dependent, P/Q type, alpha 1A subunit
+19	13944401	13957473	microRNA 23a
+19	15985834	16018884	cytochrome P450, family 4, subfamily F, polypeptide 2
+19	36332552	36361048	kin of IRRE like 2 (Drosophila)
+19	38914340	39081204	ryanodine receptor 1 (skeletal)
+19	39731272	39745916	interferon, lambda 3
+19	39733954	39749496	interferon, lambda 4 (gene/pseudogene)
+19	41346441	41366360	cytochrome P450, family 2, subfamily A, polypeptide 6
+19	41487138	41527308	cytochrome P450, family 2, subfamily B, polypeptide 6
+19	41527169	41543989	cytochrome P450, family 2, subfamily A, polypeptide 7 pseudogene 1
+19	41833812	41869831	transforming growth factor, beta 1
+19	41857322	41880078	B9 protein domain 2
+19	44044464	44089730	X-ray repair complementing defective repair in Chinese hamster cells 1
+19	45407577	45425606	apolipoprotein C-I
+19	45851649	45883845	excision repair cross-complementation group 2
+19	45899467	45917024	CD3e molecule, epsilon associated protein
+19	45907591	45992241	excision repair cross-complementation group 1
+19	46161490	46188717	gastric inhibitory polypeptide receptor
+19	47111585	47138375	prostaglandin I2 (prostacyclin) receptor (IP)
+19	49045429	49105684	sulfotransferase family, cytosolic, 2B, member 1
+19	55522073	55559632	glycoprotein VI (platelet)
+19	55872750	55891831	interleukin 11
+20	2459463	2499778	zinc finger protein 343
+20	3168012	3195295	DDRGK domain containing 1
+20	3179514	3207516	inosine triphosphatase (nucleoside triphosphate pyrophosphatase)
+20	3226948	3398587	chromosome 20 open reading frame 194
+20	8102912	8868547	phospholipase C, beta 1 (phosphoinositide-specific)
+20	23023270	23040301	thrombomodulin
+20	23853572	23870380	cystatin D
+20	33452766	33518769	acyl-CoA synthetase short-chain family member 2
+20	39311488	39327880	v-maf avian musculoaponeurotic fibrosarcoma oncogene homolog B
+20	39647462	39756127	topoisomerase (DNA) I
+20	39756159	39807359	phospholipase C, gamma 1
+20	42974441	43064485	hepatocyte nuclear factor 4, alpha
+20	50000494	50189370	nuclear factor of activated T-cells, cytoplasmic, calcineurin-dependent 2
+20	52766985	52800516	cytochrome P450, family 24, subfamily A, polypeptide 1
+20	53082266	53270710	docking protein 5
+20	55740809	55851707	bone morphogenetic protein 7
+20	57404756	57489250	GNAS complex locus
+20	57584309	57604709	tubulin, beta 1 class VI
+20	57600733	57617422	ATP synthase, H+ transporting, mitochondrial F1 complex, epsilon subunit
+20	60787017	60805323	histamine receptor H3
+20	61971662	62019487	cholinergic receptor, nicotinic, alpha 4 (neuronal)
+21	28205606	28227728	ADAM metallopeptidase with thrombospondin type 1 motif, 1
+21	30906254	31322282	glutamate receptor, ionotropic, kainate 1
+21	35787910	35894573	potassium voltage-gated channel, Isk-related family, member 1
+21	37432285	37448462	carbonyl reductase 1
+21	37496614	37521860	carbonyl reductase 3
+21	38993778	39298741	potassium inwardly-rectifying channel, subfamily J, member 6
+21	41381343	42229039	Down syndrome cell adhesion molecule
+21	43609799	43727497	ATP-binding cassette, sub-family G (WHITE), member 1
+21	46815058	46936634	collagen, type XVIII, alpha 1
+21	46931629	46993045	solute carrier family 19 (folate transporter), member 1
+22	19919263	19960498	catechol-O-methyltransferase
+22	19951126	20014325	armadillo repeat gene deleted in velocardiofacial syndrome
+22	24373135	24394284	glutathione S-transferase theta 1
+22	24809565	24841328	adenosine A2a receptor
+22	29187548	29206560	X-box binding protein 1
+22	36953916	37108690	calcium channel, voltage-dependent, gamma subunit 2
+22	37247030	37277059	neutrophil cytosolic factor 4, 40kDa
+22	37618301	37650339	ras-related C3 botulinum toxin substrate 2 (rho family, small GTP binding protein Rac2)
+22	38339674	38371463	polymerase (RNA) II (DNA directed) polypeptide F
+22	38443262	38474708	protein interacting with PRKCA 1
+22	41217539	41263012	suppression of tumorigenicity 13 (colon carcinoma) (Hsp70 interacting protein)
+22	42519501	42536883	cytochrome P450, family 2, subfamily D, polypeptide 6
+22	43262772	43421184	protein kinase C and casein kinase substrate in neurons 2
+22	46536458	46642653	peroxisome proliferator-activated receptor alpha
+22	50958997	50974868	SCO2 cytochrome c oxidase assembly protein
+X	12875202	12911480	toll-like receptor 7
+X	15576156	15630192	angiotensin I converting enzyme 2
+X	23672377	23707516	peroxiredoxin 4
+X	77156194	77308892	ATPase, Cu++ transporting, alpha polypeptide
+X	113808551	114147624	5-hydroxytryptamine (serotonin) receptor 2C, G protein-coupled
+X	122307996	122627766	glutamate receptor, ionotropic, AMPA 3
+X	128663826	128729533	oculocerebrorenal syndrome of Lowe
+X	151796637	151824825	gamma-aminobutyric acid (GABA) A receptor, theta
+X	153756606	153785796	glucose-6-phosphate dehydrogenase
+M	2	4604	mitochondrially encoded 12S RNA
+M	472	13768	mitochondrially encoded NADH dehydrogenase 4L
