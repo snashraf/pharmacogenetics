@@ -1,0 +1,46 @@
+\contentsline {section}{\numberline {1}Overview}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}New features}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Home page}{2}{subsection.1.2}
+\contentsline {section}{\numberline {2}Invocation}{4}{section.2}
+\contentsline {subsection}{\numberline {2.1}Package options}{4}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Customization parameters}{4}{subsection.2.2}
+\contentsline {paragraph}{Length parameters}{4}{section*.2}
+\contentsline {paragraph}{Customization hooks}{4}{section*.3}
+\contentsline {section}{\numberline {3}Basic usage}{5}{section.3}
+\contentsline {subsection}{\numberline {3.1}Tree syntax}{5}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Label matching}{5}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Roofs}{6}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Branching without labels}{6}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Subscripts, superscripts and primes}{7}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}Customizing text appearance}{8}{subsection.3.6}
+\contentsline {paragraph}{Details:}{8}{section*.4}
+\contentsline {subsection}{\numberline {3.7}Escaping the parser}{8}{subsection.3.7}
+\contentsline {subsection}{\numberline {3.8}Adjusting inter-node spacing}{8}{subsection.3.8}
+\contentsline {subsection}{\numberline {3.9}``Balanced'' trees}{9}{subsection.3.9}
+\contentsline {section}{\numberline {4}Using qtree}{10}{section.4}
+\contentsline {subsection}{\numberline {4.1}How to convert a tree to brackets}{10}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Placing trees on the page}{10}{subsection.4.2}
+\contentsline {section}{\numberline {5}Advanced features}{11}{section.5}
+\contentsline {subsection}{\numberline {5.1}Putting a frame around part of a tree}{11}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Embedding one tree in another}{12}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Overriding branch drawing}{12}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}Visualising tree construction}{13}{subsection.5.4}
+\contentsline {subsection}{\numberline {5.5}The low-level interface}{14}{subsection.5.5}
+\contentsline {section}{\numberline {6}How do I \dots ? (The qtree FAQ)}{15}{section.6}
+\contentsline {paragraph}{Make my tree fit in the page?}{15}{section*.7}
+\contentsline {paragraph}{Draw movement arrows from one node of a tree to another?}{15}{section*.8}
+\contentsline {paragraph}{Use \textsf {\emph {qtree}}\ with \textsl {pdflatex}?}{15}{section*.9}
+\contentsline {paragraph}{Place a tree in a footnote, figure, or macro argument?}{15}{section*.10}
+\contentsline {paragraph}{Center my trees vertically on the baseline?}{15}{section*.11}
+\contentsline {paragraph}{Line up the text from all the leaf nodes on one horizontal line?}{15}{section*.12}
+\contentsline {paragraph}{Draw dashed or dotted branches between certain nodes?}{16}{section*.13}
+\contentsline {paragraph}{Automatically select a particular font for branch or leaf labels?}{16}{section*.14}
+\contentsline {paragraph}{Embed one call to \textsf {\emph {qtree}}\ inside another?}{16}{section*.15}
+\contentsline {section}{\numberline {7}Troubleshooting}{16}{section.7}
+\contentsline {paragraph}{The placement of trees on the page has changed}{16}{section*.17}
+\contentsline {paragraph}{LaTeX says that pict2e.sty ``will not be written soon''}{16}{section*.18}
+\contentsline {paragraph}{Some very short lines are not drawn}{17}{section*.19}
+\contentsline {paragraph}{Some not-so-short lines are not drawn}{17}{section*.20}
+\contentsline {paragraph}{T\kern -.1667em\lower .5ex\hbox {E}\kern -.125emX\spacefactor \@m \ is running out of registers}{17}{section*.21}
+\contentsline {paragraph}{There's too much space below my trees, but only when I use pdflatex}{17}{section*.22}
+\contentsline {paragraph}{\textsf {\emph {Qtree}}\ will not work with journal style X}{17}{section*.23}

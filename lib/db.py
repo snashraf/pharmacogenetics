@@ -75,21 +75,17 @@ class Database(object):
 
 		# test
 
-	def removeTable(self, tabname):
-
-		sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.rm'))
-
-		self.sql.executescript(sql)
-
+	def removeTable(self, tabnames):
+		for tabname in tabnames:
+			sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.rm'))
+			self.sql.executescript(sql)
 		self.conn.commit()
 
 
-	def createTable(self, tabname):
-
-		sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.tab'))
-
-		self.sql.executescript(sql)
-
+	def createTable(self, tabnames):
+		for tabname in tabnames:
+			sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.tab'))
+			self.sql.executescript(sql)
 		self.conn.commit()
 
 

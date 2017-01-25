@@ -42,12 +42,10 @@ class ReportMaker(Database):
 
 		self.sql.executescript('''DROP VIEW AnnOverview;
 						CREATE VIEW AnnOverview AS
-				        SELECT DISTINCT v.GeneID, g.GeneName, d.DrugID, g.GeneSymbol, v.RSID, a.LoE, p.PatAllele, p.Phenotype
-		                FROM DrugVars d
-		                JOIN Variants v ON d.VarID = v.VarID
+				        SELECT DISTINCT v.GeneID, g.GeneName, a.DrugID, g.GeneSymbol, v.RSID, a.LoE, p.PatAllele, p.Phenotype
+		                FROM Annotations a
+		                JOIN Variants v ON a.VarHapID = v.VarID
 		                JOIN Genes g ON v.GeneID = g.GeneID
-                        JOIN Annotations a
-                    	ON a.VarHapID = d.VarID
                         JOIN PatAnnotations p
                         ON p.AnID = a.AnID;''')
 
@@ -74,11 +72,12 @@ class ReportMaker(Database):
 								"4":"green"
 								}
 
-		self.sql.execute('''SELECT DISTINCT d.DrugID, d.ChemName
-							FROM DrugVars v
+		self.sql.execute('''SELECT DISTINCT a.DrugID, d.ChemName
+							FROM AnnOverview a
 							JOIN Drugs d
-							ON d.DrugID = v.DrugID
+							ON d.DrugID = a.DrugID
 							ORDER BY d.ChemName ASC''')
+
 		self.jsons = []
 
 		for (did, name) in self.sql.fetchall():
@@ -124,6 +123,7 @@ class ReportMaker(Database):
 									SELECT DISTINCT RSID, PatAllele, phenotype, LoE
 									FROM AnnOverview
 									WHERE DrugID = ? AND GeneID = ?
+									ORDER BY LoE ASC
 									''', (did, gid))
 
 				for (rsid, allele, phenotype, loe) in self.sql.fetchall():
@@ -137,8 +137,9 @@ class ReportMaker(Database):
 			self.jsons.append(js)
 
 	def MakeReport(self):
-
-		reportText = self.template.render(sampleName="TEST", jsonlist=self.jsons)
+		sn = raw_input("Please enter a sample name.")
+		
+		reportText = self.template.render(sampleName=sn, jsonlist=self.jsons)
 		with open(self.path + "/templates/latex/REPORT.tex", "wb") as f:
 			f.write(reportText.encode('utf-8'))
 

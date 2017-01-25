@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.9.14)  25 JAN 2017 14:07
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.9.14)  25 JAN 2017 14:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -179,59 +179,65 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 18.
 
-Underfull \hbox (badness 10000) in paragraph at lines 29--30
+Underfull \hbox (badness 10000) in paragraph at lines 28--29
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 39--40
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 50--51
 
  []
 
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 44--45
+Underfull \hbox (badness 10000) in paragraph at lines 61--62
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--61
+Underfull \hbox (badness 10000) in paragraph at lines 72--73
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 84--85
 
  []
 
 [2]
-Overfull \hbox (8.8203pt too wide) in paragraph at lines 69--69
-[]\OT1/cmr/m/n/10.95 Patients with GG geno-type may have in-creased risk of han
-d-foot syn-drome when treated with capecitabine
+Underfull \hbox (badness 10000) in paragraph at lines 96--97
+
  []
 
 
-Overfull \hbox (2.06773pt too wide) in paragraph at lines 70--70
-[]\OT1/cmr/m/n/10.95 Patient with geno-type GG may have de-creased like-li-hood
- of drug re-sis-tance when treated with antiepilep-
- []
-
-[3] [4] [5]
 Underfull \hbox (badness 10000) in paragraph at lines 107--108
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 118--119
+Underfull \hbox (badness 10000) in paragraph at lines 119--120
 
  []
 
-[6]
-Underfull \hbox (badness 10000) in paragraph at lines 131--132
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
 
  []
 
 
-Overfull \hbox (7.45152pt too wide) in paragraph at lines 138--138
-[]\OT1/cmr/m/n/10.95 Patients with geno-type CC may have in-creased risk of han
-d-foot syn-drome when treated with capecitabine
+Underfull \hbox (badness 10000) in paragraph at lines 145--146
+
  []
 
-[7] [8]
-Overfull \hbox (4.44025pt too wide) in paragraph at lines 159--159
-[]\OT1/cmr/m/n/10.95 Patients with the CC geno-type who are un-der-go-ing or-ga
-n trans-plan-ta-tion may have in-creased metabolism
+[4]
+Underfull \hbox (badness 10000) in paragraph at lines 158--159
+
  []
 
 
@@ -239,18 +245,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 170--171
 
  []
 
-[9]
-Underfull \hbox (badness 10000) in paragraph at lines 184--185
+
+Underfull \hbox (badness 10000) in paragraph at lines 181--182
 
  []
 
-[10]
-Underfull \hbox (badness 10000) in paragraph at lines 196--197
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 211--212
+Underfull \hbox (badness 10000) in paragraph at lines 204--205
 
  []
 
@@ -259,86 +265,110 @@ Underfull \hbox (badness 10000) in paragraph at lines 217--218
 
  []
 
-[11]
+[6]
 Underfull \hbox (badness 10000) in paragraph at lines 228--229
 
  []
 
-[12] [13]
-Underfull \hbox (badness 10000) in paragraph at lines 257--258
+
+Underfull \hbox (badness 10000) in paragraph at lines 239--240
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 271--272
+Underfull \hbox (badness 10000) in paragraph at lines 250--251
 
  []
 
-[14]
+
+Underfull \hbox (badness 10000) in paragraph at lines 262--263
+
+ []
+
+[7]
+Underfull \hbox (badness 10000) in paragraph at lines 274--275
+
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 285--286
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 296--297
-
- []
-
-Missing character: There is no â in font cmr10!
-Missing character: There is no € in font cmr10!
-Missing character: There is no ™ in font cmr10!
-
-Underfull \hbox (badness 10000) in paragraph at lines 300--301
-
+Overfull \hbox (8.8203pt too wide) in paragraph at lines 287--287
+[]\OT1/cmr/m/n/10.95 Patients with GG geno-type may have in-creased risk of han
+d-foot syn-drome when treated with capecitabine
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 312--313
+Overfull \hbox (7.45152pt too wide) in paragraph at lines 288--288
+[]\OT1/cmr/m/n/10.95 Patients with geno-type CC may have in-creased risk of han
+d-foot syn-drome when treated with capecitabine
+ []
+
+[8]
+Underfull \hbox (badness 10000) in paragraph at lines 298--299
 
  []
 
-[15]
-Underfull \hbox (badness 10000) in paragraph at lines 324--325
+
+Underfull \hbox (badness 10000) in paragraph at lines 311--312
 
  []
 
-[16]
+
+Underfull \hbox (badness 10000) in paragraph at lines 322--323
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 333--334
+
+ []
+
+[9]
 Underfull \hbox (badness 10000) in paragraph at lines 344--345
 
  []
 
-[17]
-Underfull \hbox (badness 10000) in paragraph at lines 364--365
+
+Underfull \hbox (badness 10000) in paragraph at lines 355--356
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 375--376
+Underfull \hbox (badness 10000) in paragraph at lines 366--367
 
  []
 
 
+Underfull \hbox (badness 10000) in paragraph at lines 377--378
+
+ []
+
+[10]
 Underfull \hbox (badness 10000) in paragraph at lines 388--389
 
  []
 
-[18]
+
 Underfull \hbox (badness 10000) in paragraph at lines 399--400
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 411--412
+Underfull \hbox (badness 10000) in paragraph at lines 410--411
+
+ []
+
+[11]
+Underfull \hbox (badness 10000) in paragraph at lines 424--425
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 423--424
-
- []
-
-[19]
-Underfull \hbox (badness 10000) in paragraph at lines 434--435
+Underfull \hbox (badness 10000) in paragraph at lines 436--437
 
  []
 
@@ -347,108 +377,103 @@ Underfull \hbox (badness 10000) in paragraph at lines 447--448
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 458--459
-
- []
-
-[20]
-Underfull \hbox (badness 10000) in paragraph at lines 470--471
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 461--462
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 481--482
+Underfull \hbox (badness 10000) in paragraph at lines 472--473
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 492--493
+Underfull \hbox (badness 10000) in paragraph at lines 483--484
+
+ []
+
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 494--495
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 503--504
+Underfull \hbox (badness 10000) in paragraph at lines 506--507
 
  []
 
-[21]
-Underfull \hbox (badness 10000) in paragraph at lines 516--517
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 527--528
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 519--520
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 539--540
-
- []
-
-[22]
-Underfull \hbox (badness 10000) in paragraph at lines 551--552
+Underfull \hbox (badness 10000) in paragraph at lines 530--531
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 562--563
+Underfull \hbox (badness 10000) in paragraph at lines 541--542
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 574--575
+Underfull \hbox (badness 10000) in paragraph at lines 552--553
 
  []
 
-[23]
-Underfull \hbox (badness 10000) in paragraph at lines 585--586
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 596--597
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 565--566
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 607--608
+Underfull \hbox (badness 10000) in paragraph at lines 576--577
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 618--619
+Underfull \hbox (badness 10000) in paragraph at lines 587--588
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 628--629
+Underfull \hbox (badness 10000) in paragraph at lines 598--599
 
  []
 
-[24]
-Underfull \hbox (badness 10000) in paragraph at lines 632--633
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 643--644
+[16]
+Underfull \hbox (badness 10000) in paragraph at lines 609--610
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 654--655
+Underfull \hbox (badness 10000) in paragraph at lines 620--621
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 666--667
+Underfull \hbox (badness 10000) in paragraph at lines 631--632
 
  []
 
-[25]
-Underfull \hbox (badness 10000) in paragraph at lines 677--678
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--643
+
+ []
+
+[17]
+Underfull \hbox (badness 10000) in paragraph at lines 653--654
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 665--666
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 676--677
 
  []
 
@@ -457,79 +482,305 @@ Underfull \hbox (badness 10000) in paragraph at lines 688--689
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 699--700
+[18]
+Underfull \hbox (badness 10000) in paragraph at lines 700--701
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 711--712
+Underfull \hbox (badness 10000) in paragraph at lines 713--714
+
+ []
+
+[19]
+Underfull \hbox (badness 10000) in paragraph at lines 726--727
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 737--738
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 748--749
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 759--760
+
+ []
+
+[20]
+Underfull \hbox (badness 10000) in paragraph at lines 769--770
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 773--774
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 785--786
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 796--797
+
+ []
+
+[21]
+Underfull \hbox (badness 10000) in paragraph at lines 808--809
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 819--820
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 831--832
+
+ []
+
+[22]
+Underfull \hbox (badness 10000) in paragraph at lines 842--843
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 853--854
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 864--865
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 876--877
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 887--888
+
+ []
+
+[23]
+Underfull \hbox (badness 10000) in paragraph at lines 898--899
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 910--911
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 912--913
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 914--915
+
+ []
+
+[24]
+Underfull \hbox (badness 10000) in paragraph at lines 924--925
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 926--927
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 928--929
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 939--940
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 950--951
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 961--962
+
+ []
+
+[25]
+Underfull \hbox (badness 10000) in paragraph at lines 972--973
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 983--984
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 995--996
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1006--1007
 
  []
 
 [26]
-Underfull \hbox (badness 10000) in paragraph at lines 722--723
+Underfull \hbox (badness 10000) in paragraph at lines 1017--1018
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 733--734
+Underfull \hbox (badness 10000) in paragraph at lines 1028--1029
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 744--745
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 755--756
+Underfull \hbox (badness 10000) in paragraph at lines 1041--1042
 
  []
 
 [27]
-Underfull \hbox (badness 10000) in paragraph at lines 766--767
+Underfull \hbox (badness 10000) in paragraph at lines 1052--1053
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 777--778
+Underfull \hbox (badness 10000) in paragraph at lines 1065--1066
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 789--790
+Underfull \hbox (badness 10000) in paragraph at lines 1076--1077
+
+ []
+
+[28]
+Underfull \hbox (badness 10000) in paragraph at lines 1087--1088
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 800--801
+Underfull \hbox (badness 10000) in paragraph at lines 1098--1099
 
  []
 
 
-Overfull \hbox (7.60364pt too wide) in paragraph at lines 802--803
+Underfull \hbox (badness 10000) in paragraph at lines 1111--1112
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1122--1123
+
+ []
+
+[29]
+Underfull \hbox (badness 10000) in paragraph at lines 1133--1134
+
+ []
+
+
+Overfull \hbox (4.44025pt too wide) in paragraph at lines 1141--1141
+[]\OT1/cmr/m/n/10.95 Patients with the CC geno-type who are un-der-go-ing or-ga
+n trans-plan-ta-tion may have in-creased metabolism
+ []
+
+[30]
+Underfull \hbox (badness 10000) in paragraph at lines 1153--1154
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1163--1164
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1167--1168
+
+ []
+
+[31]
+Underfull \hbox (badness 10000) in paragraph at lines 1181--1182
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1192--1193
+
+ []
+
+[32]
+Underfull \hbox (badness 10000) in paragraph at lines 1203--1204
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1214--1215
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1226--1227
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1237--1238
+
+ []
+
+[33]
+Underfull \hbox (badness 10000) in paragraph at lines 1249--1250
+
+ []
+
+
+Overfull \hbox (7.60364pt too wide) in paragraph at lines 1252--1253
 []\OT1/cmr/m/n/10.95 The AA geno-type may be as-so-ci-ated with de-creased CYP4
 F2 ac-tiv-ity and de-creased vi-ta-min e metabolism
  []
 
-[28]
-Underfull \hbox (badness 10000) in paragraph at lines 810--811
+
+Underfull \hbox (badness 10000) in paragraph at lines 1260--1261
 
  []
 
 
-Overfull \hbox (44.43944pt too wide) in paragraph at lines 813--814
+Overfull \hbox (44.43944pt too wide) in paragraph at lines 1263--1264
 []\OT1/cmr/m/n/10.95 Estimate the an-tic-i-pated sta-ble dose of war-farin us-i
 ng the al-go-rithms avail-able on http://www.warfarindosing.org,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 814--815
+Underfull \hbox (badness 10000) in paragraph at lines 1264--1265
 
  []
 
-[29] (./REPORT.aux) ) 
+[34]
+Underfull \hbox (badness 10000) in paragraph at lines 1277--1278
+
+ []
+
+[35] (./REPORT.aux) ) 
 Here is how much of TeX's memory you used:
  2046 strings out of 494870
  26504 string characters out of 6176929
@@ -543,10 +794,10 @@ Here is how much of TeX's memory you used:
 bx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pf
 b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on REPORT.pdf (29 pages, 132507 bytes).
+Output written on REPORT.pdf (35 pages, 136402 bytes).
 PDF statistics:
- 117 PDF objects out of 1000 (max. 8388607)
- 80 compressed objects within 1 object stream
+ 136 PDF objects out of 1000 (max. 8388607)
+ 93 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

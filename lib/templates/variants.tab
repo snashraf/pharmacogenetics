@@ -1,9 +1,10 @@
 CREATE TABLE IF NOT EXISTS Variants (
-	VarID text PRIMARY KEY ON CONFLICT IGNORE,
+	VarID text,
 	GeneID text,
 	RSID text,
 	Significance text,
-	MutType text
+	MutType text,
+	UNIQUE(VarID, GeneID) ON CONFLICT IGNORE
 );
 
 CREATE TABLE LocPGKB (
