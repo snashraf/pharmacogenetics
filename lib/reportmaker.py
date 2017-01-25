@@ -42,7 +42,7 @@ class ReportMaker(Database):
 
 		self.sql.executescript('''DROP VIEW AnnOverview;
 						CREATE VIEW AnnOverview AS
-				        SELECT DISTINCT v.GeneID, g.GeneName, d.DrugID, g.GeneSymbol, v.RSID, p.PatAllele, p.Phenotype
+				        SELECT DISTINCT v.GeneID, g.GeneName, d.DrugID, g.GeneSymbol, v.RSID, a.LoE, p.PatAllele, p.Phenotype
 		                FROM DrugVars d
 		                JOIN Variants v ON d.VarID = v.VarID
 		                JOIN Genes g ON v.GeneID = g.GeneID
@@ -64,6 +64,15 @@ class ReportMaker(Database):
 		# List of drugs (sorted alphabetically, maybe?)
 
 	def MakeJson(self):
+
+		colorchart = {
+								"1A":"red",
+								"1B":"orange",
+								"2A":"cyan",
+								"2B":"blue",
+								"3":"teal",
+								"4":"green"
+								}
 
 		self.sql.execute('''SELECT DISTINCT d.DrugID, d.ChemName
 							FROM DrugVars v
@@ -112,13 +121,13 @@ class ReportMaker(Database):
 		# Print Annotations for this gene-drug combination
 
 				self.sql.execute('''
-									SELECT DISTINCT RSID, PatAllele, phenotype
+									SELECT DISTINCT RSID, PatAllele, phenotype, LoE
 									FROM AnnOverview
 									WHERE DrugID = ? AND GeneID = ?
 									''', (did, gid))
 
-				for (rsid, allele, phenotype) in self.sql.fetchall():
-					item = {"varName":rsid, "patAllele":allele, "annotation":phenotype}
+				for (rsid, allele, phenotype, loe) in self.sql.fetchall():
+					item = {"varName":rsid, "patAllele":allele, "annotation":phenotype, "strength":loe, "color":colorchart[loe]}
 					js_gene.setdefault("patAnnotations", []).append(item)
 				js.setdefault("relatedGenes", []).append(js_gene)
 

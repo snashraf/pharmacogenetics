@@ -395,7 +395,7 @@ class DataCollector(Database):
 
 		#self.remakeTable("annotations")
 
-		self.sql.execute('SELECT DISTINCT DrugID FROM DrugVars \
+		self.sql.execute('SELECT DISTINCT DrugID FROM Drugs \
 									WHERE DrugID NOT IN (SELECT DISTINCT DrugID FROM Annotations)')
 
 		for (DrugID,) in tqdm(self.sql.fetchall()):
