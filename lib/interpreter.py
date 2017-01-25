@@ -4,50 +4,56 @@
 from modules.pgkb_functions import *
 from tqdm import tqdm
 import pprint as pp
+from db import Database
+import os
+
 # --------------------------------------------------------------------------
 
-class Interpreter:
+class Interpreter(Database):
 
-	def __init__(self, p):
+	def __init__(self, dbname):
+		self.path = os.path.dirname(__file__)
+		dbfolder = os.path.join(self.path, 'db')
+		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
 
-		self.p = p
+		Database.__init__(self, dbpath)
 
 		self.advice = {}
 
 		self.authobj = Authenticate()
 
-		self.p.conn.commit()
+		self.conn.commit()
 
 
-	def Genotyper(self):
+	def Haplotype(self):
 
-		self.p.remakeTable("patguidelines")
+		self.remakeTable("patguidelines")
 
 		# For each drug:
 
-		self.p.sql.execute("SELECT DISTINCT GuID from Guidelines")
+		self.sql.execute("SELECT DISTINCT GuID from Guidelines")
 
-		for (guid,) in self.p.sql.fetchall():
+		for (guid,) in self.sql.fetchall():
 			print guid
 			# fetch involved genes
 
-			self.p.sql.execute("SELECT DISTINCT o.GeneID, g.GeneSymbol FROM Guidelines o JOIN Genes g on g.GeneID = o.GeneID WHERE GuID = ?", (guid,))
+			self.sql.execute("SELECT DISTINCT o.GeneID, g.GeneSymbol FROM Guidelines o JOIN Genes g on g.GeneID = o.GeneID WHERE GuID = ?", (guid,))
 
 			# Fetch involved haplotypes and scores
 
 			genotype = {}
 
-			for (gid, genesymbol) in self.p.sql.fetchall():
+			for (gid, genesymbol) in self.sql.fetchall():
 
 				print genesymbol
 
-				self.p.sql.execute("SELECT DISTINCT p.HapID, Distance1, Distance2, OldScore1, OldScore2, HapLen, h.hgvs, starname FROM PatHaplotypes p JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
+				self.sql.execute("SELECT DISTINCT p.HapID, Distance1, Distance2, OldScore1, OldScore2, HapLen, h.hgvs, starname FROM PatHaplotypes p JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
 
-				haplotypes = self.p.sql.fetchall()
+				haplotypes = self.sql.fetchall()
 
-				self.p.sql.execute("SELECT DISTINCT Starname FROM GuideOptions o JOIN Genes g on g.GeneSymbol = o.GeneSymbol WHERE GuID = ?", (guid,))
+				self.sql.execute("SELECT DISTINCT Starname FROM GuideOptions o JOIN Genes g on g.GeneSymbol = o.GeneSymbol WHERE GuID = ?", (guid,))
 
-				options = [starname[0] for starname in self.p.sql.fetchall()]
+				options = [starname[0] for starname in self.sql.fetchall()]
 
 				if len(haplotypes) == 0:
 
@@ -78,7 +84,7 @@ class Interpreter:
 
 						curDistance = curLoc["distance"]
 
-						if alleleDistance < curDistance and starname in options:
+						if alleleDistance < curDistance:
 
 							curLoc["starname"] = starname
 
@@ -94,13 +100,15 @@ class Interpreter:
 
 						curLen = curLoc["hapLen"]
 
-						if (alleleScore >= curScore and hLen > curLen )  and starname in options:
+						if (alleleScore >= curScore and hLen > curLen ):
 
 							curLoc["starname"] = starname
 
 							curLoc["score"] = alleleScore
 
 							curLoc["hapLen"] = hLen
+
+							print curLoc
 
 				# -----------------------------------------------------
 
@@ -163,11 +171,11 @@ class Interpreter:
 
 					data = getJson(uri, self.authobj)
 
-				sql = self.p.insertSQL("patguidelines").render(guid = guid, genotype = string_genotype, json = data)
+				sql = self.insertSQL("patguidelines").render(guid = guid, genotype = string_genotype, json = data)
 				print sql
-				self.p.sql.executescript(sql)
+				self.sql.executescript(sql)
 
-			self.p.conn.commit()
+			self.conn.commit()
 
 			# Save to advice table 'PatGuidelines' (DrugID, GeneID, Category(Metabolizer type), Advice)
 
@@ -176,9 +184,7 @@ class Interpreter:
 
 			# only when there is no haplotype available?
 
-			#self.p.remakeTable("patannotations")
-
-			self.p.sql.execute('''
+			self.sql.execute('''
 							SELECT DISTINCT
         							a.AnID,
         							VarName,
@@ -202,7 +208,7 @@ class Interpreter:
 			print "Annotating SNPs... /(* ` ^ `*/)"
 
 			for (anid, rsid, varid, muttype, refP, altP, refV, altV, ref, alt, call, start) \
-			in tqdm(self.p.sql.fetchall()):
+			in tqdm(self.sql.fetchall()):
 
 				uri = \
 				'https://api.pharmgkb.org/v1/data/clinicalAnnotation/{}?view=max' \
@@ -228,15 +234,15 @@ class Interpreter:
 
 				# --------------------------------------
 
-				sql = self.p.insertSQL("patannotations").render(json = data, revallele = revAllele, patallele = allele)
+				sql = self.insertSQL("patannotations").render(json = data, revallele = revAllele, patallele = allele)
 
 				try:
-					self.p.sql.executescript(sql)
+					self.sql.executescript(sql)
 				except:
 					print sql
 					continue
 
-			self.p.conn.commit()
+			self.conn.commit()
 
 
 # ---------------------------- NEXT STEP: ReportMaker --------------------------------

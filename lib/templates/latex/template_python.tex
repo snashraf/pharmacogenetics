@@ -1,0 +1,47 @@
+\documentclass{resume} % Use the custom resume.cls style
+
+\usepackage[left=0.75in,top=0.6in,right=0.75in,bottom=0.6in]{geometry} % Document margins
+\usepackage{xcolor}
+
+\name{ {{sampleName}} } % Your name
+\address{Generated on \today} % Your address
+
+\begin{document}
+
+{% for json in jsonlist -%}
+
+{% if json.relatedGenes | length > 0 -%}
+
+\begin{rSection}{ {{json.drugName}} }
+\item[]
+
+{% for gene in json.relatedGenes -%}
+\begin{rSubsection}{ {{gene.geneName}} }{ {{gene.geneDesc}} }{}{}
+\item[]
+{% if gene.patGuide | length > 0 -%}
+\item[] ------------------------------------------------------ Dosing Guideline --------------------------------------------------------\newline
+\item[]
+\item[] \textbf{ {{gene.patGuide.haplotype}} } {{gene.patGuide.strength}}
+{% if gene.patGuide.phenotype -%}
+\item[] {{gene.patGuide.phenotype}}\newline
+{%- endif %}
+\item[] {{gene.patGuide.recommendation | replace("_", "")}}
+{%- endif %}
+{% if gene.patAnnotations | length > 0 -%}
+\item[] ---------------------------------------------------- Clinical Annotations -----------------------------------------------------\newline
+{% for ann in gene.patAnnotations -%}
+\item \textbf{\colorbox{ {%- if ann %}{{ann.color}}{% endif -%} } {Class {{ann.strength}}}} \textbf{ {{ann.varName}} } \textit{ {{ann.patAllele}} }
+\item[] {{ann.annotation | replace("_", "")}}
+{%- endfor %}
+{%- endif %}
+\end{rSubsection}
+
+{%- endfor %}
+
+\end{rSection}
+
+{%- endif %}
+
+{%- endfor %}
+
+\end{document}

@@ -257,26 +257,28 @@ class Patient(Database):
 							''', (hapid,))
 
 					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
+					uniques_dct = dict(set(varValues[refid].items()) - set(haprsids.items()))
 
-					if len(haprsids) == 0:
+					if len(haprsids.items()) == 0 or uniques_dct == varValues[refid]:
 
 						continue
 
 					else:
-
 						varValues[hapid] = dict(varValues[refid], **haprsids)
 
 						# calculate match scores old way
 
 						scores = {}
-
+						print uniques_dct
 						hapLen = len(haprsids.keys())
 
-						shared_al1 = set(haprsids.items()) & set(patrsids_het.items())
-						shared_al2 = set(haprsids.items()) & set(patrsids_hom.items())
+						shared_al1 = set(uniques_dct.items()) & set(patrsids_het.items())
+						shared_al2 = set(uniques_dct.items()) & set(patrsids_hom.items())
+#shared_al1 = set(uniques_dct.items()) & set(varValues['a1'].items())
+#shared_al2 = set(uniques_dct.items()) & set(varValues['a2'].items())
 
-						match_score1 = float(len(shared_al1))/ float(hapLen)
-						match_score2 = float(len(shared_al2)) / float(hapLen)
+						match_score1 = float(len(shared_al1))/ float(len(uniques_dct.keys()))
+						match_score2 = float(len(shared_al2)) / float(len(uniques_dct.keys()))
 
 						scores["al1"] = match_score1
 						scores["al2"] = match_score2
@@ -357,7 +359,7 @@ class Patient(Database):
 
 			tree.root_with_outgroup({refid})
 
-			Phylo.draw_ascii(tree)
+			#Phylo.draw_ascii(tree)
 
 			for clade in tree.find_clades():
 

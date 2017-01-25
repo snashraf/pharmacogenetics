@@ -5,6 +5,7 @@ from optparse import OptionParser
 
 from lib.data import *
 from lib.patient import *
+from lib.reportmaker import *
 
 # --------------------------------------------------------------------------
 
@@ -28,9 +29,12 @@ def main():
 	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
 			"help":"Patient compressed vcf [g.vcf.gz] file to parse"},
 
-	{"short":"r" , "long":"reset", "action":"store","dest":"reset", "default":None,
-			"help":"Database table to reset (mostly for testing purposes)"}
-]
+	{"short":"r" , "long":"reset", "action":"append","dest":"reset", "default":[],
+			"help":"Database table to reset (mostly for testing purposes)"},
+
+	{"short":"i" , "long":"interpret", "action":"append","dest":"interpret", "default":[],
+			"help":'''Do something with collected data. Use 'guidelines' to find patient matching guidelines and add to DB.
+			Use 'annotate' to do the same for annotations. Use 'report' after this to generate a patient report using this info.'''}]
 
 	parser = OptionParser(usage='usage: %prog [options] filename',
 						version='%prog 1.0')
@@ -49,20 +53,11 @@ def main():
 	(options, args) = parser.parse_args()
 
 	if len(options.dbtasks) > 0:
-
-		print options.reset
 		CreateDB(options.dbname, options.dbtasks, options.reset)
-
 	if options.gvcf:
-
-		if '.gz' not in options.gvcf:
-
-			print 'Please convert to .gz and create tabix file first.'
-
-		else:
-
-			CreatePatient(options.dbname, options.gvcf, options.pattasks)
-
+		CreatePatient(options.dbname, options.gvcf, options.pattasks)
+	if len(options.interpret) > 0:
+		InterpretResults(options.dbname, options.interpret)
 
 def CreateDB(dbname, tables, reset):
 
@@ -72,9 +67,9 @@ def CreateDB(dbname, tables, reset):
 
 	print reset
 
-	if reset is not None:
-
-		d.remakeTable(reset)
+	if len(reset) > 0:
+		for table in reset:
+			d.remakeTable(reset)
 
 # --------------------------------------------------------------------------
 
@@ -155,9 +150,7 @@ def CreatePatient(dbname, gvcf, tables):
 
 	("import", p.GetPositions),
 
-	("haplotype", p.GetHaplotypes),
-
-	("interpret", p.Interpret)
+	("haplotype", p.GetHaplotypes)
 
 	])
 
@@ -188,6 +181,45 @@ def CreatePatient(dbname, gvcf, tables):
 			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
 
 	p.conn.commit()
+
+def InterpretResults(dbname, opts):
+
+	i = Interpreter(dbname)
+	r = ReportMaker(dbname)
+
+# ===========================
+
+	options = OrderedDict ([
+
+	("haplotype", i.Haplotype),
+
+	("annotate", i.Annotate),
+
+	("report", [r.MakeJson, r.MakeReport])
+
+	])
+
+	for opt in opts:
+
+		try:
+
+			o = options[opt]
+
+			if type(o) is not list:
+
+				options[opt]()
+
+			elif type(o) is list:
+
+				for item in o:
+
+					item()
+
+		except:
+
+			raise
+
+			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
 
 # --------------------------------------------------------------------------------
 

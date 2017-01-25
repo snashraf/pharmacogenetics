@@ -173,8 +173,7 @@ class DataCollector(Database):
 
 		self.sql.execute('''SELECT DISTINCT GeneID FROM Variants
 		WHERE GeneID NOT IN (
-			SELECT GeneID FROM Genes
-		)''')
+			SELECT GeneID FROM Genes)''')
 
 		for (gid,) in tqdm(self.sql.fetchall()):
 
@@ -199,8 +198,7 @@ class DataCollector(Database):
 		self.sql.execute('''
 		SELECT DISTINCT GeneID FROM Variants
 		WHERE GeneID NOT IN (
-		SELECT GeneID FROM Haplotypes
-		)''')
+		SELECT GeneID FROM Haplotypes)''')
 
 		template = self.insertSQL("haplotypes")
 
@@ -224,8 +222,6 @@ class DataCollector(Database):
 
 				sql = template.render(json = response)
 
-				print sql
-
 				self.sql.executescript(sql)
 
 			self.conn.commit()
@@ -233,27 +229,16 @@ class DataCollector(Database):
 
 	def GetHapVars(self):
 		"""
-		Using Variant objects, this function fetches data on variants from the PharmGKB servers,
-		if not available uses the Entrez servers, possibilities are limited for now.
 		:return:
 		"""
 
 		print 'Getting variants connected to haplotypes... ~(^_^)~'
 
-		# get all rsids in the design vcf
-
 		self.sql.execute('''
-					SELECT DISTINCT d.VarName from HapVars v
-					JOIN Haplotypes h ON v.HapID = h.HapID
-					JOIN Genes g on h.GeneID = g.GeneID
-					JOIN DrugVars d on d.VarName = v.VarName
-					WHERE d.VarName LIKE "rs%"
-					AND d.VarName NOT IN(
-					SELECT DISTINCT RSID FROM Variants
-					)
-					ORDER BY h.GeneID;
-					'''
-					)
+					SELECT DISTINCT VarName from HapVars
+					WHERE VarName LIKE "rs%" AND VarName NOT IN
+					(SELECT DISTINCT RSID FROM Variants)
+					''')
 
 		template = self.insertSQL("variants")
 
@@ -282,6 +267,7 @@ class DataCollector(Database):
 				JOIN Haplotypes h ON v.HapID = h.HapID
 				JOIN Genes g on h.GeneID = g.GeneID
 				WHERE v.VarName LIKE "%chr%"
+				OR v.VarName LIKE "chr%"
 				AND v.VarName NOT LIKE "hg38"
 				ORDER BY h.GeneID;
 				''')
@@ -290,17 +276,15 @@ class DataCollector(Database):
 
 		template = self.insertSQL("othervars")
 
-		for (rsid, gid, alt) in tqdm(self.sql.fetchall()):
+		for (rsid, alt, gid) in tqdm(self.sql.fetchall()):
 
-			d = hg19conv(rsid, gid, alt)
+			d = hg19conv(rsid, alt, gid)
 
 			sql = template.render(json = d)
 
-			print sql
-
 			self.sql.executescript(sql)
 
-		self.conn.commit()
+			self.conn.commit()
 
 
 	def ConvertIndels(self):
@@ -393,9 +377,7 @@ class DataCollector(Database):
 
 	def GetAnnotations(self):
 
-		#self.remakeTable("annotations")
-
-		self.sql.execute('SELECT DISTINCT DrugID FROM DrugVars \
+		self.sql.execute('SELECT DISTINCT DrugID FROM Drugs \
 									WHERE DrugID NOT IN (SELECT DISTINCT DrugID FROM Annotations)')
 
 		for (DrugID,) in tqdm(self.sql.fetchall()):
@@ -421,7 +403,7 @@ class DataCollector(Database):
 
 		#self.remakeTable("guidelines")
 
-		self.sql.execute('SELECT DISTINCT DrugID FROM DrugVars')
+		self.sql.execute('SELECT DISTINCT DrugID FROM Drugs')
 
 		for (DrugID,) in tqdm(self.sql.fetchall()):
 
@@ -475,7 +457,7 @@ class DataCollector(Database):
 
 		# creates bed file for subsetting .BAM files.
 
-		self.sql.execute('SELECT chromosome, start, end, genename FROM genes ORDER BY chromosome ASC, start ASC'
+		self.sql.execute('SELECT chromosome, start, end, genesymbol FROM genes ORDER BY chromosome ASC, start ASC'
 						 )
 
 		linesINT = []

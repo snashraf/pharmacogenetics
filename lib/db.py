@@ -21,12 +21,17 @@ class Database(object):
 
 		path = os.path.dirname(dbpath)
 
+		print path
+
 		self.tempfolder = path.replace("db", "templates")
 
 		self.conn = sqlite3.connect(dbpath)  # connect to db- if it doesn't exist, create it
 
 		self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
+		templateLoader = FileSystemLoader( searchpath=self.tempfolder)
+
+		self.templateEnv = Environment( loader=templateLoader )
 
 	def loadSQL(self, path):
 
@@ -40,19 +45,21 @@ class Database(object):
 
 		return sql
 
+	def getTemplate(self, template):
 
-	def insertSQL(self, tabname):
+		TEMPLATE_FILE = template
 
-		templateLoader = FileSystemLoader( searchpath=self.tempfolder)
-
-		templateEnv = Environment( loader=templateLoader )
-
-		TEMPLATE_FILE = tabname + '.ins'
-
-		template = templateEnv.get_template( TEMPLATE_FILE )
+		template = self.templateEnv.get_template( TEMPLATE_FILE )
 
 		return template
 
+	def insertSQL(self, tabname):
+
+		TEMPLATE_FILE = tabname + '.ins'
+
+		template = self.templateEnv.get_template( TEMPLATE_FILE )
+
+		return template
 
 	def setDefaults(self):
 
@@ -70,21 +77,20 @@ class Database(object):
 
 		# test
 
-	def removeTable(self, tabname):
-
-		sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.rm'))
-
-		self.sql.executescript(sql)
-
+	def removeTable(self, tabnames):
+		if type(tabnames) != list:
+			tabnames = []
+		for tabname in tabnames:
+			sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.rm'))
+			self.sql.executescript(sql)
 		self.conn.commit()
 
-
-	def createTable(self, tabname):
-
-		sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.tab'))
-
-		self.sql.executescript(sql)
-
+	def createTable(self, tabnames):
+		if type(tabnames) != list:
+			tabnames = []
+		for tabname in tabnames:
+			sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.tab'))
+			self.sql.executescript(sql)
 		self.conn.commit()
 
 

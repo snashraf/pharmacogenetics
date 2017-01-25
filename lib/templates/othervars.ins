@@ -1,9 +1,9 @@
-{% if json.id and json.muttype %}
+{% if json.id %}
 
 	INSERT INTO VARIANTS VALUES(
 		"{{json.id}}",
+		"{{json.gid}}",
 		"{{json.id}}",
-		"Unknown",
 		"Unknown",
 		"{{json.muttype}}"
 	);

@@ -140,6 +140,8 @@ def hg19conv(rsid, alt, gid):
 
 	d['id'] = rsid
 
+	d['gid'] = gid
+
 	# find chromosome number
 
 	d['loc'] = rsid.split(':')[0]
@@ -187,7 +189,7 @@ def hg19conv(rsid, alt, gid):
 		d['muttype'] = 'in-del'
 
 		d['end'] = d['begin'] + len(d['ref'])
-
+	print d
 	return d
 
 def merge_dicts(*dict_args):
