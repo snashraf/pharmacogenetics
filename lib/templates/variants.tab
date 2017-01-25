@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS Variants (
 	GeneID text,
 	RSID text,
 	Significance text,
-	MutType text
+	MutType text,
+	UNIQUE(VarID, GeneID) ON CONFLICT IGNORE
 );
 
 CREATE TABLE LocPGKB (

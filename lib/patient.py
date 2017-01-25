@@ -234,6 +234,7 @@ class Patient(Database):
 
 				varValues['a2'] = dict(varValues[refid], **patrsids_het)
 
+				print varValues
 				# get list of all hapids for this gene
 
 				self.sql.execute('''

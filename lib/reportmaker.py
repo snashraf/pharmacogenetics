@@ -138,7 +138,7 @@ class ReportMaker(Database):
 
 	def MakeReport(self):
 		sn = raw_input("Please enter a sample name.")
-		
+
 		reportText = self.template.render(sampleName=sn, jsonlist=self.jsons)
 		with open(self.path + "/templates/latex/REPORT.tex", "wb") as f:
 			f.write(reportText.encode('utf-8'))
