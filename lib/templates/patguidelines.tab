@@ -3,6 +3,6 @@ CREATE TABLE PatGuidelines (
 	Genotype text,
 	MetaCat text,
 	Strength text,
-	AnnType text,
-	Annotation text
+	Term text,
+	Markdown text
 );

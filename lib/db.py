@@ -35,7 +35,7 @@ class Database(object):
 		with open(path, 'r') as f:
 
 			for line in f.readlines():
-			
+
 				sql += re.sub('[\n\t]', '', line)
 
 		return sql
@@ -44,28 +44,28 @@ class Database(object):
 	def insertSQL(self, tabname):
 
 		templateLoader = FileSystemLoader( searchpath=self.tempfolder)
-		
+
 		templateEnv = Environment( loader=templateLoader )
-		
+
 		TEMPLATE_FILE = tabname + '.ins'
-		
+
 		template = templateEnv.get_template( TEMPLATE_FILE )
 
 		return template
-	
+
 
 	def setDefaults(self):
 
 		dropTables = glob.glob(os.path.join(self.tempfolder, "*.rm"))
-		
+
 		createTables = glob.glob(os.path.join(self.tempfolder, "*.tab"))
 
 		for template in dropTables + createTables:
-						
+
 			sql = self.loadSQL(template)
 
 		self.sql.executescript(sql)
-		
+
 		self.conn.commit()
 
 		# test

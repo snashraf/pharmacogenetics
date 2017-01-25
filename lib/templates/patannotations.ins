@@ -3,10 +3,10 @@
 	{% if patallele in phen.allele or revallele in phen.allele %}
 
 		INSERT INTO PatAnnotations VALUES(
-			"{{json.id}}",
-			"{{patallele}}",
-			"{{phen.id}}",
-			"{{phen.phenotype}}"
+			"{{json.id | safe}}",
+			"{{patallele | safe}}",
+			"{{phen.id | safe}}",
+			'{{phen.phenotype | safe}}'
 		);
 
 	{% endif %}

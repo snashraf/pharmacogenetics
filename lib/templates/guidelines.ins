@@ -1,14 +1,14 @@
 {% if json %}
 
 	{% for doc in json %}
-
-		INSERT INTO Guidelines VALUES(
-			"{{doc.id}}",
-			"{{gid}}",
-			"{{did}}",
-			"{{doc.source}}"
-		);
-		
+		{% for gene in doc.relatedGenes %}
+			INSERT INTO Guidelines VALUES(
+				"{{doc.id}}",
+				"{{gene.id}}",
+				"{{did}}",
+				"{{doc.source}}"
+			);
+		{% endfor %}
 	{% endfor %}
 
 {% endif %}

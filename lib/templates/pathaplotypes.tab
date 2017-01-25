@@ -1,4 +1,7 @@
 CREATE TABLE PatHaplotypes (
 	HapID text,
 	Distance1 text,
-	Distance2 text);
+	Distance2 text,
+	OldScore1 text,
+	OldScore2 text,
+	HapLen text);

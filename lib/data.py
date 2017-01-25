@@ -318,6 +318,7 @@ class DataCollector(Database):
 						JOIN AltAlleles a
 						ON v.VarID = a.VarID
 						''')
+
 		print "Converting indels.. \(>w <)/"
 
 		for (varid, genome, loc, start, end, ref, alt) in tqdm(self.sql.fetchall()):
@@ -386,21 +387,22 @@ class DataCollector(Database):
 
 			self.sql.executescript(sql)
 
+			self.conn.commit()
 
 # ------------------------------------------------------------------------------------------------------------
 
-
 	def GetAnnotations(self):
 
-		self.remakeTable("annotations")
+		#self.remakeTable("annotations")
 
-		self.sql.execute('SELECT DISTINCT d.DrugID, v.GeneID FROM DrugVars d JOIN Variants v ON d.VarID = v.VarID')
+		self.sql.execute('SELECT DISTINCT DrugID FROM DrugVars \
+									WHERE DrugID NOT IN (SELECT DISTINCT DrugID FROM Annotations)')
 
-		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
+		for (DrugID,) in tqdm(self.sql.fetchall()):
 
 			uri = \
-			'https://api.pharmgkb.org/v1/report/pair/{}/{}/clinicalAnnotation?view=max' \
-			.format(DrugID, GeneID)
+			'https://api.pharmgkb.org/v1/data/clinicalAnnotation?relatedChemicals.accessionId={}' \
+			.format(DrugID)
 
 			data = getJson(uri, self.authobj)
 
@@ -410,29 +412,31 @@ class DataCollector(Database):
 
 			self.sql.executescript(sql)
 
-		self.conn.commit()
+			self.conn.commit()
 
 
 	def GetGuidelines(self):
 
 		template = self.insertSQL("guidelines")
 
-		self.remakeTable("guidelines")
+		#self.remakeTable("guidelines")
 
-		self.sql.execute('SELECT DISTINCT d.DrugID, v.GeneID FROM DrugVars d JOIN Variants v ON d.VarID = v.VarID')
+		self.sql.execute('SELECT DISTINCT DrugID FROM DrugVars')
 
-		for (DrugID, GeneID) in tqdm(self.sql.fetchall()):
+		for (DrugID,) in tqdm(self.sql.fetchall()):
 
-			uri = 'https://api.pharmgkb.org/v1/data/guideline?&relatedChemicals.accessionId={}&relatedGenes.accessionId={}&view=max' \
-					.format(DrugID, GeneID)
+			uri = 'https://api.pharmgkb.org/v1/data/guideline?relatedChemicals.accessionId={}'\
+					.format(DrugID,)
 
 			data = getJson(uri, self.authobj)
+
+			pp.pprint(data)
 
 			if data is None:
 
 				continue
 
-			sql = template.render(json = data, did = DrugID, gid = GeneID)
+			sql = template.render(json = data, did = DrugID)
 
 			print sql
 
