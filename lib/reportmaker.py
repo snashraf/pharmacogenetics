@@ -5,6 +5,8 @@ import sqlite3
 from jinja2 import Template, FileSystemLoader, Environment
 import os
 import pprint as pp
+from db import Database
+from patient import Patient
 
 # Needed for document:
 
@@ -24,62 +26,23 @@ JSON_TEMPLATE = '''
 '''
 # ============================================================
 
-class ReportMaker(object):
-	def __init__(self):
+class ReportMaker(Database):
+
+	def __init__(self, dbname):
 		print "Initiating Report..."
 		self.path = os.path.dirname(__file__)
+		dbfolder = os.path.join(self.path, 'db')
+		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
 
-		if len(self.path) == 0:
-			self.path = os.getcwd()
+		Database.__init__(self, dbpath)
 
-		self.conn = sqlite3.connect(self.path+"/db/pgx_full.db")  # connect to db- if it doesn't exist, create it
-
-		self.sql = self.conn.cursor()  # cursor for self.sqlite3, used to do things in database
-
-		self.templateText = '''
-		\documentclass{resume} % Use the custom resume.cls style
-
-		\usepackage[left=0.75in,top=0.6in,right=0.75in,bottom=0.6in]{geometry} % Document margins
-
-		\name{\\{{SampleName}}\\} % Your name
-		\address{Generated on \today} % Your address
-
-		\begin{document}
-
-		{% for json in jsonlist %}
-
-		\begin{rSection}{\\{{json.drugName}}\\}
-		% \item DrugDesc
-
-		{% for gene in json.relatedGenes %}
-		\begin{rSubsection}{\\{{gene.geneName}}\\}{TEST}{TEST}{TEST}
-		\newline\newline ------------------------------------------------------ Dosing Guideline --------------------------------------------------------
-		{% if gene.patGuide %}
-		\item \textbf{\\{{gene.haplotype}}\\}  \newline{{gene.patGuideline.phenotype}} \newline {{gene.patGuideline.recommendation}}
-		{% endif %}
-		{% if gene.patAnnotations %}
-		\newline\newline ---------------------------------------------------- Clinical Annotations -----------------------------------------------------
-		{% for ann in json.patAnnotations %}
-		\item \textbf{\\{{ann.varName}}\\} {{ann.patAllele}} \newline {{ann.annotation}}
-		{% endfor %}
-		{% endif %}
-		\end{rSubsection}
-
-		{% endfor %}
-
-		\end{rSection}
-
-		{% endfor %}
-
-		\end{document}
-		'''
 	# ==========================================================
 
 		# AnnotationView
 
 		self.sql.executescript('''DROP VIEW AnnOverview;
 						CREATE VIEW AnnOverview AS
-				        SELECT DISTINCT v.GeneID, d.DrugID, g.GeneSymbol, v.RSID, p.PatAllele, p.Phenotype
+				        SELECT DISTINCT v.GeneID, g.GeneName, d.DrugID, g.GeneSymbol, v.RSID, p.PatAllele, p.Phenotype
 		                FROM DrugVars d
 		                JOIN Variants v ON d.VarID = v.VarID
 		                JOIN Genes g ON v.GeneID = g.GeneID
@@ -88,7 +51,7 @@ class ReportMaker(object):
                         JOIN PatAnnotations p
                         ON p.AnID = a.AnID;''')
 
-		self.template = Template(self.templateText)
+		self.template = self.getTemplate("latex/template_python.tex")
 
 		# Hap/GuidelineView
 
@@ -100,43 +63,43 @@ class ReportMaker(object):
 
 		# List of drugs (sorted alphabetically, maybe?)
 
+	def MakeJson(self):
+
 		self.sql.execute('''SELECT DISTINCT d.DrugID, d.ChemName
 							FROM DrugVars v
 							JOIN Drugs d
 							ON d.DrugID = v.DrugID
 							ORDER BY d.ChemName ASC''')
-		jsons = []
+		self.jsons = []
 
 		for (did, name) in self.sql.fetchall():
 			print did, name
 			js={}
 			js['drugID'] = did
 			js['drugName'] = name
-			js['relatedGenes']=[]
 
 		# Collect involved genes (through bound variants in DrugVars)
 
 			self.sql.execute('''
-		                        SELECT DISTINCT GeneID, GeneSymbol
+		                        SELECT DISTINCT GeneID, GeneSymbol, GeneName
 		                        FROM AnnOverview
 								WHERE DrugID = ?''', (did,))
 
 		# For each gene:
 
-			for (gid, symbol) in self.sql.fetchall():
+			for (gid, symbol, name) in self.sql.fetchall():
 				js_gene = {}
 				js_gene['geneID'] = gid
 				js_gene['geneName'] = symbol
-				js_gene['patAnnotations'] = []
-				js_gene['patGuide'] = {}
-				js_guide = js_gene['patGuide']
-				js_guide = {}
+				js_gene['geneDesc'] = name
 
 				self.sql.execute('''
-				        SELECT DISTINCT  MetaCat, Strength, Term, Markdown FROM HapOverview
+				        SELECT DISTINCT  Genotype, MetaCat, Strength, Term, Markdown FROM HapOverview
 						WHERE DrugID = ? AND GeneID = ?''', (did, gid))
 
-				for (metacat, strength, term, markdown) in self.sql.fetchall():
+				for (genotype, metacat, strength, term, markdown) in self.sql.fetchall():
+					js_guide = js_gene['patGuide'] = {}
+					js_guide['haplotype'] = genotype
 					js_guide['metaType'] = metacat
 					js_guide['strength'] = strength
 					if "Implication" in term:
@@ -156,12 +119,18 @@ class ReportMaker(object):
 
 				for (rsid, allele, phenotype) in self.sql.fetchall():
 					item = {"varName":rsid, "patAllele":allele, "annotation":phenotype}
-					js_gene['patAnnotations'].append(item)
-				js['relatedGenes'].append(js_gene)
-			jsons.append(js)
-		pp.pprint(jsons)
-		reportText = self.template.render(sampleName="TEST", jsonlist=jsons)
-		print reportText
-# ----------------------------------------------------------------------------
+					js_gene.setdefault("patAnnotations", []).append(item)
+				js.setdefault("relatedGenes", []).append(js_gene)
 
-r = ReportMaker()
+				print js.keys()
+				print js['relatedGenes'][0].keys()
+				break
+			self.jsons.append(js)
+
+	def MakeReport(self):
+
+		reportText = self.template.render(sampleName="TEST", jsonlist=self.jsons)
+		with open(self.path + "/templates/latex/REPORT.tex", "wb") as f:
+			f.write(reportText.encode('utf-8'))
+
+# ----------------------------------------------------------------------------

@@ -27,6 +27,9 @@ class Database(object):
 
 		self.sql = self.conn.cursor()  # cursor for sqlite3, used to do things in database
 
+		templateLoader = FileSystemLoader( searchpath=self.tempfolder)
+
+		self.templateEnv = Environment( loader=templateLoader )
 
 	def loadSQL(self, path):
 
@@ -40,19 +43,21 @@ class Database(object):
 
 		return sql
 
+	def getTemplate(self, template):
 
-	def insertSQL(self, tabname):
+		TEMPLATE_FILE = template
 
-		templateLoader = FileSystemLoader( searchpath=self.tempfolder)
-
-		templateEnv = Environment( loader=templateLoader )
-
-		TEMPLATE_FILE = tabname + '.ins'
-
-		template = templateEnv.get_template( TEMPLATE_FILE )
+		template = self.templateEnv.get_template( TEMPLATE_FILE )
 
 		return template
 
+	def insertSQL(self, tabname):
+
+		TEMPLATE_FILE = tabname + '.ins'
+
+		template = self.templateEnv.get_template( TEMPLATE_FILE )
+
+		return template
 
 	def setDefaults(self):
 

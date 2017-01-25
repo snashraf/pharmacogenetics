@@ -234,6 +234,7 @@ class Patient(Database):
 
 				varValues['a2'] = dict(varValues[refid], **patrsids_het)
 
+				print varValues
 				# get list of all hapids for this gene
 
 				self.sql.execute('''
@@ -272,8 +273,8 @@ class Patient(Database):
 
 						hapLen = len(haprsids.keys())
 
-						shared_al1 = set(haprsids.items()) & set(patrsids_het.items())
-						shared_al2 = set(haprsids.items()) & set(patrsids_hom.items())
+						shared_al1 = set(haprsids.items()) & set(varValues['a1'].items())
+						shared_al2 = set(haprsids.items()) & set(varValues['a2'].items())
 
 						match_score1 = float(len(shared_al1))/ float(hapLen)
 						match_score2 = float(len(shared_al2)) / float(hapLen)
