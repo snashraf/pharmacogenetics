@@ -377,7 +377,7 @@ class DataCollector(Database):
 
 	def GetAnnotations(self):
 
-		self.sql.execute('SELECT DISTINCT DrugID FROM Drugs \
+		self.sql.execute('SELECT DISTINCT DrugID FROM DrugVars \
 									WHERE DrugID NOT IN (SELECT DISTINCT DrugID FROM Annotations)')
 
 		for (DrugID,) in tqdm(self.sql.fetchall()):
@@ -403,7 +403,7 @@ class DataCollector(Database):
 
 		#self.remakeTable("guidelines")
 
-		self.sql.execute('SELECT DISTINCT DrugID FROM Drugs')
+		self.sql.execute('SELECT DISTINCT DrugID FROM DrugVars')
 
 		for (DrugID,) in tqdm(self.sql.fetchall()):
 
