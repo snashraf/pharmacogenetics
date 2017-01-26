@@ -193,6 +193,8 @@ def InterpretResults(dbname, opts):
 
 	("haplotype", i.Haplotype),
 
+	("guidelines", i.FindGuidelines),
+
 	("annotate", i.Annotate),
 
 	("report", [r.MakeJson, r.MakeReport])

@@ -143,6 +143,7 @@ class Interpreter(Database):
 				self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?)", item)
 				self.conn.commit()
 
+
 	def FindGuidelines(self):
 
 		self.remakeTable("patguidelines")
@@ -166,28 +167,43 @@ class Interpreter(Database):
 
 				options = [starname[0] for starname in self.sql.fetchall()]
 
-				string_genotype_NEW = ";".join(genotypeNEW)
-				string_genotype_OLD = ";".join(genotypeOLD)
+				self.sql.execute('''
+				SELECT DISTINCT
+				Allele1_Phyl, Allele2_Phyl,
+				Allele1_Set, Allele2_Set
+				FROM PatGenotypes
+				WHERE GeneID = ?
+				''', (gid,))
 
-				print "NEW:", string_genotype_NEW
-				print "OLD:", string_genotype_OLD
+				scores = self.sql.fetchone()
 
-				# Find matching advice
-				string_genotype = string_genotype_OLD
+				genotypeNEW = [scores[0], scores[1]]
+				genotypeOLD = [scores[2], scores[3]]
 
-				uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype)
+# ----------------------------------------------------------------------
+
+			string_genotype_NEW = ";".join(genotypeNEW)
+			string_genotype_OLD = ";".join(genotypeOLD)
+
+			print "NEW:", string_genotype_NEW
+			print "OLD:", string_genotype_OLD
+
+			# Find matching advice
+			string_genotype = string_genotype_OLD
+
+			uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype)
+
+			data = getJson(uri, self.authobj)
+
+			if data == None:
+
+				uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype.replace("1A", "1"))
 
 				data = getJson(uri, self.authobj)
 
-				if data == None:
-
-					uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype.replace("1A", "1"))
-
-					data = getJson(uri, self.authobj)
-
-				sql = self.insertSQL("patguidelines").render(guid = guid, genotype = string_genotype, json = data)
-				print sql
-				self.sql.executescript(sql)
+			sql = self.insertSQL("patguidelines").render(guid = guid, genotype = string_genotype, json = data)
+			print sql
+			self.sql.executescript(sql)
 
 			self.conn.commit()
 
