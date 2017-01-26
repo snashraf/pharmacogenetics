@@ -99,7 +99,7 @@ class Patient(Database):
 
 			self.remakeTable('pathaplotypes')
 
-			self.sql.execute("SELECT DISTINCT GeneID from Guidelines")
+			self.sql.execute("SELECT DISTINCT GeneID from Haplotypes")
 
 			gids = [tup[0] for tup in self.sql.fetchall()]
 
@@ -158,7 +158,7 @@ class Patient(Database):
 				# First: collect SNPs and patient positions at those SNPs
 
 				self.sql.execute('''
-					SELECT DISTINCT hapid, VarName, PatAlt, CallNum
+					SELECT DISTINCT hapid, VarName, HapAllele, PatAlt, CallNum
 					FROM Overview
 					WHERE GeneID = ?
 					AND HGVS LIKE "%[=]%"
@@ -167,10 +167,10 @@ class Patient(Database):
 					OR  hapallele = altpgkb)
 					ORDER BY Start ASC
 					''', (gid,))
-
+#'PA134952671'
 				refRsids = self.sql.fetchall()
 
-				rsidorder = [rsid for (hapid, rsid, patAlt, CallNum) in refRsids]
+				rsidorder = [rsid for (hapid, rsid, hapallele, patAlt, CallNum) in refRsids]
 
 				if len(rsidorder) == 0:
 
@@ -178,9 +178,9 @@ class Patient(Database):
 
 				# Collect patient variants :-)
 
-				patrsids_hom = { rsid : patAlt for hapid, rsid, patAlt, CallNum in refRsids if CallNum == "1/1"}
+				patrsids_hom = {rsid : patAlt for (hapid, rsid, hapallele, patAlt, CallNum) in refRsids if CallNum == "1/1"}
 
-				patrsids_het = { rsid : patAlt for hapid, rsid, patAlt, CallNum in refRsids if CallNum == "0/1" or CallNum == "1/1"}
+				patrsids_het = {rsid : patAlt for (hapid, rsid,  hapallele, patAlt, CallNum) in refRsids if CallNum == "0/1" or CallNum == "1/1"}
 
 				refid = refRsids[0][0]
 
@@ -234,7 +234,6 @@ class Patient(Database):
 
 				varValues['a2'] = dict(varValues[refid], **patrsids_het)
 
-				print varValues
 				# get list of all hapids for this gene
 
 				self.sql.execute('''
@@ -258,28 +257,36 @@ class Patient(Database):
 							''', (hapid,))
 
 					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
-					uniques_dct = dict(set(varValues[refid].items()) - set(haprsids.items()))
 
-					if len(haprsids.items()) == 0 or uniques_dct == varValues[refid]:
+					if len(haprsids.items()) == 0:
 
 						continue
 
 					else:
 						varValues[hapid] = dict(varValues[refid], **haprsids)
 
+						uniques_dct = dict(set(varValues[refid].items()) - set(varValues[hapid].items()))
+
+						if len(uniques_dct.items()) == 0:
+							continue
+
+						uniques_al1 = dict(set(varValues[refid].items()) - set(varValues['a1'].items()))
+						uniques_al2 = dict(set(varValues[refid].items()) - set(varValues['a2'].items()))
+
 						# calculate match scores old way
 
 						scores = {}
-						print uniques_dct
+
 						hapLen = len(haprsids.keys())
 
-						shared_al1 = set(uniques_dct.items()) & set(patrsids_het.items())
-						shared_al2 = set(uniques_dct.items()) & set(patrsids_hom.items())
+						shared_al1 = dict(set(uniques_dct.items()) & set(uniques_al1.items()))
+						shared_al2 = dict(set(uniques_dct.items()) & set(uniques_al2.items()))
+
 #shared_al1 = set(uniques_dct.items()) & set(varValues['a1'].items())
 #shared_al2 = set(uniques_dct.items()) & set(varValues['a2'].items())
 
-						match_score1 = float(len(shared_al1))/ float(len(uniques_dct.keys()))
-						match_score2 = float(len(shared_al2)) / float(len(uniques_dct.keys()))
+						match_score1 = float(len(shared_al1.keys()))/ float(len(uniques_dct.keys()))
+						match_score2 = float(len(shared_al2.keys())) / float(len(uniques_dct.keys()))
 
 						scores["al1"] = match_score1
 						scores["al2"] = match_score2
@@ -302,12 +309,10 @@ class Patient(Database):
 
 					CREATE VIEW HapView AS
 
-					SELECT DISTINCT * FROM GuideOptions o
+					SELECT DISTINCT * FROM Haplotypes h
 					JOIN Genes g
-					on g.GeneSymbol = o.GeneSymbol
-					JOIN Haplotypes h
 					On G.GeneID = h.GeneID
-					AND o.Starname = h.Starname
+					AND h.Starname = h.Starname
 
 					''')
 
@@ -392,7 +397,7 @@ class Patient(Database):
 
 					# commit to db
 
-			self.conn.commit()
+					self.conn.commit()
 
 		else:
 

@@ -94,12 +94,13 @@ class ReportMaker(Database):
 								WHERE DrugID = ?''', (did,))
 
 		# For each gene:
-
+			print name
 			for (gid, symbol, name) in self.sql.fetchall():
 				js_gene = {}
 				js_gene['geneID'] = gid
 				js_gene['geneName'] = symbol
 				js_gene['geneDesc'] = name
+				print name
 
 				self.sql.execute('''
 				        SELECT DISTINCT  Genotype, MetaCat, Strength, Term, Markdown FROM HapOverview
@@ -131,16 +132,13 @@ class ReportMaker(Database):
 					js_gene.setdefault("patAnnotations", []).append(item)
 				js.setdefault("relatedGenes", []).append(js_gene)
 
-				print js.keys()
-				print js['relatedGenes'][0].keys()
-				break
 			self.jsons.append(js)
 
 	def MakeReport(self):
-		sn = raw_input("Please enter a sample name.")
+		sn = raw_input("Please enter a sample name: ")
 
 		reportText = self.template.render(sampleName=sn, jsonlist=self.jsons)
-		with open(self.path + "/templates/latex/REPORT.tex", "wb") as f:
+		with open(self.path + "/templates/latex/{}.tex".format(sn), "wb") as f:
 			f.write(reportText.encode('utf-8'))
 
 # ----------------------------------------------------------------------------
