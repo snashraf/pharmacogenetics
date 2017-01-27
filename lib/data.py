@@ -420,8 +420,6 @@ class DataCollector(Database):
 
 			sql = template.render(json = data, did = DrugID)
 
-			print sql
-
 			self.sql.executescript(sql)
 
 		self.conn.commit()

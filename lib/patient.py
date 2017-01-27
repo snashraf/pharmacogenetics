@@ -99,6 +99,8 @@ class Patient(Database):
 
 			self.remakeTable('pathaplotypes')
 
+			self.conn.commit()
+
 			self.sql.execute("SELECT DISTINCT GeneID from Haplotypes")
 
 			gids = [tup[0] for tup in self.sql.fetchall()]
@@ -163,11 +165,9 @@ class Patient(Database):
 					WHERE GeneID = ?
 					AND HGVS LIKE "%[=]%"
 					AND HapAllele NOT LIKE "%(%"
-					and (hapallele = refpgkb
-					OR  hapallele = altpgkb)
 					ORDER BY Start ASC
 					''', (gid,))
-#'PA134952671'
+
 				refRsids = self.sql.fetchall()
 
 				rsidorder = [rsid for (hapid, rsid, hapallele, patAlt, CallNum) in refRsids]
@@ -193,6 +193,7 @@ class Patient(Database):
 					from overview
 					where geneid = ?
 					and hgvs like "%[=]%"
+					AND HapAllele NOT LIKE "%(%"
 					and muttype = "snp"
 					order by start asc
 					''', (gid,))
@@ -206,8 +207,7 @@ class Patient(Database):
 					FROM overview where geneid = ?
 					and hgvs like "%[=]%"
 					and muttype != "snp"
-					and hapallele not like "%("
-					and hapallele = refpgkb
+					and hapallele not like "%(%"
 					order by start asc
 					''', (gid,))
 

@@ -79,27 +79,24 @@ class Database(object):
 
 	def removeTable(self, tabnames):
 		if type(tabnames) != list:
-			tabnames = []
+			tabnames = [tabnames]
 		for tabname in tabnames:
 			sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.rm'))
+			print sql
 			self.sql.executescript(sql)
-		self.conn.commit()
+			self.conn.commit()
 
 	def createTable(self, tabnames):
 		if type(tabnames) != list:
-			tabnames = []
+			tabnames = [tabnames]
 		for tabname in tabnames:
 			sql = self.loadSQL(os.path.join(self.tempfolder, tabname + '.tab'))
 			self.sql.executescript(sql)
-		self.conn.commit()
+			self.conn.commit()
 
 
-	def remakeTable(self, tabname):
-
-		self.removeTable(tabname)
-
-		self.createTable(tabname)
-
-		self.conn.commit()
+	def remakeTable(self, tabnames):
+		self.removeTable(tabnames)
+		self.createTable(tabnames)
 
 # -----------------------------------------------------

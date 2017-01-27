@@ -152,16 +152,23 @@ class Interpreter(Database):
 		self.sql.execute("SELECT DISTINCT GuID from Guidelines")
 
 		for (guid,) in tqdm(self.sql.fetchall()):
+
 			print guid
 			# fetch involved genes
 
 			self.sql.execute("SELECT DISTINCT o.GeneID, g.GeneSymbol FROM Guidelines o JOIN Genes g on g.GeneID = o.GeneID WHERE GuID = ?", (guid,))
 
+			genes = self.sql.fetchall()
+
+			guideGenes = {}
+
+			if len(genes) == 0:
+				continue
 			# Fetch involved haplotypes and scores
 
 			genotype = {}
 
-			for (gid, genesymbol) in self.sql.fetchall():
+			for (gid, genesymbol) in genes:
 
 				self.sql.execute("SELECT DISTINCT Starname FROM GuideOptions o JOIN Genes g on g.GeneSymbol = o.GeneSymbol WHERE GuID = ?", (guid,))
 
@@ -176,14 +183,19 @@ class Interpreter(Database):
 				''', (gid,))
 
 				scores = self.sql.fetchone()
+				print scores
 
-				genotypeNEW = [scores[0], scores[1]]
-				genotypeOLD = [scores[2], scores[3]]
+				if scores == None:
+					continue
 
-# ----------------------------------------------------------------------
+				guideGenes[gid] = {}
+				guideGenes[gid]['new'] =  "{}:{}/{}".format(genesymbol, scores[0], scores[1])
+				guideGenes[gid]['old'] =  "{}:{}/{}".format(genesymbol, scores[2], scores[3])
 
-			string_genotype_NEW = ";".join(genotypeNEW)
-			string_genotype_OLD = ";".join(genotypeOLD)
+		# ----------------------------------------------------------------------
+
+				string_genotype_NEW = ";".join([guideGenes[gid]['new'] for gid in guideGenes.keys()])
+				string_genotype_OLD = ";".join([guideGenes[gid]['old'] for gid in guideGenes.keys()])
 
 			print "NEW:", string_genotype_NEW
 			print "OLD:", string_genotype_OLD
