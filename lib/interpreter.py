@@ -46,7 +46,7 @@ class Interpreter(Database):
 			print genesymbol
 
 
-			self.sql.execute("SELECT DISTINCT p.HapID, Distance1, Distance2, OldScore1, OldScore2, HapLen, h.hgvs, starname FROM PatHaplotypes p JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
+			self.sql.execute("SELECT DISTINCT p.HapID, p.Distance1, p.Distance2, po.score1, po.score2, HapLen, h.hgvs, starname FROM PatHaplotypes p JOIN PatHaplotypes_OLD po on p.hapid = po.hapid JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
 
 			haplotypes = self.sql.fetchall()
 

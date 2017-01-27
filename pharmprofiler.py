@@ -150,7 +150,9 @@ def CreatePatient(dbname, gvcf, tables):
 
 	("import", p.GetPositions),
 
-	("haplotype", p.GetHaplotypes)
+	("haplotype", p.GetHaplotypes),
+
+	("score", p.HapScorer)
 
 	])
 

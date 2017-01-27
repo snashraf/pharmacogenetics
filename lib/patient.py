@@ -106,6 +106,9 @@ class Patient(Database):
 
 			gids = [tup[0] for tup in self.sql.fetchall()]
 
+			self.sql.executescript('''DROP TABLE IF EXISTS PatHaplotypes_OLD;
+												CREATE TABLE PatHaplotypes_OLD(hapid text, score1 text, score2 text, matchLen text);''')
+
 			# create view with everything
 			self.sql.executescript('''
 					DROP VIEW IF EXISTS Overview;
@@ -269,33 +272,9 @@ class Patient(Database):
 						match_score1 = float(len(shared_al1.keys()))/ float(len(uniques_dct.keys()))
 						match_score2 = float(len(shared_al2.keys())) / float(len(uniques_dct.keys()))
 
-						if "PA134952671" in gid:
-							print "hap:", uniques_dct
-							print "al1:", uniques_al1
-							print "al2:", uniques_al2
-							print "shared1:", shared_al1
-							print "shared2", shared_al2
-							print match_score1
-							print match_score2
-							raw_input("Take a looksie")
-
-						scoreOverview[hapid]["al1"] = match_score1
-						scoreOverview[hapid]["al2"] = match_score2
-						scoreOverview[hapid]["hapLen"] = hapLen
-
-						if "PA134952671" in gid:
-							print "hap:", uniques_dct
-							print "al1:", uniques_al1
-							print "al2:", uniques_al2
-							print "shared1:", shared_al1
-							print "shared2", shared_al2
-							print match_score1
-							print match_score2
-							print scoreOverview[hapid]
-
-				sequences = []
-
-				#print sequences
+						self.sql.execute("INSERT INTO PatHaplotypes_OLD VALUES(?,?,?,?)", (hapid, match_score1, match_score2, hapLen))
+						self.conn.commit()
+# -------------------------------------------------------------------------------------------------------------------
 
 				output = "/output/alignments/"
 
@@ -337,13 +316,20 @@ class Patient(Database):
 
 						prev_seqs.append(seq)
 
-				self.HapScorer(fn, "phylo", refid, scoreOverview)
+	def HapScorer(self):
 
+		self.sql.execute("SELECT DISTINCT GeneID FROM Genes")
 
+		for (gid,) in self.sql.fetchall():
 
-	def HapScorer(self, fn, mode, refid, scoreOverview):
+			self.sql.execute("SELECT DISTINCT HapID FROM Haplotypes WHERE hgvs LIKE '%[=]%' AND GeneID = ?", (gid,))
 
-		if mode == "phylo":
+			try:
+				refid = self.sql.fetchone()[0]
+			except:
+				continue
+
+			fn = self.path + output + gid + "_aln.fasta"
 
 			# phylogenetic tree
 
@@ -363,8 +349,6 @@ class Patient(Database):
 			# modified
 
 			tree.root_with_outgroup({refid})
-
-			#Phylo.draw_ascii(tree)
 
 			for clade in tree.find_clades():
 
@@ -388,7 +372,7 @@ class Patient(Database):
 
 						distances["al%i" %i] = dist
 
-					sql = self.insertSQL("pathaplotypes").render(json = distances, scores = scoreOverview[hap])
+					sql = self.insertSQL("pathaplotypes").render(json = distances)
 
 					print sql
 
