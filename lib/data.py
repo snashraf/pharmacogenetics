@@ -368,7 +368,7 @@ class DataCollector(Database):
 			# render sql
 
 			sql = template.render(alt = alt, json = shifted)
-
+			print sql
 			self.sql.executescript(sql)
 
 			self.conn.commit()

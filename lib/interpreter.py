@@ -45,6 +45,7 @@ class Interpreter(Database):
 
 			print genesymbol
 
+
 			self.sql.execute("SELECT DISTINCT p.HapID, Distance1, Distance2, OldScore1, OldScore2, HapLen, h.hgvs, starname FROM PatHaplotypes p JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
 
 			haplotypes = self.sql.fetchall()
@@ -139,7 +140,7 @@ class Interpreter(Database):
 							allelesOLD.append(ref["starname"])
 
 				item = (gid, allelesNEW[0], allelesNEW[1], allelesOLD[0], allelesOLD[1])
-
+				print item
 				self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?)", item)
 				self.conn.commit()
 

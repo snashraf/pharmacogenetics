@@ -74,7 +74,8 @@ class Patient(Database):
 		for (loc, start, end, ref, muttype, varid) in tqdm(positions):
 
 			try:
-				records = self.reader.fetch(str(loc.lstrip("chr")), start-1, end=end)
+				records = self.reader.fetch(str(loc.lstrip("chr")), start - 1, end = end)
+
 			except:
 				print "Couldn't find {} in gvcf".format(varid)
 				continue
@@ -143,7 +144,6 @@ class Patient(Database):
 					   locpgkb locb ON locb.varid = locv.varid
 					   JOIN
 					   altalleles a on a.VarID = locv.VarID
-
 					   ORDER BY locv.start asc;
 							''')
 
@@ -151,88 +151,73 @@ class Patient(Database):
 
 			print "Haplotyping patient... (\\' n')\\*scribble*"
 
-			for gid in tqdm(gids):
+			scoreOverview = {}
 
-				scoreOverview = {}
+			for gid in tqdm(gids):
 
 				varValues = OrderedDict([])
 
 				# First: collect SNPs and patient positions at those SNPs
 
 				self.sql.execute('''
-					SELECT DISTINCT hapid, VarName, HapAllele, PatAlt, CallNum
+					SELECT DISTINCT hapid, VarName, HapAllele, PatAlt, RefPGKB, AltPGKB, RefVCF, AltVCF, CallNum, MutType
 					FROM Overview
 					WHERE GeneID = ?
 					AND HGVS LIKE "%[=]%"
 					AND HapAllele NOT LIKE "%(%"
+					AND HapAllele NOT LIKE "%[%"
 					ORDER BY Start ASC
 					''', (gid,))
 
 				refRsids = self.sql.fetchall()
 
-				rsidorder = [rsid for (hapid, rsid, hapallele, patAlt, CallNum) in refRsids]
+				rsidorder = list(set([rsid
+				for (hapid, rsid, hapallele, patAlt, refp, altp, refv, altv, CallNum, MutType)
+				in refRsids]))
 
 				if len(rsidorder) == 0:
-
 					continue
 
-				# Collect patient variants :-)
+				snps = {}
+				indels = {}
+				patrsids_hom = {}
+				patrsids_het = {}
 
-				patrsids_hom = {rsid : patAlt for (hapid, rsid, hapallele, patAlt, CallNum) in refRsids if CallNum == "1/1"}
-
-				patrsids_het = {rsid : patAlt for (hapid, rsid,  hapallele, patAlt, CallNum) in refRsids if CallNum == "0/1" or CallNum == "1/1"}
+				for (hapid, rsid, hapallele, patAlt, refp, altp, refv, altv, CallNum, MutType) in refRsids:
+					refid = hapid
+					# SNPs
+					if "[" not in hapallele and "(" not in hapallele:
+						if MutType == "snp":
+							snps[rsid] = hapallele
+						elif MutType != "snp":
+							if hapallele == refp or hapallele[::-1] == refp:
+								indels[rsid] = refv
+							elif hapallele == altp or hapallele[::-1] == altp:
+								indels[rsid] = altv
+							else:
+								print hapid, rsid, hapallele, MutType, CallNum, refp, altp, refv, altv
+								continue
+						if CallNum == "1/1":
+							patrsids_hom[rsid] = patAlt
+							patrsids_het[rsid] = patAlt
+						if CallNum == "0/1":
+							patrsids_het[rsid] = patAlt
+					else:
+						print "cannot parse", rsid, hapallele, MutType
+						continue
+					# GET PATIENT VARS
 
 				refid = refRsids[0][0]
 
 				scoreOverview[refid] = {"al1":0.0, "al2":0.0, "hapLen":0}
 
-				# Fetch SNPs and add to dictionary
-
-				self.sql.execute('''
-					SELECT DISTINCT VarName, HapAllele
-					from overview
-					where geneid = ?
-					and hgvs like "%[=]%"
-					AND HapAllele NOT LIKE "%(%"
-					and muttype = "snp"
-					order by start asc
-					''', (gid,))
-
-				snps = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
-
-				# Fetch indels that match RefPGKB and bind them to RefVCF
-
-				self.sql.execute('''
-					SELECT DISTINCT VarName, RefVCF
-					FROM overview where geneid = ?
-					and hgvs like "%[=]%"
-					and muttype != "snp"
-					and hapallele not like "%(%"
-					order by start asc
-					''', (gid,))
-
-				indels_ref  = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
-
-				# Fetch indels that match AltPGKB and bind them to AltVCF
-
-				self.sql.execute("\
-					SELECT DISTINCT VarName, AltVCF\
-					FROM overview where geneid = ?\
-					and hgvs like '%[=]%'\
-					and muttype != 'snp'\
-					and hapallele = altpgkb\
-					order by start asc\
-					", (gid,))
-
-				indels_alt  = {rsid:allele for (rsid, allele) in self.sql.fetchall()}
-
 				# Join these three dictionaries and feed to seqMaker
 
-				varValues[refid] = merge_dicts(snps, indels_ref, indels_alt)
+				varValues[refid] = merge_dicts(snps, indels)
 
-				varValues['a1'] = dict(varValues[refid], **patrsids_hom)
+				varValues['a1'] =merge_dicts(varValues[refid], patrsids_hom)
 
-				varValues['a2'] = dict(varValues[refid], **patrsids_het)
+				varValues['a2'] = merge_dicts(varValues[refid], patrsids_het)
 
 				# get list of all hapids for this gene
 
@@ -247,19 +232,18 @@ class Patient(Database):
 				selection = self.sql.fetchall()
 
 				for (hapid, starname) in selection:
-
+					print hapid, starname
+					scoreOverview[hapid] = {}
 					# get haplotype alleles and create complete dictionary
 
 					self.sql.execute('''SELECT VarName, AltVCF
 							from Overview
 							where HapID = ?
-							and HapAllele = AltPGKB
 							''', (hapid,))
 
 					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 
 					if len(haprsids.items()) == 0:
-
 						continue
 
 					else:
@@ -282,17 +266,32 @@ class Patient(Database):
 						shared_al1 = dict(set(uniques_dct.items()) & set(uniques_al1.items()))
 						shared_al2 = dict(set(uniques_dct.items()) & set(uniques_al2.items()))
 
-#shared_al1 = set(uniques_dct.items()) & set(varValues['a1'].items())
-#shared_al2 = set(uniques_dct.items()) & set(varValues['a2'].items())
-
 						match_score1 = float(len(shared_al1.keys()))/ float(len(uniques_dct.keys()))
 						match_score2 = float(len(shared_al2.keys())) / float(len(uniques_dct.keys()))
 
-						scores["al1"] = match_score1
-						scores["al2"] = match_score2
-						scores['hapLen'] = hapLen
+						if "PA134952671" in gid:
+							print "hap:", uniques_dct
+							print "al1:", uniques_al1
+							print "al2:", uniques_al2
+							print "shared1:", shared_al1
+							print "shared2", shared_al2
+							print match_score1
+							print match_score2
+							raw_input("Take a looksie")
 
-						scoreOverview[hapid] = scores
+						scoreOverview[hapid]["al1"] = match_score1
+						scoreOverview[hapid]["al2"] = match_score2
+						scoreOverview[hapid]["hapLen"] = hapLen
+
+						if "PA134952671" in gid:
+							print "hap:", uniques_dct
+							print "al1:", uniques_al1
+							print "al2:", uniques_al2
+							print "shared1:", shared_al1
+							print "shared2", shared_al2
+							print match_score1
+							print match_score2
+							print scoreOverview[hapid]
 
 				sequences = []
 
