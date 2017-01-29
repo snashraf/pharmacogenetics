@@ -246,7 +246,10 @@ class Patient(Database):
 
 					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
 
+					self.sql.execute("INSERT INTO PatHaplotypes_OLD VALUES(?,?,?,?)", (refid,0, 0, 0))
+
 					if len(haprsids.items()) == 0:
+						print "no rsids found for", hapid
 						continue
 
 					else:
@@ -255,6 +258,8 @@ class Patient(Database):
 						uniques_dct = dict(set(varValues[refid].items()) - set(varValues[hapid].items()))
 
 						if len(uniques_dct.items()) == 0:
+
+							print "no unique rsids found for", hapid
 							continue
 
 						uniques_al1 = dict(set(varValues[refid].items()) - set(varValues['a1'].items()))
@@ -274,6 +279,7 @@ class Patient(Database):
 
 						self.sql.execute("INSERT INTO PatHaplotypes_OLD VALUES(?,?,?,?)", (hapid, match_score1, match_score2, hapLen))
 						self.conn.commit()
+
 # -------------------------------------------------------------------------------------------------------------------
 
 				output = "/output/alignments/"
@@ -281,22 +287,6 @@ class Patient(Database):
 				fn = self.path + output + gid + "_aln.fasta"
 
 				prev_seqs = []
-
-				self.sql.executescript('''
-					DROP VIEW IF EXISTS HapView;
-
-					CREATE VIEW HapView AS
-
-					SELECT DISTINCT * FROM Haplotypes h
-					JOIN Genes g
-					On G.GeneID = h.GeneID
-					AND h.Starname = h.Starname
-
-					''')
-
-				self.sql.execute("SELECT DISTINCT HapID FROM HapView WHERE GeneID = ?", (gid,))
-
-				options = [hapid for hapid in self.sql.fetchall()]
 
 				with open(fn, "w") as f:
 
@@ -308,26 +298,30 @@ class Patient(Database):
 
 					for var, values in varValues.items():
 
+						print var
+
 						seq = seqMaker(rsidorder, varValues[refid], values)
 
-						if (seq not in prev_seqs) or (var == 'a1' or var == 'a2'):
+						if seq not in prev_seqs or var == "a1" or var == "a2":
 
 							f.write(">{}\n{}\n".format(var, seq))
 
-						prev_seqs.append(seq)
+						if var != "a1" and var != "a2":
+
+							prev_seqs.append(seq)
+
 
 	def HapScorer(self):
 
-		self.sql.execute("SELECT DISTINCT GeneID FROM Genes")
+		output = "/output/alignments/"
 
-		for (gid,) in self.sql.fetchall():
+		self.sql.execute("SELECT DISTINCT GeneID FROM Haplotypes")
+
+		for (gid,) in tqdm(self.sql.fetchall()):
 
 			self.sql.execute("SELECT DISTINCT HapID FROM Haplotypes WHERE hgvs LIKE '%[=]%' AND GeneID = ?", (gid,))
 
-			try:
-				refid = self.sql.fetchone()[0]
-			except:
-				continue
+			refids = [hapid for (hapid) in self.sql.fetchall()]
 
 			fn = self.path + output + gid + "_aln.fasta"
 
@@ -337,8 +331,16 @@ class Patient(Database):
 
 			tn = of.strip(".fasta")+"_tree.dnd"
 
-			s.check_call("{}/plugins/clustalo -i {} -o {} -t DNA --dealign --force"
-					.format(self.path, fn, of),  shell=True)
+			try:
+
+				with open(fn, "r") as f:
+
+					s.check_call("{}/plugins/clustalo -i {} -o {} -t DNA --dealign --force"
+						.format(self.path, fn, of),  shell=True)
+
+			except:
+
+				continue
 
 			s.check_call("{}/plugins/FastTree -quiet -nopr -gtr -nt {} > {}".format(self.path, of, tn), shell=True)
 
@@ -346,9 +348,15 @@ class Patient(Database):
 
 			names = []
 
-			# modified
+			for refid in refids:
 
-			tree.root_with_outgroup({refid})
+				try:
+
+					tree.root_with_outgroup({refid})
+
+				except:
+
+					continue
 
 			for clade in tree.find_clades():
 
@@ -377,8 +385,6 @@ class Patient(Database):
 					print sql
 
 					self.sql.executescript(sql)
-
-					# commit to db
 
 					self.conn.commit()
 

@@ -39,14 +39,13 @@ class Interpreter(Database):
 		SELECT DISTINCT h.GeneID, g.GeneSymbol from Haplotypes h
 		JOIN Genes g on g.GeneID = h.GeneID''')
 
-		for (gid, genesymbol) in self.sql.fetchall():
+		genotype={}
 
-			genotype={}
+		for (gid, genesymbol) in self.sql.fetchall():
 
 			print genesymbol
 
-
-			self.sql.execute("SELECT DISTINCT p.HapID, p.Distance1, p.Distance2, po.score1, po.score2, HapLen, h.hgvs, starname FROM PatHaplotypes p JOIN PatHaplotypes_OLD po on p.hapid = po.hapid JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
+			self.sql.execute("SELECT DISTINCT p.HapID, p.Distance1, p.Distance2, po.score1, po.score2, po.MatchLen, h.hgvs, starname FROM PatHaplotypes p JOIN PatHaplotypes_OLD po on p.hapid = po.hapid JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
 
 			haplotypes = self.sql.fetchall()
 
@@ -54,7 +53,10 @@ class Interpreter(Database):
 
 				continue
 
-			genotype[genesymbol] = {
+			genotype[genesymbol] = {"Ref_PHEN":
+					{"starname":"A", "al1":10.0, "al2":10.0},
+					"Ref_OLD":
+					{"starname":"A"},
 					"al1_PHEN":
 					{"starname":"A", "distance":10.0},
 					"al1_OLD":
@@ -69,21 +71,41 @@ class Interpreter(Database):
 
 				if "[=]" in hgvs:
 
-					ref = {"starname":starname, "al1":al1, "al2":al2}
+					genotype[genesymbol]["Ref_PHEN"]["starname"] = starname
 
-				# FOR ALLELE IN PATIENT:
+					genotype[genesymbol]["Ref_PHEN"]["al1"] = al1
+
+					genotype[genesymbol]["Ref_PHEN"]["al2"] = al2
+
+					genotype[genesymbol]["Ref_OLD"]["starname"] = starname
+
+# ------------------------------------------------------------------------------------------
+
+			for (hapid, al1, al2, s1, s2, hLen, hgvs, starname) in haplotypes:
+
+				hLen = int(hLen)
 
 				for i, alleleDistance in enumerate([float(al1), float(al2)]):
 
 					curLoc = genotype[genesymbol]["al{}_PHEN".format(i+1)]
 
-					curDistance = curLoc["distance"]
+					try:
 
-					if alleleDistance < curDistance:
+						curDistance = curLoc["distance"]
+
+						if alleleDistance < curDistance:
+
+							curLoc["starname"] = starname
+
+							curLoc["distance"] = alleleDistance
+
+					except:
 
 						curLoc["starname"] = starname
 
 						curLoc["distance"] = alleleDistance
+
+					genotype[genesymbol]["al{}_PHEN".format(i+1)] = curLoc
 
 		# ---------------------------------- calculate old style --------------------------------------
 
@@ -95,54 +117,68 @@ class Interpreter(Database):
 
 					curLen = curLoc["hapLen"]
 
-					if (alleleScore >= curScore and hLen > curLen) and alleleScore > 1.0:
+					if (alleleScore > 0 and alleleScore > curScore and hLen >= curLen):
 
-						curLoc["starname"] = starname
+							curLoc["starname"] = starname
 
-						curLoc["score"] = alleleScore
+							curLoc["score"] = alleleScore
 
-						curLoc["hapLen"] = hLen
+							curLoc["hapLen"] = hLen
 
-			# -----------------------------------------------------
+					genotype[genesymbol]["al{}_OLD".format(i+1)] = curLoc
 
-			genotypeNEW = []
+		# ---------------------------------------------------
 
-			genotypeOLD = []
+		for (gene, allele) in genotype.items():
 
-			for i, (gene, allele) in enumerate(genotype.items()):
+			print gene
 
-				allelesNEW = []
+			allelesNEW = []
 
-				allelesOLD = []
+			allelesOLD = []
 
-				for name, subdict in allele.items():
+			allelesNEW = []
 
-					if "PHEN" in name:
+			allelesOLD = []
 
-						refVal = ref["al{}".format(i+1)]
+			for name, subdict in allele.items():
 
-						if float(subdict["distance"]) >= float(refVal):
+				if "PHEN" in name and "al" in name:
 
-							allelesNEW.append(ref["starname"])
+					val = name.rstrip("_PHEN")
 
-						else:
+					print val
 
-							allelesNEW.append(subdict["starname"])
+					refVal = genotype[gene]["Ref_PHEN"][val]
 
-					if "OLD" in name:
+					print refVal
 
-						if float(subdict["score"]) > 1.0:
+					if float(subdict["distance"]) >= float(refVal):
 
-							allelesOLD.append(subdict["starname"])
+						allelesNEW.append(genotype[gene]["Ref_PHEN"]["starname"])
 
-						else:
+					else:
 
-							allelesOLD.append(ref["starname"])
+						allelesNEW.append(subdict["starname"])
 
-				item = (gid, allelesNEW[0], allelesNEW[1], allelesOLD[0], allelesOLD[1])
-				print item
-				self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?)", item)
-				self.conn.commit()
+				if "OLD" in name and "al" in name:
+
+					if float(subdict["score"]) > 0.0:
+
+						allelesOLD.append(subdict["starname"])
+
+					else:
+
+						allelesOLD.append(genotype[gene]["Ref_OLD"]["starname"])
+
+				else:
+
+					continue
+
+			item = (gene, allelesNEW[0], allelesNEW[1], allelesOLD[0], allelesOLD[1])
+			print item
+			self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?)", item)
+			self.conn.commit()
 
 
 	def FindGuidelines(self):
@@ -181,7 +217,7 @@ class Interpreter(Database):
 				Allele1_Set, Allele2_Set
 				FROM PatGenotypes
 				WHERE GeneID = ?
-				''', (gid,))
+				''', (genesymbol,))
 
 				scores = self.sql.fetchone()
 				print scores
@@ -198,29 +234,29 @@ class Interpreter(Database):
 				string_genotype_NEW = ";".join([guideGenes[gid]['new'] for gid in guideGenes.keys()])
 				string_genotype_OLD = ";".join([guideGenes[gid]['old'] for gid in guideGenes.keys()])
 
-			print "NEW:", string_genotype_NEW
-			print "OLD:", string_genotype_OLD
+				print "NEW:", string_genotype_NEW
+				print "OLD:", string_genotype_OLD
 
-			# Find matching advice
-			string_genotype = string_genotype_OLD
+				# Find matching advice
+				string_genotype = string_genotype_OLD
 
-			uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype)
-
-			data = getJson(uri, self.authobj)
-
-			if data == None:
-
-				uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype.replace("1A", "1"))
+				uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype)
 
 				data = getJson(uri, self.authobj)
 
-			sql = self.insertSQL("patguidelines").render(guid = guid, genotype = string_genotype, json = data)
-			print sql
-			self.sql.executescript(sql)
+				if data == None:
 
-			self.conn.commit()
+					uri = "https://api.pharmgkb.org/v1/report/guideline/{}/annotations?genotypes={}".format(guid, string_genotype.replace("1A", "1"))
 
-			# Save to advice table 'PatGuidelines' (DrugID, GeneID, Category(Metabolizer type), Advice)
+					data = getJson(uri, self.authobj)
+
+				sql = self.insertSQL("patguidelines").render(guid = guid, genotype = string_genotype, json = data)
+				print sql
+				self.sql.executescript(sql)
+
+				self.conn.commit()
+
+				# Save to advice table 'PatGuidelines' (DrugID, GeneID, Category(Metabolizer type), Advice)
 
 
 	def Annotate(self):
