@@ -1,0 +1,97 @@
+<<<
+With asterisks
+
+ * List item
+ *
+ * List item
+
+With numbers
+
+1. List item
+2.
+3. List item
+
+With hyphens
+
+- List item
+-
+- List item
+
+With asterisks
+
+ * List item
+ * List item
+ *
+
+With numbers
+
+1. List item
+2. List item
+3.
+
+With hyphens
+
+- List item
+- List item
+-
+
+>>>
+interblockSeparator
+ulBeginTight
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulEndTight
+interblockSeparator
+interblockSeparator
+olBeginTight
+olItemWithNumber: 1
+olItemEnd
+olItemWithNumber: 2
+olItemEnd
+olItemWithNumber: 3
+olItemEnd
+olEndTight
+interblockSeparator
+interblockSeparator
+ulBeginTight
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulEndTight
+interblockSeparator
+interblockSeparator
+ulBeginTight
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulEndTight
+interblockSeparator
+interblockSeparator
+olBeginTight
+olItemWithNumber: 1
+olItemEnd
+olItemWithNumber: 2
+olItemEnd
+olItemWithNumber: 3
+olItemEnd
+olEndTight
+interblockSeparator
+interblockSeparator
+ulBeginTight
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulEndTight

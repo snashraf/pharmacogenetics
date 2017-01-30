@@ -1,0 +1,50 @@
+<<<
+Just a [URL](/url/).
+
+[URL and title](/url/ "title").
+
+[URL and title](/url/  "title preceded by two spaces").
+
+[URL and title](/url/	"title preceded by a tab").
+
+[URL and title](/url/ "title has spaces afterward"  ).
+
+
+[Empty]().
+
+>>>
+BEGIN link
+- label: URL
+- URI: /url/
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: URL and title
+- URI: /url/
+- title: title
+END link
+interblockSeparator
+BEGIN link
+- label: URL and title
+- URI: /url/
+- title: title preceded by two spaces
+END link
+interblockSeparator
+BEGIN link
+- label: URL and title
+- URI: /url/
+- title: title preceded by a tab
+END link
+interblockSeparator
+BEGIN link
+- label: URL and title
+- URI: /url/
+- title: title has spaces afterward
+END link
+interblockSeparator
+BEGIN link
+- label: Empty
+- URI: 
+- title: 
+END link

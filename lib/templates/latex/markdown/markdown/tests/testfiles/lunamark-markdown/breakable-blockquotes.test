@@ -1,0 +1,19 @@
+\def\markdownOptionBreakableBlockquotes{true}
+<<<
+This test ensures that the Lua `breakableBlockquotes` option correctly
+propagates through the plain TeX interface.
+
+> *quote 1*
+
+> *quote 2*
+
+>>>
+codeSpan: breakableBlockquotes
+interblockSeparator
+blockQuoteBegin
+emphasis: quote 1
+blockQuoteEnd
+interblockSeparator
+blockQuoteBegin
+emphasis: quote 2
+blockQuoteEnd

@@ -1,0 +1,30 @@
+<<<
+Valid nesting:
+
+**[Link](url)**
+
+[**Link**](url)
+
+**[**Link**](url)**
+
+Invalid nesting:
+
+[[Link](url)](url)
+>>>
+interblockSeparator
+strongEmphasis: (BEGIN link)(- label: Link)(- URI: url)(- title: )(END link)
+interblockSeparator
+BEGIN link
+- label: (strongEmphasis: Link)
+- URI: url
+- title: 
+END link
+interblockSeparator
+strongEmphasis: (BEGIN link)(- label: (strongEmphasis: Link))(- URI: url)(- title: )(END link)
+interblockSeparator
+interblockSeparator
+BEGIN link
+- label: [Link](url)
+- URI: url
+- title: 
+END link

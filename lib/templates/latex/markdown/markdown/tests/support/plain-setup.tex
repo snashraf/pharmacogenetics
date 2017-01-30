@@ -1,0 +1,121 @@
+\def\markdownRendererInterblockSeparator#1{%
+  \TYPE{interblockSeparator}}%
+\def\markdownRendererLineBreak#1{%
+  \TYPE{lineBreak}}%
+\def\markdownRendererEllipsis#1{%
+  \TYPE{ellipsis}}%
+\def\markdownRendererNbsp#1{%
+  \TYPE{nbsp}}%
+\def\markdownRendererLeftBrace#1{%
+  \TYPE{leftBrace}}%
+\def\markdownRendererRightBrace#1{%
+  \TYPE{rightBrace}}%
+\def\markdownRendererDollarSign#1{%
+  \TYPE{dollarSign}}%
+\def\markdownRendererPercentSign#1{%
+  \TYPE{percentSign}}%
+\def\markdownRendererAmpersand#1{%
+  \TYPE{ampersand}}%
+\def\markdownRendererUnderscore#1{%
+  \TYPE{underscore}}%
+\def\markdownRendererHash#1{%
+  \TYPE{hash}}%
+\def\markdownRendererCircumflex#1{%
+  \TYPE{circumflex}}%
+\def\markdownRendererBackslash#1{%
+  \TYPE{backslash}}%
+\def\markdownRendererTilde#1{%
+  \TYPE{tilde}}%
+\def\markdownRendererPipe#1{%
+  \TYPE{pipe}}%
+\def\markdownRendererCodeSpan#1{%
+  \TYPE{codeSpan:         #1}}%
+\def\markdownRendererLink#1#2#3#4{%
+  \TYPE{BEGIN link}%
+  \TYPE{- label:          #1}%
+  \TYPE{- URI:            #2}%
+  \TYPE{- title:          #4}%
+  \TYPE{END link}}%
+\def\markdownRendererImage#1#2#3#4{%
+  \TYPE{BEGIN image}%
+  \TYPE{- label:          #1}%
+  \TYPE{- URI:            #2}%
+  \TYPE{- title:          #4}%
+  \TYPE{END image}}%
+\def\markdownRendererUlBegin{%
+  \TYPE{ulBegin}}%
+\def\markdownRendererUlBeginTight{%
+  \TYPE{ulBeginTight}}%
+\def\markdownRendererUlItem{%
+  \TYPE{ulItem}}%
+\def\markdownRendererUlItemEnd{%
+  \TYPE{ulItemEnd}}%
+\def\markdownRendererUlEnd{%
+  \TYPE{ulEnd}}%
+\def\markdownRendererUlEndTight{%
+  \TYPE{ulEndTight}}%
+\def\markdownRendererOlBegin{%
+  \TYPE{olBegin}}%
+\def\markdownRendererOlBeginTight{%
+  \TYPE{olBeginTight}}%
+\def\markdownRendererOlItem{%
+  \TYPE{olItem}}%
+\def\markdownRendererOlItemEnd{%
+  \TYPE{olItemEnd}}%
+\def\markdownRendererOlItemWithNumber#1{%
+  \TYPE{olItemWithNumber: #1}}%
+\def\markdownRendererOlEnd{%
+  \TYPE{olEnd}}%
+\def\markdownRendererOlEndTight{%
+  \TYPE{olEndTight}}%
+\def\markdownRendererDlBegin{%
+  \TYPE{dlBegin}}%
+\def\markdownRendererDlBeginTight{%
+  \TYPE{dlBeginTight}}%
+\def\markdownRendererDlItem#1{%
+  \TYPE{dlItem:           #1}}%
+\def\markdownRendererDlItemEnd{%
+  \TYPE{dlItemEnd}}%
+\def\markdownRendererDlDefinitionBegin{%
+  \TYPE{dlDefinitionBegin}}%
+\def\markdownRendererDlDefinitionEnd{%
+  \TYPE{dlDefinitionEnd}}%
+\def\markdownRendererDlEnd{%
+  \TYPE{dlEnd}}%
+\def\markdownRendererDlEndTight{%
+  \TYPE{dlEndTight}}%
+\def\markdownRendererEmphasis#1{%
+  \TYPE{emphasis:         #1}}%
+\def\markdownRendererStrongEmphasis#1{%
+  \TYPE{strongEmphasis:   #1}}%
+\def\markdownRendererBlockQuoteBegin{%
+  \TYPE{blockQuoteBegin}}%
+\def\markdownRendererBlockQuoteEnd{%
+  \TYPE{blockQuoteEnd}}%
+\def\markdownRendererInputVerbatim#1{%
+  \TYPE{inputVerbatim:    #1}}%
+\def\markdownRendererInputFencedCode#1#2{%
+  \TYPE{BEGIN fencedCode}%
+  \TYPE{- src:            #1}%
+  \TYPE{- infostring:     #2}%
+  \TYPE{END fencedCode}}%
+\def\markdownRendererHeadingOne#1{%
+  \TYPE{headingOne:       #1}}%
+\def\markdownRendererHeadingTwo#1{%
+  \TYPE{headingTwo:       #1}}%
+\def\markdownRendererHeadingThree#1{%
+  \TYPE{headingThree:     #1}}%
+\def\markdownRendererHeadingFour#1{%
+  \TYPE{headingFour:      #1}}%
+\def\markdownRendererHeadingFive#1{%
+  \TYPE{headingFive:      #1}}%
+\def\markdownRendererHeadingSix#1{%
+  \TYPE{headingSix:       #1}}%
+\def\markdownRendererHorizontalRule{%
+  \TYPE{horizontalRule}}%
+\def\markdownRendererFootnote#1{%
+  \TYPE{footnote:         #1}}%
+\def\markdownRendererCite#1{%
+  \CITATIONS{#1}}%
+\def\markdownRendererTextCite#1{%
+  \TEXTCITATIONS{#1}}%

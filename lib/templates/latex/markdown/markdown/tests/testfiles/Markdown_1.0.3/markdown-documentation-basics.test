@@ -1,0 +1,436 @@
+<<<
+Markdown: Basics
+================
+
+Getting the Gist of Markdown's Formatting Syntax
+------------------------------------------------
+
+This page offers a brief overview of what it's like to use Markdown.
+The [syntax page] [s] provides complete, detailed documentation for
+every feature, but Markdown should be very easy to pick up simply by
+looking at a few examples of it in action. The examples on this page
+are written in a before/after style, showing example syntax and the
+HTML output produced by Markdown.
+
+It's also helpful to simply try Markdown out; the [Dingus] [d] is a
+web application that allows you type your own Markdown-formatted text
+and translate it to XHTML.
+
+**Note:** This document is itself written using Markdown; you
+can [see the source for it by adding '.text' to the URL] [src].
+
+  [s]: /projects/markdown/syntax  "Markdown Syntax"
+  [d]: /projects/markdown/dingus  "Markdown Dingus"
+  [src]: /projects/markdown/basics.text
+
+
+## Paragraphs, Headers, Blockquotes ##
+
+A paragraph is simply one or more consecutive lines of text, separated
+by one or more blank lines. (A blank line is any line that looks like a
+blank line -- a line containing nothing spaces or tabs is considered
+blank.) Normal paragraphs should not be intended with spaces or tabs.
+
+Markdown offers two styles of headers: *Setext* and *atx*.
+Setext-style headers for `<h1>` and `<h2>` are created by
+"underlining" with equal signs (`=`) and hyphens (`-`), respectively.
+To create an atx-style header, you put 1-6 hash marks (`#`) at the
+beginning of the line -- the number of hashes equals the resulting
+HTML header level.
+
+Blockquotes are indicated using email-style '`>`' angle brackets.
+
+Markdown:
+
+    A First Level Header
+    ====================
+    
+    A Second Level Header
+    ---------------------
+
+    Now is the time for all good men to come to
+    the aid of their country. This is just a
+    regular paragraph.
+
+    The quick brown fox jumped over the lazy
+    dog's back.
+    
+    ### Header 3
+
+    > This is a blockquote.
+    >
+    > This is the second paragraph in the blockquote.
+    >
+    > ## This is an H2 in a blockquote
+
+
+Output:
+
+    <h1>A First Level Header</h1>
+    
+    <h2>A Second Level Header</h2>
+    
+    <p>Now is the time for all good men to come to
+    the aid of their country. This is just a
+    regular paragraph.</p>
+    
+    <p>The quick brown fox jumped over the lazy
+    dog's back.</p>
+    
+    <h3>Header 3</h3>
+    
+    <blockquote>
+        <p>This is a blockquote.</p>
+        
+        <p>This is the second paragraph in the blockquote.</p>
+        
+        <h2>This is an H2 in a blockquote</h2>
+    </blockquote>
+
+
+
+### Phrase Emphasis ###
+
+Markdown uses asterisks and underscores to indicate spans of emphasis.
+
+Markdown:
+
+    Some of these words *are emphasized*.
+    Some of these words _are emphasized also_.
+    
+    Use two asterisks for **strong emphasis**.
+    Or, if you prefer, __use two underscores instead__.
+
+Output:
+
+    <p>Some of these words <em>are emphasized</em>.
+    Some of these words <em>are emphasized also</em>.</p>
+    
+    <p>Use two asterisks for <strong>strong emphasis</strong>.
+    Or, if you prefer, <strong>use two underscores instead</strong>.</p>
+   
+
+
+## Lists ##
+
+Unordered (bulleted) lists use asterisks, pluses, and hyphens (`*`,
+`+`, and `-`) as list markers. These three markers are
+interchangable; this:
+
+    *   Candy.
+    *   Gum.
+    *   Booze.
+
+this:
+
+    +   Candy.
+    +   Gum.
+    +   Booze.
+
+and this:
+
+    -   Candy.
+    -   Gum.
+    -   Booze.
+
+all produce the same output:
+
+    <ul>
+    <li>Candy.</li>
+    <li>Gum.</li>
+    <li>Booze.</li>
+    </ul>
+
+Ordered (numbered) lists use regular numbers, followed by periods, as
+list markers:
+
+    1.  Red
+    2.  Green
+    3.  Blue
+
+Output:
+
+    <ol>
+    <li>Red</li>
+    <li>Green</li>
+    <li>Blue</li>
+    </ol>
+
+If you put blank lines between items, you'll get `<p>` tags for the
+list item text. You can create multi-paragraph list items by indenting
+the paragraphs by 4 spaces or 1 tab:
+
+    *   A list item.
+    
+        With multiple paragraphs.
+
+    *   Another item in the list.
+
+Output:
+
+    <ul>
+    <li><p>A list item.</p>
+    <p>With multiple paragraphs.</p></li>
+    <li><p>Another item in the list.</p></li>
+    </ul>
+    
+
+
+### Links ###
+
+Markdown supports two styles for creating links: *inline* and
+*reference*. With both styles, you use square brackets to delimit the
+text you want to turn into a link.
+
+Inline-style links use parentheses immediately after the link text.
+For example:
+
+    This is an [example link](http://example.com/).
+
+Output:
+
+    <p>This is an <a href="http://example.com/">
+    example link</a>.</p>
+
+Optionally, you may include a title attribute in the parentheses:
+
+    This is an [example link](http://example.com/ "With a Title").
+
+Output:
+
+    <p>This is an <a href="http://example.com/" title="With a Title">
+    example link</a>.</p>
+
+Reference-style links allow you to refer to your links by names, which
+you define elsewhere in your document:
+
+    I get 10 times more traffic from [Google][1] than from
+    [Yahoo][2] or [MSN][3].
+
+    [1]: http://google.com/        "Google"
+    [2]: http://search.yahoo.com/  "Yahoo Search"
+    [3]: http://search.msn.com/    "MSN Search"
+
+Output:
+
+    <p>I get 10 times more traffic from <a href="http://google.com/"
+    title="Google">Google</a> than from <a href="http://search.yahoo.com/"
+    title="Yahoo Search">Yahoo</a> or <a href="http://search.msn.com/"
+    title="MSN Search">MSN</a>.</p>
+
+The title attribute is optional. Link names may contain letters,
+numbers and spaces, but are *not* case sensitive:
+
+    I start my morning with a cup of coffee and
+    [The New York Times][NY Times].
+
+    [ny times]: http://www.nytimes.com/
+
+Output:
+
+    <p>I start my morning with a cup of coffee and
+    <a href="http://www.nytimes.com/">The New York Times</a>.</p>
+
+
+### Images ###
+
+Image syntax is very much like link syntax.
+
+Inline (titles are optional):
+
+    ![alt text](/path/to/img.jpg "Title")
+
+Reference-style:
+
+    ![alt text][id]
+
+    [id]: /path/to/img.jpg "Title"
+
+Both of the above examples produce the same output:
+
+    <img src="/path/to/img.jpg" alt="alt text" title="Title" />
+
+
+
+### Code ###
+
+In a regular paragraph, you can create code span by wrapping text in
+backtick quotes. Any ampersands (`&`) and angle brackets (`<` or
+`>`) will automatically be translated into HTML entities. This makes
+it easy to use Markdown to write about HTML example code:
+
+    I strongly recommend against using any `<blink>` tags.
+
+Output:
+
+    <p>I strongly recommend against using any
+    <code>&lt;blink&gt;</code> tags.</p>
+
+
+To specify an entire block of pre-formatted code, indent every line of
+the block by 4 spaces or 1 tab. Just like with code spans, `&`, `<`,
+and `>` characters will be escaped automatically.
+
+Markdown:
+
+    If you want your page to validate under XHTML 1.0 Strict,
+    you've got to put paragraph tags in your blockquotes:
+
+        <blockquote>
+            <p>For example.</p>
+        </blockquote>
+
+Output:
+
+    <p>If you want your page to validate under XHTML 1.0 Strict,
+    you've got to put paragraph tags in your blockquotes:</p>
+    
+    <pre><code>&lt;blockquote&gt;
+        &lt;p&gt;For example.&lt;/p&gt;
+    &lt;/blockquote&gt;
+    </code></pre>
+
+>>>
+headingOne: Markdown: Basics
+interblockSeparator
+headingTwo: Getting the Gist of Markdown's Formatting Syntax
+interblockSeparator
+BEGIN link
+- label: syntax page
+- URI: /projects/markdown/syntax
+- title: Markdown Syntax
+END link
+interblockSeparator
+BEGIN link
+- label: Dingus
+- URI: /projects/markdown/dingus
+- title: Markdown Dingus
+END link
+interblockSeparator
+strongEmphasis: Note:
+BEGIN link
+- label: see the source for it by adding '.text' to the URL
+- URI: /projects/markdown/basics.text
+- title: 
+END link
+interblockSeparator
+headingTwo: Paragraphs, Headers, Blockquotes
+interblockSeparator
+interblockSeparator
+emphasis: Setext
+emphasis: atx
+codeSpan: <h1>
+codeSpan: <h2>
+codeSpan: =
+codeSpan: -
+codeSpan: (hash)
+interblockSeparator
+codeSpan: >
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/5ebdf3631f626dba5ee92ee773e97a8f.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/9347d3cfacf328e3d73c4fe1b4f76524.verbatim
+interblockSeparator
+headingThree: Phrase Emphasis
+interblockSeparator
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/495d205391f56da33d355c43c81daa64.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/60195f0a7c825159eb9156947e6fb71b.verbatim
+interblockSeparator
+headingTwo: Lists
+interblockSeparator
+codeSpan: *
+codeSpan: +
+codeSpan: -
+interblockSeparator
+inputVerbatim: ./_markdown_test/30a921ea3110056dc221ed257b3c883b.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/674e077aa8994de8bf541093168d2e29.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/7ae61eceff910c380dbe3ee9af7b6c4a.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/b84dd49773de7abaeec71bfa32680045.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/2a1d33d66339f281e4a171d1eb084b07.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/430a75a1628ba89cc2b1005bb1e5d932.verbatim
+interblockSeparator
+codeSpan: <p>
+interblockSeparator
+inputVerbatim: ./_markdown_test/e6108616b0422dd64f485971e61ac69c.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/0bd4d7d78b1cd0e46e78a522f613a6a3.verbatim
+interblockSeparator
+headingThree: Links
+interblockSeparator
+emphasis: inline
+emphasis: reference
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/20cfebed5272ba2f01c1aee798509f18.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/46124210265b51c9d470c0c70a598037.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/d56162c63107aadd63a5b6ca05f491e9.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/c62653fbfcf155bfe2912f066f242885.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/b996f30ba094126a05b4797a048ff2d2.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/0b1519420e84d1c754b52b25170d7213.verbatim
+interblockSeparator
+emphasis: not
+interblockSeparator
+inputVerbatim: ./_markdown_test/15e1c1abc08ec60d9181f9578c6cf172.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/440c1e901154984bf647fc152cb0971b.verbatim
+interblockSeparator
+headingThree: Images
+interblockSeparator
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/602bb0e325271b2b4dce9175eaed15b1.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/e5b369214c819b9d9b476b7bb1f5aa53.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/885cbee5cc0e1fac9ce25c3a9d30034e.verbatim
+interblockSeparator
+headingThree: Code
+interblockSeparator
+codeSpan: (ampersand)
+codeSpan: <
+codeSpan: >
+interblockSeparator
+inputVerbatim: ./_markdown_test/fbcaafb68ad6405619da77e413788d6e.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/cfc57312a789ed7b4e14f3f56c88381a.verbatim
+interblockSeparator
+codeSpan: (ampersand)
+codeSpan: <
+codeSpan: >
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/fe59314852dc8de3165464ab451f44a0.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/3f58f44c2de7257eb42c24e7aee621c5.verbatim

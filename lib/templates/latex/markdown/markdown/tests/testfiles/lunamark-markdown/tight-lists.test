@@ -1,0 +1,18 @@
+<<<
+This test ensures that the Lua `tightLists` option is enabled by default. The
+following list should be tight.
+
+3. three
+4. four
+5. five
+>>>
+codeSpan: tightLists
+interblockSeparator
+olBeginTight
+olItemWithNumber: 3
+olItemEnd
+olItemWithNumber: 4
+olItemEnd
+olItemWithNumber: 5
+olItemEnd
+olEndTight

@@ -43,143 +43,82 @@ class Interpreter(Database):
 
 		for (gid, genesymbol) in self.sql.fetchall():
 
-			print genesymbol
-
-			self.sql.execute("SELECT DISTINCT p.HapID, p.Distance1, p.Distance2, po.score1, po.score2, po.MatchLen, h.hgvs, starname FROM PatHaplotypes p JOIN PatHaplotypes_OLD po on p.hapid = po.hapid JOIN Haplotypes h on h.HapID = P.HapID WHERE h.GeneID = ?", (gid,))
+			self.sql.executescript('''
+			DROP VIEW IF EXISTS CurView;
+			CREATE VIEW CurView AS
+			SELECT DISTINCT
+			h.GeneID as GeneID,
+			p.HapID,
+			p.Distance1 as new1, p.Distance2 as new2,
+			po.score1 as old1, po.score2 as old2,
+			po.MatchLen,
+			h.hgvs, starname
+			FROM PatHaplotypes p
+			JOIN PatHaplotypes_OLD po
+			on p.hapid = po.hapid
+			JOIN Haplotypes h
+			on h.HapID = P.HapID
+			''')
 
 			haplotypes = self.sql.fetchall()
 
-			if len(haplotypes) == 0:
+			self.sql.execute('''
+	SELECT DISTINCT starname, new1, new2, old1, old2 FROM CurView
+	WHERE GeneID = ?
+	and hgvs LIKE "%=%"
+				''',(gid,))
 
+			refhap = {}
+
+			for (starname, new1, new2, old1, old2) in self.sql.fetchall():
+				refhap['starname'] = starname
+				refhap['new1']=float(new1)
+				refhap['new2']=float(new2)
+				refhap['old1']=0.0
+				refhap['old2']=0.0
+
+			allelesNEW = {1:[], 2:[]}
+			allelesOLD = {1:[], 2:[]}
+			allelesNEW = {1:[], 2:[]}
+			allelesOLD = {1:[], 2:[]}
+
+			# NEW STYLE
+
+			for i in range(1,3):
+				self.sql.execute('''
+				SELECT DISTINCT starname, new{} FROM CurView
+				WHERE GeneID = ?
+				ORDER BY new{} ASC
+				'''.format(i, i), (gid,))
+
+				# shuffle for ref at the top
+				for (starname, score) in self.sql.fetchall():
+					if float(score) == refhap["new{}".format(i)] and starname != refhap['starname'] and refhap['starname'] not in allelesNEW[i]:
+						allelesNEW[i].append(refhap['starname'])
+						allelesNEW[i].append(starname)
+					else:
+						allelesNEW[i].append(starname)
+
+				# OLD STYLE
+				self.sql.execute('''
+				SELECT DISTINCT starname, old{}, matchLen FROM CurView
+				WHERE GeneID = ?
+				ORDER BY old{} DESC, MatchLen DESC
+				'''.format(i, i), (gid,))
+
+				for (starname, score, mlen) in self.sql.fetchall():
+					if float(score) == 0.0 and starname != refhap['starname'] and refhap['starname'] not in allelesOLD[i]:
+						allelesOLD[i].append(refhap['starname'])
+						allelesOLD[i].append(starname)
+					else:
+						allelesOLD[i].append(starname)
+			try:
+				item = (gid, allelesNEW[1][0], allelesNEW[2][0], allelesOLD[1][0], allelesOLD[2][0])
+				print item
+				self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?)", item)
+				self.conn.commit()
+			except:
 				continue
-
-			genotype[genesymbol] = {"Ref_PHEN":
-					{"starname":"A", "al1":10.0, "al2":10.0},
-					"Ref_OLD":
-					{"starname":"A"},
-					"al1_PHEN":
-					{"starname":"A", "distance":10.0},
-					"al1_OLD":
-					{"starname":"A", "score":0.0, "hapLen":0},
-					"al2_PHEN":
-					{"starname":"A", "distance":10.0},
-					"al2_OLD":
-					{"starname":"A", "score":0.0, "hapLen":0}
-					}
-
-			for (hapid, al1, al2, s1, s2, hLen, hgvs, starname) in haplotypes:
-
-				if "[=]" in hgvs:
-
-					genotype[genesymbol]["Ref_PHEN"]["starname"] = starname
-
-					genotype[genesymbol]["Ref_PHEN"]["al1"] = al1
-
-					genotype[genesymbol]["Ref_PHEN"]["al2"] = al2
-
-					genotype[genesymbol]["Ref_OLD"]["starname"] = starname
-
-# ------------------------------------------------------------------------------------------
-
-			for (hapid, al1, al2, s1, s2, hLen, hgvs, starname) in haplotypes:
-
-				hLen = int(hLen)
-
-				for i, alleleDistance in enumerate([float(al1), float(al2)]):
-
-					curLoc = genotype[genesymbol]["al{}_PHEN".format(i+1)]
-
-					try:
-
-						curDistance = curLoc["distance"]
-
-						if alleleDistance < curDistance:
-
-							curLoc["starname"] = starname
-
-							curLoc["distance"] = alleleDistance
-
-					except:
-
-						curLoc["starname"] = starname
-
-						curLoc["distance"] = alleleDistance
-
-					genotype[genesymbol]["al{}_PHEN".format(i+1)] = curLoc
-
-		# ---------------------------------- calculate old style --------------------------------------
-
-				for i, alleleScore in enumerate([float(s1), float(s2)]):
-
-					curLoc = genotype[genesymbol]["al{}_OLD".format(i+1)]
-
-					curScore = curLoc["score"]
-
-					curLen = curLoc["hapLen"]
-
-					if (alleleScore > 0 and alleleScore > curScore and hLen >= curLen):
-
-							curLoc["starname"] = starname
-
-							curLoc["score"] = alleleScore
-
-							curLoc["hapLen"] = hLen
-
-					genotype[genesymbol]["al{}_OLD".format(i+1)] = curLoc
-
-		# ---------------------------------------------------
-
-		for (gene, allele) in genotype.items():
-
-			print gene
-
-			allelesNEW = []
-
-			allelesOLD = []
-
-			allelesNEW = []
-
-			allelesOLD = []
-
-			for name, subdict in allele.items():
-
-				if "PHEN" in name and "al" in name:
-
-					val = name.rstrip("_PHEN")
-
-					print val
-
-					refVal = genotype[gene]["Ref_PHEN"][val]
-
-					print refVal
-
-					if float(subdict["distance"]) >= float(refVal):
-
-						allelesNEW.append(genotype[gene]["Ref_PHEN"]["starname"])
-
-					else:
-
-						allelesNEW.append(subdict["starname"])
-
-				if "OLD" in name and "al" in name:
-
-					if float(subdict["score"]) > 0.0:
-
-						allelesOLD.append(subdict["starname"])
-
-					else:
-
-						allelesOLD.append(genotype[gene]["Ref_OLD"]["starname"])
-
-				else:
-
-					continue
-
-			item = (gene, allelesNEW[0], allelesNEW[1], allelesOLD[0], allelesOLD[1])
-			print item
-			self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?)", item)
-			self.conn.commit()
-
 
 	def FindGuidelines(self):
 
@@ -322,6 +261,5 @@ class Interpreter(Database):
 					continue
 
 			self.conn.commit()
-
 
 # ---------------------------- NEXT STEP: ReportMaker --------------------------------

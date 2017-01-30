@@ -277,6 +277,8 @@ class Patient(Database):
 						match_score1 = float(len(shared_al1.keys()))/ float(len(uniques_dct.keys()))
 						match_score2 = float(len(shared_al2.keys())) / float(len(uniques_dct.keys()))
 
+						print hapid
+						
 						self.sql.execute("INSERT INTO PatHaplotypes_OLD VALUES(?,?,?,?)", (hapid, match_score1, match_score2, hapLen))
 						self.conn.commit()
 

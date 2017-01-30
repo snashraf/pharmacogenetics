@@ -111,12 +111,8 @@ class ReportMaker(Database):
 					js_guide['haplotype'] = genotype
 					js_guide['metaType'] = metacat
 					js_guide['strength'] = strength
-					if "Implication" in term:
-						js_guide['implications'] = markdown
-					if "Phenotype" in term:
-						js_guide['phenotype'] = term
-					if "Recommendation" in term:
-						js_guide['recommendation'] = markdown
+					tex = DeconstructGuideline(markdown)
+					print tex
 
 		# Print Annotations for this gene-drug combination
 

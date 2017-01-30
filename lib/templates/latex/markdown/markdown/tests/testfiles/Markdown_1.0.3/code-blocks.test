@@ -1,0 +1,18 @@
+<<<
+	code block on the first line
+	
+Regular text.
+
+    code block indented by spaces
+
+Regular Text.
+
+	code block on the last line
+>>>
+inputVerbatim: ./_markdown_test/757353c94a464c718394adbe349d6771.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/84469dcb7c065e457fc00040f5c96d8f.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/e0bb27efcfecc25309f165e0092a7434.verbatim

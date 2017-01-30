@@ -1,0 +1,24 @@
+<<<
+These are just two backticks:
+
+``
+
+These are empty code spans:
+
+` `
+
+`  `
+
+This is a code span containing a single space:
+
+`   `
+>>>
+interblockSeparator
+interblockSeparator
+interblockSeparator
+codeSpan: 
+interblockSeparator
+codeSpan: 
+interblockSeparator
+interblockSeparator
+codeSpan:  

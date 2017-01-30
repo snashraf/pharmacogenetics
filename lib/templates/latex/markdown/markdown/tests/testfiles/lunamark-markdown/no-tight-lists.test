@@ -1,0 +1,19 @@
+\def\markdownOptionTightLists{false}
+<<<
+This test ensures that the Lua `tightLists` option correctly propagates
+through the plain TeX interface. The following list should be regular.
+
+3. three
+4. four
+5. five
+>>>
+codeSpan: tightLists
+interblockSeparator
+olBegin
+olItemWithNumber: 3
+olItemEnd
+olItemWithNumber: 4
+olItemEnd
+olItemWithNumber: 5
+olItemEnd
+olEnd

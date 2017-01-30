@@ -1,0 +1,15 @@
+<<<
+This test ensures that the Lua `breakableBlockquotes` option is disabled by
+default.
+
+> *quote 1*
+
+> *quote 2*
+
+>>>
+codeSpan: breakableBlockquotes
+interblockSeparator
+blockQuoteBegin
+emphasis: quote 1
+emphasis: quote 2
+blockQuoteEnd

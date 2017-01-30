@@ -1,0 +1,43 @@
+\def\markdownOptionHybrid{true}
+<<<
+This test ensures that the Lua `hybrid` option correctly propagates through
+the plain TeX interface. The following special characters should not be
+processed by lunamark in any way.
+
+ * \char`{
+ * \char`}
+ * \char`$
+ * \char`\%
+ * \char`&
+ * \char`_
+ * \char`#
+ * \char`^
+ * \char`\
+ * \char`~
+ * \char`|
+>>>
+codeSpan: hybrid
+interblockSeparator
+ulBeginTight
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulItem
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulEndTight

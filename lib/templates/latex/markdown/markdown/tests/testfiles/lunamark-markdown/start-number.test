@@ -1,0 +1,39 @@
+<<<
+This test ensures that the Lua `startNumber` option is enabled by default. The
+following lists should start with number three.
+
+Tight:
+
+3. three
+4. four
+5. five
+
+Loose:
+
+3. three
+
+4. four
+
+5. five
+>>>
+codeSpan: startNumber
+interblockSeparator
+interblockSeparator
+olBeginTight
+olItemWithNumber: 3
+olItemEnd
+olItemWithNumber: 4
+olItemEnd
+olItemWithNumber: 5
+olItemEnd
+olEndTight
+interblockSeparator
+interblockSeparator
+olBegin
+olItemWithNumber: 3
+olItemEnd
+olItemWithNumber: 4
+olItemEnd
+olItemWithNumber: 5
+olItemEnd
+olEnd

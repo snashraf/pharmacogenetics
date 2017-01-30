@@ -1,0 +1,9 @@
+<<<
+[silly URL w/ angle brackets](<?}]*+|&)>).
+
+>>>
+BEGIN link
+- label: silly URL w/ angle brackets
+- URI: ?(rightBrace)]*+(pipe)(ampersand))
+- title: 
+END link

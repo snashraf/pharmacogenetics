@@ -1,0 +1,12 @@
+\def\markdownOptionCacheDir{some-other-directory}
+<<<
+This test ensures that the Lua `cacheDir` option correctly propagates through
+the plain TeX interface and causes a change in the cache directory location.
+The following code should be stored in a temporary file inside the specified
+cache directory.
+
+    foo bar
+>>>
+codeSpan: cacheDir
+interblockSeparator
+inputVerbatim: some-other-directory/5ceaa7ed396ccb8e959c02753cb4bd18.verbatim

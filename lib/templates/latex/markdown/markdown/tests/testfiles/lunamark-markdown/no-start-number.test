@@ -1,0 +1,41 @@
+\def\markdownOptionStartNumber{false}
+<<<
+This test ensures that the Lua `startNumber` option correctly propagates
+through the plain TeX interface. The following lists should not receive
+any starting number.
+
+Tight:
+
+3. three
+4. four
+5. five
+
+Loose:
+
+3. three
+
+4. four
+
+5. five
+>>>
+codeSpan: startNumber
+interblockSeparator
+interblockSeparator
+olBeginTight
+olItem
+olItemEnd
+olItem
+olItemEnd
+olItem
+olItemEnd
+olEndTight
+interblockSeparator
+interblockSeparator
+olBegin
+olItem
+olItemEnd
+olItem
+olItemEnd
+olItem
+olItemEnd
+olEnd

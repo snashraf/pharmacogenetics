@@ -1,0 +1,19 @@
+\enableregime[utf]
+\usetypescript[modern][ec]
+\setupbodyfont[10pt,rm]
+\usemodule[t][markdown]
+\def\markdownOptionHashEnumerators{true}
+\def\markdownOptionDefinitionLists{true}
+\def\markdownOptionSmartEllipses{true}
+\def\markdownOptionFootnotes{true}
+\def\markdownOptionInlineFootnotes{true}
+\def\markdownOptionFencedCode{true}
+\definetyping [latex]
+\setuptyping  [latex] [option=TEX]
+\starttext
+  \markdownInput{example.md}
+  \startmarkdown
+Here are some non-ASCII characters: *ěščřžýáíé*
+and ConTeXt special characters: *|*.
+  \stopmarkdown
+\stoptext

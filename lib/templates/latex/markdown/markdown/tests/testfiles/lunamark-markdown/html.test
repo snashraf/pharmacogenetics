@@ -1,0 +1,18 @@
+\def\markdownOptionHtml{true}
+<<<
+This test ensures that the Lua `html` option correctly propagates through
+the plain TeX interface.
+
+<div>
+*There is no block tag support.*
+</div>
+*There is no <inline>tag</inline> support.*
+_There is no <!-- comments --> support._
+_There is no <? HTML instructions ?> support._
+>>>
+codeSpan: html
+interblockSeparator
+interblockSeparator
+emphasis: There is no tag support.
+emphasis: There is no support.
+emphasis: There is no support.

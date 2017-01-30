@@ -33,8 +33,9 @@
 \item \textbf{\colorbox{ {%- if ann %}{{ann.color}}{% endif -%} } {Class {{ann.strength}}}} \textbf{ {{ann.varName}} } \textit{ {{ann.patAllele}} }
 \item[] {{ann.annotation | replace("_", "")}}
 {%- endfor %}
-{%- endif %}
 \end{rSubsection}
+
+{%- endif %}
 
 {%- endfor %}
 

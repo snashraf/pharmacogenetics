@@ -1,0 +1,52 @@
+<<<
+Link: <http://example.com/>.
+
+With an ampersand: <http://example.com/?foo=1&bar=2>
+
+* In a list?
+* <http://example.com/>
+* It should.
+
+> Blockquoted: <http://example.com/>
+
+Auto-links should not occur here: `<http://example.com/>`
+
+	or here: <http://example.com/>
+>>>
+BEGIN link
+- label: http://example.com/
+- URI: http://example.com/
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: http://example.com/?foo=1(ampersand)bar=2
+- URI: http://example.com/?foo=1(ampersand)bar=2
+- title: 
+END link
+interblockSeparator
+ulBeginTight
+ulItem
+ulItemEnd
+ulItem
+BEGIN link
+- label: http://example.com/
+- URI: http://example.com/
+- title: 
+END link
+ulItemEnd
+ulItem
+ulItemEnd
+ulEndTight
+interblockSeparator
+blockQuoteBegin
+BEGIN link
+- label: http://example.com/
+- URI: http://example.com/
+- title: 
+END link
+blockQuoteEnd
+interblockSeparator
+codeSpan: <http://example.com/>
+interblockSeparator
+inputVerbatim: ./_markdown_test/d65b41d110c17fbc771809f553258ff5.verbatim

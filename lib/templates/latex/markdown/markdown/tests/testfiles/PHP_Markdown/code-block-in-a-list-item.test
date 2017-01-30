@@ -1,0 +1,31 @@
+<<<
+
+*	List Item:
+
+		code block
+
+		with a blank line
+
+	within a list item.
+
+*       code block
+        as first element of a list item
+
+*	List Item:
+	
+		code block with whitespace on preceding line
+>>>
+ulBegin
+ulItem
+interblockSeparator
+inputVerbatim: ./_markdown_test/3918bc9009f196cbcc980181827419e9.verbatim
+interblockSeparator
+ulItemEnd
+ulItem
+inputVerbatim: ./_markdown_test/2ecbe437956c71ad33b2efd354f11893.verbatim
+ulItemEnd
+ulItem
+interblockSeparator
+inputVerbatim: ./_markdown_test/89ad99c3052a342e765443409ef64797.verbatim
+ulItemEnd
+ulEnd

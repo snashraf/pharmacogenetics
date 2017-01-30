@@ -1,0 +1,16 @@
+<<<
+<HTTP://WWW.SOMEURL.COM>
+
+<hr@company.com>
+>>>
+BEGIN link
+- label: HTTP://WWW.SOMEURL.COM
+- URI: HTTP://WWW.SOMEURL.COM
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: hr@company.com
+- URI: mailto:hr@company.com
+- title: 
+END link

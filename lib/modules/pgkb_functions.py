@@ -189,7 +189,6 @@ def hg19conv(rsid, alt, gid):
 		d['muttype'] = 'in-del'
 
 		d['end'] = d['begin'] + len(d['ref'])
-	print d
 	return d
 
 def merge_dicts(*dict_args):
@@ -201,3 +200,29 @@ def merge_dicts(*dict_args):
     for dictionary in dict_args:
         result.update(dictionary)
     return result
+
+def DeconstructGuideline(markdown):
+	markdown = markdown.split("\n")
+	tex = ""
+	# ------------
+	conv = {
+"%":"\%",
+	}
+	# ------------
+	nontable = []
+	table = []
+	for line in markdown:
+		if "|" in line:
+			table.append(line)
+		else:
+			nontable.append(line)
+	if len(table) == 0:
+		for line in enumerate(table):
+			spl_line = [item for item in line.split("|") if line != ""]
+			andjoin = "&".join(spl_line)
+			tex += unicode(andjoin + "\\\\")
+	else:
+		for line in nontable:
+			tex += unicode(line + "\\\\")
+
+	return tex

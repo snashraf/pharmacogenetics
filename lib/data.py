@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
-from modules.pgkb_functions import Authenticate, hg19conv, getJson, getRef
+from modules.pgkb_functions import Authenticate, hg19conv, getJson, getRef, DeconstructGuideline
 import urllib2
 import json
 from tqdm import tqdm
@@ -431,18 +431,13 @@ class DataCollector(Database):
 
 		self.remakeTable("guideoptions")
 
-		self.sql.execute("SELECT DISTINCT GuID from Guidelines;")
+		self.sql.execute("SELECT DISTINCT GuID, markdown from Guidelines;")
 
-		for (guid, ) in tqdm(self.sql.fetchall()):
-
+		for (guid, markdown ) in tqdm(self.sql.fetchall()):
 			uri = "https://api.pharmgkb.org/v1/report/guideline/{}/options" \
 			.format(guid)
 
 			data = getJson(uri, self.authobj)
-
-			if data is None:
-
-				continue
 
 			sql = template.render(guid = guid, json = data)
 

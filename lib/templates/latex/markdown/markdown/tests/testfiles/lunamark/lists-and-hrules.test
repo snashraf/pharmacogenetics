@@ -1,0 +1,18 @@
+<<<
++   item 1
+
+    +   item 2
+
+  *   *   *   *   *
+>>>
+ulBegin
+ulItem
+interblockSeparator
+ulBeginTight
+ulItem
+ulItemEnd
+ulEndTight
+ulItemEnd
+ulEnd
+interblockSeparator
+horizontalRule

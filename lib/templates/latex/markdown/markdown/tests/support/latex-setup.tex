@@ -1,0 +1,138 @@
+renderers = {%
+  interblockSeparator = {%
+    \TYPE{interblockSeparator}%
+    \GOBBLE},
+  lineBreak = {%
+    \TYPE{lineBreak}%
+    \GOBBLE},
+  ellipsis = {%
+    \TYPE{ellipsis}%
+    \GOBBLE},
+  nbsp = {%
+    \TYPE{nbsp}%
+    \GOBBLE},
+  leftBrace = {%
+    \TYPE{leftBrace}%
+    \GOBBLE},
+  rightBrace = {%
+    \TYPE{rightBrace}%
+    \GOBBLE},
+  dollarSign = {%
+    \TYPE{dollarSign}%
+    \GOBBLE},
+  percentSign = {%
+    \TYPE{percentSign}%
+    \GOBBLE},
+  ampersand = {%
+    \TYPE{ampersand}%
+    \GOBBLE},
+  underscore = {%
+    \TYPE{underscore}%
+    \GOBBLE},
+  hash = {%
+    \TYPE{hash}%
+    \GOBBLE},
+  circumflex = {%
+    \TYPE{circumflex}%
+    \GOBBLE},
+  backslash = {%
+    \TYPE{backslash}%
+    \GOBBLE},
+  tilde = {%
+    \TYPE{tilde}%
+    \GOBBLE},
+  pipe = {%
+    \TYPE{pipe}%
+    \GOBBLE},
+  codeSpan = {%
+    \TYPE{codeSpan:         #1}},
+  link = {%
+    \TYPE{BEGIN link}%
+    \TYPE{- label:          #1}%
+    \TYPE{- URI:            #2}%
+    \TYPE{- title:          #4}%
+    \TYPE{END link}},
+  image = {%
+    \TYPE{BEGIN image}%
+    \TYPE{- label:          #1}%
+    \TYPE{- URI:            #2}%
+    \TYPE{- title:          #4}%
+    \TYPE{END image}},
+  ulBegin = {%
+    \TYPE{ulBegin}},
+  ulBeginTight = {%
+    \TYPE{ulBeginTight}},
+  ulItem = {%
+    \TYPE{ulItem}},
+  ulItemEnd = {%
+    \TYPE{ulItemEnd}},
+  ulEnd = {%
+    \TYPE{ulEnd}},
+  ulEndTight = {%
+    \TYPE{ulEndTight}},
+  olBegin = {%
+    \TYPE{olBegin}},
+  olBeginTight = {%
+    \TYPE{olBeginTight}},
+  olItem = {%
+    \TYPE{olItem}},
+  olItemEnd = {%
+    \TYPE{olItemEnd}},
+  olItemWithNumber = {%
+    \TYPE{olItemWithNumber: #1}},
+  olEnd = {%
+    \TYPE{olEnd}},
+  olEndTight = {%
+    \TYPE{olEndTight}},
+  dlBegin = {%
+    \TYPE{dlBegin}},
+  dlBeginTight = {%
+    \TYPE{dlBeginTight}},
+  dlItem = {%
+    \TYPE{dlItem:           #1}},
+  dlItemEnd = {%
+    \TYPE{dlItemEnd}},
+  dlDefinitionBegin = {%
+    \TYPE{dlDefinitionBegin}},
+  dlDefinitionEnd = {%
+    \TYPE{dlDefinitionEnd}},
+  dlEnd = {%
+    \TYPE{dlEnd}},
+  dlEndTight = {%
+    \TYPE{dlEndTight}},
+  emphasis = {%
+    \TYPE{emphasis:         #1}},
+  strongEmphasis = {%
+    \TYPE{strongEmphasis:   #1}},
+  blockQuoteBegin = {%
+    \TYPE{blockQuoteBegin}},
+  blockQuoteEnd = {%
+    \TYPE{blockQuoteEnd}},
+  inputVerbatim = {%
+    \TYPE{inputVerbatim:    #1}},
+  inputFencedCode = {%
+    \TYPE{BEGIN fencedCode}%
+    \TYPE{- src:            #1}%
+    \TYPE{- infostring:     #2}%
+    \TYPE{END fencedCode}},
+  headingOne = {%
+    \TYPE{headingOne:       #1}},
+  headingTwo = {%
+    \TYPE{headingTwo:       #1}},
+  headingThree = {%
+    \TYPE{headingThree:     #1}},
+  headingFour = {%
+    \TYPE{headingFour:      #1}},
+  headingFive = {%
+    \TYPE{headingFive:      #1}},
+  headingSix = {%
+    \TYPE{headingSix:       #1}},
+  horizontalRule = {%
+    \TYPE{horizontalRule}},
+  footnote = {%
+    \TYPE{footnote:         #1}},
+  cite = {%
+    \CITATIONS{#1}},
+  textCite = {%
+    \TEXTCITATIONS{#1}},
+}

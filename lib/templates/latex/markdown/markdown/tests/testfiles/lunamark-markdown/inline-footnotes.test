@@ -1,0 +1,17 @@
+\def\markdownOptionInlineFootnotes{true}
+<<<
+This test ensures that the Lua `footnotes` and `inlineFootnotes` options
+correctly propagate through the plain TeX interface.
+
+^[Here is the footnote.  It can go anywhere after the footnote
+reference.  It need *not* be placed at the end of the document.]
+
+\^[This should *not* be a footnote, because it has been escaped.]
+>>>
+codeSpan: footnotes
+codeSpan: inlineFootnotes
+interblockSeparator
+footnote: Here is the footnote. It can go anywhere after the footnote reference. It need (emphasis: not) be placed at the end of the document.
+interblockSeparator
+circumflex
+emphasis: not

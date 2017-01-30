@@ -1,0 +1,49 @@
+\long\def\TYPE#1{%
+  \begingroup
+    \long\def\TYPE##1{(##1)}%
+    \immediate\write128{TEST INPUT BEGIN}%
+    \immediate\write128{#1}%
+    \immediate\write128{TEST INPUT END}%
+  \endgroup}%
+\def\GOBBLE#1{}%
+
+% Citations parsing
+\newcount\CITATIONSCOUNTER
+
+%% Regular citations
+\def\DOCITATIONS#1#2#3#4{%
+  \advance\CITATIONSCOUNTER by 1\relax
+  \CITE{#1}{#2}{#3}{#4}%
+  \ifnum\CITATIONSCOUNTER>\CITATIONSTOTAL\relax
+    \expandafter\GOBBLE
+  \fi\DOCITATIONS}%
+\def\CITE#1#2#3#4{%
+  \TYPE{BEGIN cite}%
+  \TYPE{- suppressAuthor: \if#1+false\else true\fi}%
+  \TYPE{- prenote:        #2}%
+  \TYPE{- postnote:       #3}%
+  \TYPE{- name:           #4}%
+  \TYPE{END cite}}%
+\def\CITATIONS#1{%
+  \CITATIONSCOUNTER=1%
+  \def\CITATIONSTOTAL{#1}%
+  \DOCITATIONS}%
+
+%% Text citations
+\def\DOTEXTCITATIONS#1#2#3#4{%
+  \advance\CITATIONSCOUNTER by 1\relax
+  \TEXTCITE{#1}{#2}{#3}{#4}%
+  \ifnum\CITATIONSCOUNTER>\CITATIONSTOTAL\relax
+    \expandafter\GOBBLE
+  \fi\DOTEXTCITATIONS}%
+\def\TEXTCITE#1#2#3#4{%
+  \TYPE{BEGIN textCite}%
+  \TYPE{- suppressAuthor: \if#1+false\else true\fi}%
+  \TYPE{- prenote:        #2}%
+  \TYPE{- postnote:       #3}%
+  \TYPE{- name:           #4}%
+  \TYPE{END textCite}}%
+\def\TEXTCITATIONS#1{%
+  \CITATIONSCOUNTER=1%
+  \def\CITATIONSTOTAL{#1}%
+  \DOTEXTCITATIONS}%

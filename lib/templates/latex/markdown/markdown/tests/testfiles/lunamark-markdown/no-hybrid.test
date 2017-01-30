@@ -1,0 +1,65 @@
+<<<
+This test ensures that the Lua `hybrid` option is disabled by default. The
+following special characters should be processed by lunamark.
+
+ * \char`{
+ * \char`}
+ * \char`$
+ * \char`\%
+ * \char`&
+ * \char`_
+ * \char`#
+ * \char`^
+ * \char`\
+ * \char`~
+ * \char`|
+>>>
+codeSpan: hybrid
+interblockSeparator
+ulBeginTight
+ulItem
+backslash
+leftBrace
+ulItemEnd
+ulItem
+backslash
+rightBrace
+ulItemEnd
+ulItem
+backslash
+dollarSign
+ulItemEnd
+ulItem
+backslash
+backslash
+percentSign
+ulItemEnd
+ulItem
+backslash
+ampersand
+ulItemEnd
+ulItem
+backslash
+underscore
+ulItemEnd
+ulItem
+backslash
+hash
+ulItemEnd
+ulItem
+backslash
+circumflex
+ulItemEnd
+ulItem
+backslash
+backslash
+ulItemEnd
+ulItem
+backslash
+tilde
+ulItemEnd
+ulItem
+backslash
+pipe
+ulItemEnd
+ulEndTight

@@ -1,0 +1,10 @@
+<<<
+[hI]
+
+[Hi]: /foo
+>>>
+BEGIN link
+- label: hI
+- URI: /foo
+- title: 
+END link

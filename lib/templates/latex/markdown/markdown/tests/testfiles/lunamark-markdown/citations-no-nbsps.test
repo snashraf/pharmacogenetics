@@ -1,0 +1,85 @@
+\def\markdownOptionCitations{true}
+\def\markdownOptionCitationNbsps{false}
+<<<
+This test ensures that the Lua `citations` and `citationNbsps` options correctly
+propagate through the plain TeX interface.
+
+Here is a simple parenthetical citation [@doe99] and here
+is a string of several [see @doe99, pp. 33-35; also
+@smit:.#$%&-+?<>~/h04, chap. 1].
+
+A parenthetical citation can have a [prenote @doe99] and
+a [@smith04 postnote]. The name of the author can be
+suppressed by inserting a dash before the name of an
+author as follows [-@smith04].
+
+Here is a simple text citation @doe99 and here is a
+string of several @doe99 [pp. 33-35; also
+@smit:.#$%&-+?<>~/h04, chap. 1]. Here is one with the
+name of the author suppressed -@doe99.
+>>>
+codeSpan: citations
+codeSpan: citationNbsps
+interblockSeparator
+BEGIN cite
+- suppressAuthor: false
+- prenote: 
+- postnote: 
+- name: doe99
+END cite
+BEGIN cite
+- suppressAuthor: false
+- prenote: see
+- postnote: pp. 33-35
+- name: doe99
+END cite
+BEGIN cite
+- suppressAuthor: false
+- prenote: also
+- postnote: chap. 1
+- name: smit:.(hash)(dollarSign)(percentSign)(ampersand)-+?<>(tilde)/h04
+END cite
+interblockSeparator
+BEGIN cite
+- suppressAuthor: false
+- prenote: prenote
+- postnote: 
+- name: doe99
+END cite
+BEGIN cite
+- suppressAuthor: false
+- prenote: 
+- postnote:  postnote
+- name: smith04
+END cite
+BEGIN cite
+- suppressAuthor: true
+- prenote: 
+- postnote: 
+- name: smith04
+END cite
+interblockSeparator
+BEGIN textCite
+- suppressAuthor: false
+- prenote: 
+- postnote: 
+- name: doe99
+END textCite
+BEGIN textCite
+- suppressAuthor: false
+- prenote: 
+- postnote: pp. 33-35
+- name: doe99
+END textCite
+BEGIN textCite
+- suppressAuthor: false
+- prenote: also
+- postnote: chap. 1
+- name: smit:.(hash)(dollarSign)(percentSign)(ampersand)-+?<>(tilde)/h04
+END textCite
+BEGIN textCite
+- suppressAuthor: true
+- prenote: 
+- postnote: 
+- name: doe99.
+END textCite

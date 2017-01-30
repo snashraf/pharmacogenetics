@@ -1,0 +1,22 @@
+<<<
+This test ensures that the Lua `fencedCode` option is disabled by default. The
+following fenced code block should resolve to a code spans.
+
+``` foo
+bar
+```
+
+~~~ foo
+bar
+~~~
+>>>
+codeSpan: fencedCode
+interblockSeparator
+codeSpan: foo bar 
+interblockSeparator
+tilde
+tilde
+tilde
+tilde
+tilde
+tilde

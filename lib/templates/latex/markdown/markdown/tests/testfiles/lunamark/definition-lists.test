@@ -1,0 +1,200 @@
+\def\markdownOptionDefinitionLists{true}
+<<<
+Tight using spaces:
+
+apple
+:   red fruit
+orange
+:   orange fruit
+banana
+:   yellow fruit
+
+Tight using tabs:
+
+apple
+:	red fruit
+orange
+:	orange fruit
+banana
+:	yellow fruit
+
+Loose:
+
+apple
+:   red fruit
+
+orange
+:   orange fruit
+
+banana
+:   yellow fruit
+
+Multiple blocks with italics:
+
+*apple*
+:   red fruit
+
+    contains seeds,
+    crisp, pleasant to taste
+
+*orange*
+:   orange fruit
+
+        { orange code block }
+
+    > orange block quote
+
+Multiple definitions, tight:
+
+apple
+:   red fruit
+:   computer
+orange
+:   orange fruit
+:   bank
+
+Multiple definitions, loose:
+
+apple
+:   red fruit
+
+:   computer
+
+orange
+:   orange fruit
+
+:   bank
+
+Blank line after term, indented marker, alternate markers:
+
+apple
+
+  ~ red fruit
+
+  ~ computer
+
+orange
+
+  ~ orange fruit
+
+    1. sublist
+    2. sublist
+>>>
+interblockSeparator
+dlBeginTight
+dlItem: apple
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: orange
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: banana
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlEndTight
+interblockSeparator
+interblockSeparator
+dlBeginTight
+dlItem: apple
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: orange
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: banana
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlEndTight
+interblockSeparator
+interblockSeparator
+dlBegin
+dlItem: apple
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: orange
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: banana
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlEnd
+interblockSeparator
+interblockSeparator
+dlBegin
+dlItem: (emphasis: apple)
+dlDefinitionBegin
+interblockSeparator
+dlDefinitionEnd
+dlItemEnd
+dlItem: (emphasis: orange)
+dlDefinitionBegin
+interblockSeparator
+inputVerbatim: ./_markdown_test/f9f08689e38f4705165b9018b14b4a09.verbatim
+interblockSeparator
+blockQuoteBegin
+blockQuoteEnd
+dlDefinitionEnd
+dlItemEnd
+dlEnd
+interblockSeparator
+interblockSeparator
+dlBeginTight
+dlItem: apple
+dlDefinitionBegin
+dlDefinitionEnd
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: orange
+dlDefinitionBegin
+dlDefinitionEnd
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlEndTight
+interblockSeparator
+interblockSeparator
+dlBegin
+dlItem: apple
+dlDefinitionBegin
+dlDefinitionEnd
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: orange
+dlDefinitionBegin
+dlDefinitionEnd
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlEnd
+interblockSeparator
+interblockSeparator
+dlBegin
+dlItem: apple
+dlDefinitionBegin
+dlDefinitionEnd
+dlDefinitionBegin
+dlDefinitionEnd
+dlItemEnd
+dlItem: orange
+dlDefinitionBegin
+interblockSeparator
+olBeginTight
+olItemWithNumber: 1
+olItemEnd
+olItemWithNumber: 2
+olItemEnd
+olEndTight
+dlDefinitionEnd
+dlItemEnd
+dlEnd

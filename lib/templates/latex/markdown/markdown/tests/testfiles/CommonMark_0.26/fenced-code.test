@@ -1,0 +1,315 @@
+\def\markdownOptionFencedCode{true}
+<<<
+Here is a simple example with backticks:
+
+```
+<
+ >
+```
+
+With tildes:
+
+~~~
+<
+ >
+~~~
+
+The closing code fence must use the same character as the opening fence:
+
+```
+aaa
+~~~
+```
+
+~~~
+aaa
+```
+~~~
+
+The closing code fence must be at least as long as the opening fence:
+
+````
+aaa
+```
+``````
+
+~~~~
+aaa
+~~~
+~~~~
+
+Unclosed code blocks are closed by the end of the document (or the enclosing block quote or list item):
+
+> ```
+> aaa
+
+bbb
+
+A code block can have all empty lines as its content
+
+```
+
+
+```
+
+A code block can be empty:
+```
+```
+
+Fences can be indented. If the opening fence is indented, content lines will have equivalent opening indentation removed, if present:
+ ```
+ aaa
+aaa
+```
+
+  ```
+aaa
+  aaa
+aaa
+  ```
+
+   ```
+   aaa
+    aaa
+  aaa
+   ```
+
+Four spaces indentation produces an indented code block:
+
+    ```
+    aaa
+    ```
+
+Closing fences may be indented by 0-3 spaces, and their indentation need not match that of the opening fence:
+
+```
+aaa
+  ```
+
+   ```
+aaa
+  ```
+
+This is not a closing fence, because it is indented 4 spaces:
+
+```
+aaa
+    ```
+```
+
+Code fences (opening and closing) cannot contain internal spaces:
+
+``` ```
+aaa
+
+```
+aaa
+``` ```
+```
+
+~~~~~~
+aaa
+~~~ ~~
+~~~~~~
+
+foo
+```
+bar
+```
+baz
+
+Other blocks can also occur before and after fenced code blocks without an intervening blank line:
+
+foo
+---
+~~~
+bar
+~~~
+# baz
+
+An info string can be provided after the opening code fence. Opening and closing spaces will be stripped, and the first word, prefixed with language-, is used as the value for the class attribute of the code element within the enclosing pre element.
+
+```ruby
+def foo(x)
+  return 3
+end
+```
+
+~~~~    ruby startline=3 $%@#$
+def foo(x)
+  return 3
+end
+~~~~~~~
+
+````;
+````
+
+Info strings for backtick code blocks cannot contain backticks:
+
+``` aa ```
+foo
+
+Closing code fences cannot have info strings:
+
+```
+``` aaa
+```
+
+Unclosed code blocks are closed by the end of the document (or the enclosing block quote or list item):
+
+`````
+
+```
+aaa
+>>>
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/40aeb3c06faa194425865c43b0818cf3.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/40aeb3c06faa194425865c43b0818cf3.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/162c3a1e89dc98bb7c0e223462144172.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/a109a04c348f12d1fc1e55dc6cd3153d.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/a109a04c348f12d1fc1e55dc6cd3153d.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/162c3a1e89dc98bb7c0e223462144172.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+blockQuoteBegin
+BEGIN fencedCode
+- src: ./_markdown_test/5c9597f3c8245907ea71a89d9d39d08e.verbatim
+- infostring: 
+END fencedCode
+blockQuoteEnd
+interblockSeparator
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/e1c06d85ae7b8b032bef47e42e4c08f9.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/d41d8cd98f00b204e9800998ecf8427e.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/4b44563cc9886576b6589dd730cbc397.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/f084b3953e4a48b5425a11074ae99e3c.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/8a70ce8c35179c24412d9271f69da1fd.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/04338967b57abaf5489d4de2ca3d5d75.verbatim
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/5c9597f3c8245907ea71a89d9d39d08e.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/5c9597f3c8245907ea71a89d9d39d08e.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/5fcf96d052f67d3d8a648cb90cc39193.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+codeSpan: 
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/baeea0ffee491579d17a52cb85675edf.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/42935760431e4eb4ddd8a8bcc5e54a23.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/c157a79031e1c40f85931829bc5fc552.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+interblockSeparator
+headingTwo: foo
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/c157a79031e1c40f85931829bc5fc552.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+headingOne: baz
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/22bc2a65d877cb1e2a14deece6005742.verbatim
+- infostring: ruby
+END fencedCode
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/22bc2a65d877cb1e2a14deece6005742.verbatim
+- infostring: ruby startline=3 (dollarSign)(percentSign)@(hash)(dollarSign)
+END fencedCode
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/d41d8cd98f00b204e9800998ecf8427e.verbatim
+- infostring: ;
+END fencedCode
+interblockSeparator
+interblockSeparator
+codeSpan: aa
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/e1ff8c7886d18f6b5499b096584e13bf.verbatim
+- infostring: 
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/ab4c9bee663124ac417409b22e2af252.verbatim
+- infostring: 
+END fencedCode

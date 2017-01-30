@@ -1,0 +1,31 @@
+<<<
+This test ensures that the Lua `citations` option is disabled by default.
+
+Here is a simple parenthetical citation [@doe99] and here
+is a string of several [see @doe99, pp. 33-35; also
+@smit:.#$%&-+?<>~/h04, chap. 1].
+
+A parenthetical citation can have a [prenote @doe99] and
+a [@smith04 postnote]. The name of the author can be
+suppressed by inserting a dash before the name of an
+author as follows [-@smith04].
+
+Here is a simple text citation @doe99 and here is a
+string of several @doe99 [pp. 33-35; also
+@smit:.#$%&-+?<>~/h04, chap. 1]. Here is one with the
+name of the author suppressed -@doe99.
+>>>
+codeSpan: citations
+interblockSeparator
+hash
+dollarSign
+percentSign
+ampersand
+tilde
+interblockSeparator
+interblockSeparator
+hash
+dollarSign
+percentSign
+ampersand
+tilde

@@ -1,0 +1,57 @@
+\def\markdownOptionFencedCode{true}
+\def\markdownOptionBlankBeforeCodeFence{true}
+<<<
+This test ensures that the Lua `fencedCode` and `blankBeforeCodeFence` options
+correctly propagate through the plain TeX interface.
+
+The following fenced code block should resolve to a code span.
+
+foo
+``` foo
+bar
+```
+
+foo
+~~~ foo
+bar
+~~~
+
+The following fenced code blocks should be recognized as such.
+
+foo
+
+``` foo
+bar
+```
+
+foo
+
+~~~ foo
+bar
+~~~
+>>>
+codeSpan: fencedCode
+codeSpan: blankBeforeCodeFence
+interblockSeparator
+interblockSeparator
+codeSpan: foo bar 
+interblockSeparator
+tilde
+tilde
+tilde
+tilde
+tilde
+tilde
+interblockSeparator
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/c157a79031e1c40f85931829bc5fc552.verbatim
+- infostring: foo
+END fencedCode
+interblockSeparator
+interblockSeparator
+BEGIN fencedCode
+- src: ./_markdown_test/c157a79031e1c40f85931829bc5fc552.verbatim
+- infostring: foo
+END fencedCode

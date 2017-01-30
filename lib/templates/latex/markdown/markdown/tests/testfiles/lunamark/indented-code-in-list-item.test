@@ -1,0 +1,16 @@
+<<<
+1.  Just a small test
+
+        This is some code
+
+            and some indented code
+
+     and this is the end
+>>>
+olBegin
+olItemWithNumber: 1
+interblockSeparator
+inputVerbatim: ./_markdown_test/36d7a0503b844c792d46549a49b6e7b8.verbatim
+interblockSeparator
+olItemEnd
+olEnd

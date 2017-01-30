@@ -1,0 +1,176 @@
+<<<
+Foo [bar] [1].
+
+Foo [bar][1].
+
+Foo [bar]
+[1].
+
+[1]: /url/  "Title"
+
+
+With [embedded [brackets]] [b].
+
+
+Indented [once][].
+
+Indented [twice][].
+
+Indented [thrice][].
+
+Indented [four][] times.
+
+ [once]: /url
+
+  [twice]: /url
+
+   [thrice]: /url
+
+    [four]: /url
+
+
+[b]: /url/
+
+* * *
+
+[this] [this] should work
+
+So should [this][this].
+
+And [this] [].
+
+And [this][].
+
+And [this].
+
+But not [that] [].
+
+Nor [that][].
+
+Nor [that].
+
+[Something in brackets like [this][] should work]
+
+[Same with [this].]
+
+In this case, [this](/somethingelse/) points to something else.
+
+Backslashing should suppress \[this] and [this\].
+
+[this]: foo
+
+
+* * *
+
+Here's one where the [link
+breaks] across lines.
+
+[link breaks]: /url/
+
+>>>
+BEGIN link
+- label: bar
+- URI: /url/
+- title: Title
+END link
+interblockSeparator
+BEGIN link
+- label: bar
+- URI: /url/
+- title: Title
+END link
+interblockSeparator
+BEGIN link
+- label: bar
+- URI: /url/
+- title: Title
+END link
+interblockSeparator
+BEGIN link
+- label: embedded [brackets]
+- URI: /url/
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: once
+- URI: /url
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: twice
+- URI: /url
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: thrice
+- URI: /url
+- title: 
+END link
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/b0cba64633d2a9eac28ca9e3fa500018.verbatim
+interblockSeparator
+horizontalRule
+interblockSeparator
+BEGIN link
+- label: this
+- URI: foo
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: this
+- URI: foo
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: this
+- URI: foo
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: this
+- URI: foo
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: this
+- URI: foo
+- title: 
+END link
+interblockSeparator
+interblockSeparator
+interblockSeparator
+interblockSeparator
+BEGIN link
+- label: this
+- URI: foo
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: this
+- URI: foo
+- title: 
+END link
+interblockSeparator
+BEGIN link
+- label: this
+- URI: /somethingelse/
+- title: 
+END link
+interblockSeparator
+interblockSeparator
+horizontalRule
+interblockSeparator
+BEGIN link
+- label: link breaks
+- URI: /url/
+- title: 
+END link

@@ -1,0 +1,39 @@
+<<<
++	this is a list item
+	indented with tabs
+
++   this is a list item
+    indented with spaces
+
+Code:
+
+	this code block is indented by one tab
+
+And:
+
+		this code block is indented by two tabs
+
+And:
+
+	+	this is an example list item
+		indented with tabs
+	
+	+   this is an example list item
+	    indented with spaces
+
+>>>
+ulBegin
+ulItem
+ulItemEnd
+ulItem
+ulItemEnd
+ulEnd
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/07112549a31e78f7efb64c16f22570db.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/385fbae90889669b105262d12987e9da.verbatim
+interblockSeparator
+interblockSeparator
+inputVerbatim: ./_markdown_test/ce062b920c62d9e77aae68da221de295.verbatim
