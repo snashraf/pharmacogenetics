@@ -61,7 +61,7 @@ class ReportMaker(Database):
 
 		# List of drugs (sorted alphabetically, maybe?)
 
-	def MakeJson(self):
+	def MakeJson(self, outfile):
 
 		colorchart = {
 								"1A":"red",
@@ -108,11 +108,11 @@ class ReportMaker(Database):
 
 				for (genotype, metacat, strength, term, markdown) in self.sql.fetchall():
 					js_guide = js_gene['patGuide'] = {}
-					js_guide['haplotype'] = genotype
-					js_guide['metaType'] = metacat
-					js_guide['strength'] = strength
+					js_guide['hapNEW'] = genotype
+					js_guide['hapOLD'] = metacat
 					tex = DeconstructGuideline(markdown)
 					print tex
+					js_guide['tex'] = tex
 
 		# Print Annotations for this gene-drug combination
 
@@ -134,7 +134,7 @@ class ReportMaker(Database):
 		sn = raw_input("Please enter a sample name: ")
 
 		reportText = self.template.render(sampleName=sn, jsonlist=self.jsons)
-		with open(self.path + "/templates/latex/{}.tex".format(sn), "wb") as f:
+		with open(outfile) + sn + ".tex"), "wb") as f:
 			f.write(reportText.encode('utf-8'))
 
 # ----------------------------------------------------------------------------

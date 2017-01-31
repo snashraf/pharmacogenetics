@@ -29,6 +29,9 @@ def main():
 	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
 			"help":"Patient compressed vcf [g.vcf.gz] file to parse"},
 
+	{"short":"o" , "long":"outfile", "action":"store","dest":"outpath", "default":".",
+			"help":"Location to send report TEX file to."},
+
 	{"short":"r" , "long":"reset", "action":"append","dest":"reset", "default":[],
 			"help":"Database table to reset (mostly for testing purposes)"},
 
@@ -57,7 +60,7 @@ def main():
 	if options.gvcf:
 		CreatePatient(options.dbname, options.gvcf, options.pattasks)
 	if len(options.interpret) > 0:
-		InterpretResults(options.dbname, options.interpret)
+		InterpretResults(options.dbname, options.interpret, options.outfile)
 
 def CreateDB(dbname, tables, reset):
 
@@ -199,7 +202,7 @@ def InterpretResults(dbname, opts):
 
 	("annotate", i.Annotate),
 
-	("report", [r.MakeJson, r.MakeReport])
+	("report", [r.MakeJson, r.MakeReport(outfile)])
 
 	])
 
