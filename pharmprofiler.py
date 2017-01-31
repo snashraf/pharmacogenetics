@@ -29,7 +29,7 @@ def main():
 	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
 			"help":"Patient compressed vcf [g.vcf.gz] file to parse"},
 
-	{"short":"o" , "long":"outfile", "action":"store","dest":"outpath", "default":".",
+	{"short":"o" , "long":"outfile", "action":"store","dest":"outfile", "default":".",
 			"help":"Location to send report TEX file to."},
 
 	{"short":"r" , "long":"reset", "action":"append","dest":"reset", "default":[],
@@ -187,10 +187,10 @@ def CreatePatient(dbname, gvcf, tables):
 
 	p.conn.commit()
 
-def InterpretResults(dbname, opts):
+def InterpretResults(dbname, opts, outfile):
 
 	i = Interpreter(dbname)
-	r = ReportMaker(dbname)
+	r = ReportMaker(dbname, outfile)
 
 # ===========================
 
@@ -202,7 +202,7 @@ def InterpretResults(dbname, opts):
 
 	("annotate", i.Annotate),
 
-	("report", [r.MakeJson, r.MakeReport(outfile)])
+	("report", [r.MakeJson, r.MakeReport])
 
 	])
 
@@ -223,10 +223,10 @@ def InterpretResults(dbname, opts):
 					item()
 
 		except:
-
 			raise
-
 			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
+			return
+
 
 # --------------------------------------------------------------------------------
 

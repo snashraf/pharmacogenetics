@@ -24,7 +24,7 @@
 \item[] \textbf{ {{gene.patGuide.hapNEW}} } | \textbf{ {{gene.patGuide.hapOLD}} }
 \item[] {{gene.patGuide.tex}}
 {%- endif %}
-{% if gene.patAnnotations | select("1" in "strength" or "2" in strength) | length > 0 -%}
+{% if gene.patAnnotations | length > 0 -%}
 \item[] ---------------------------------------------------- Clinical Annotations -----------------------------------------------------\newline
 {% for ann in gene.patAnnotations -%}
 \item \textbf{\colorbox{ {%- if "1" in ann.strength or "2" in ann.strength %}{{ann.color}} } {Class {{ann.strength}}}} \textbf{ {{ann.varName}} } \textit{ {{ann.patAllele}} }
@@ -55,7 +55,7 @@
 \item[]
 
 {% for gene in json.relatedGenes -%}
-{% if gene.patAnnotations | select("1" in "strength" or "2" in strength) | length > 0 -%}
+{% if gene.patAnnotations | length > 0 -%}
 \begin{rSubsection}{ {{gene.geneName}} }{ {{gene.geneDesc}} }{}{}
 \item[]
 {% for ann in gene.patAnnotations -%}

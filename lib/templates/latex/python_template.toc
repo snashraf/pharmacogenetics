@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {0.1}Patient haplotypes}{4}{section.0.1}
+\contentsline {section}{\numberline {0.2}Drug-gene connections}{5}{section.0.2}
+\contentsline {section}{\numberline {0.3}Haplotype Guidelines}{6}{section.0.3}
+\contentsline {subsection}{\numberline {0.3.1}Acenocoumarol}{6}{subsection.0.3.1}
+\contentsline {subsubsection}{VKORC1}{6}{section*.2}
+\contentsline {section}{\numberline {0.4}Clinical Annotations}{7}{section.0.4}
+\contentsline {subsection}{\numberline {0.4.1}Acenocoumarol}{7}{subsection.0.4.1}
+\contentsline {subsubsection}{VKORC1}{7}{section*.3}
+\contentsline {subsubsection}{PRSS53}{7}{section*.4}
+\contentsline {section}{\numberline {0.5}Appendix 1: Haplotype trees}{8}{section.0.5}
+\contentsline {section}{\numberline {0.6}Appendix 2: Top 3 haplotypes}{8}{section.0.6}
+\contentsline {section}{\numberline {0.7}Appendix 3: Low level annotations}{8}{section.0.7}

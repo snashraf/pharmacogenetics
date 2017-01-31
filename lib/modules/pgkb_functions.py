@@ -217,12 +217,12 @@ def DeconstructGuideline(markdown):
 		else:
 			nontable.append(line)
 	if len(table) == 0:
-		for line in enumerate(table):
+			tex += unicode(line + "\\\\")
+	else:
+		for i, line in enumerate(table):
+			print line
 			spl_line = [item for item in line.split("|") if line != ""]
 			andjoin = "&".join(spl_line)
 			tex += unicode(andjoin + "\\\\")
-	else:
-		for line in nontable:
-			tex += unicode(line + "\\\\")
 
 	return tex

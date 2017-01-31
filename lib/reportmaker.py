@@ -7,6 +7,7 @@ import os
 import pprint as pp
 from db import Database
 from patient import Patient
+from modules.pgkb_functions import DeconstructGuideline
 
 # Needed for document:
 
@@ -23,24 +24,37 @@ JSON_TEMPLATE = '''
 													]
 	]
 }
+
+# --------------------------------------------------------------------------------------
+
+{samplename, haplotable:[ {symbol, new1:{1, 2, 3}, new2{1, 2, 3}, old1{1, 2, 3}, old2{1, 2, 3}, tree}, ...],
+						annotable:[ (drug, gene, guidelinelink, Ann1-2, Ann3-4), ...],
+						drugs:[{drugname, genes:[{symbol, hapNEW, hapOLD, guideline, annotations:[:{1A,
+						 	1B:{patAllele, rsid, text},
+							2A, 2B, 3, 4}, ...]
+						]}
+							}
+						} , ...]
+
+}
 '''
 # ============================================================
 
 class ReportMaker(Database):
 
-	def __init__(self, dbname):
+	def __init__(self, dbname, outfile):
 		print "Initiating Report..."
 		self.path = os.path.dirname(__file__)
 		dbfolder = os.path.join(self.path, 'db')
 		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
-
+		self.outfile = outfile
 		Database.__init__(self, dbpath)
 
 	# ==========================================================
 
 		# AnnotationView
 
-		self.sql.executescript('''DROP VIEW AnnOverview;
+		self.sql.executescript('''DROP VIEW IF EXISTS AnnOverview;
 						CREATE VIEW AnnOverview AS
 				        SELECT DISTINCT v.GeneID, g.GeneName, a.DrugID, g.GeneSymbol, v.RSID, a.LoE, p.PatAllele, p.Phenotype
 		                FROM Annotations a
@@ -53,15 +67,24 @@ class ReportMaker(Database):
 
 		# Hap/GuidelineView
 
-		self.sql.executescript('''DROP VIEW HapOverview;
+		self.sql.executescript('''DROP VIEW IF EXISTS HapOverview;
 						CREATE VIEW HapOverview AS
-						SELECT DISTINCT * FROM PatGuidelines p
-						JOIN Guidelines g
-						ON g.GuID = p.GuID;''')
+						SELECT DISTINCT
+						GuID,
+						g.GeneID,
+						DrugID,
+						Allele1_Phyl as new1,
+						Allele2_Phyl as new2,
+						Allele1_Set as old1,
+						Allele2_Set as old2,
+						Markdown
+						FROM Guidelines g
+						JOIN PatGenotypes p
+						on p.GeneID = g.GeneID;''')
 
 		# List of drugs (sorted alphabetically, maybe?)
 
-	def MakeJson(self, outfile):
+	def MakeJson(self):
 
 		colorchart = {
 								"1A":"red",
@@ -103,13 +126,13 @@ class ReportMaker(Database):
 				print name
 
 				self.sql.execute('''
-				        SELECT DISTINCT  Genotype, MetaCat, Strength, Term, Markdown FROM HapOverview
+				        SELECT DISTINCT new1, new2, old1, old2, Markdown FROM HapOverview
 						WHERE DrugID = ? AND GeneID = ?''', (did, gid))
 
-				for (genotype, metacat, strength, term, markdown) in self.sql.fetchall():
+				for (n1, n2, o1, o2, markdown) in self.sql.fetchall():
 					js_guide = js_gene['patGuide'] = {}
-					js_guide['hapNEW'] = genotype
-					js_guide['hapOLD'] = metacat
+					js_guide['hapNEW'] = "{}/{}".format(n1, n2)
+					js_guide['hapOLD'] =  "{}/{}".format(o1, o2)
 					tex = DeconstructGuideline(markdown)
 					print tex
 					js_guide['tex'] = tex
@@ -134,7 +157,7 @@ class ReportMaker(Database):
 		sn = raw_input("Please enter a sample name: ")
 
 		reportText = self.template.render(sampleName=sn, jsonlist=self.jsons)
-		with open(outfile) + sn + ".tex"), "wb") as f:
+		with open(self.outfile + sn + ".tex", "wb") as f:
 			f.write(reportText.encode('utf-8'))
 
 # ----------------------------------------------------------------------------
