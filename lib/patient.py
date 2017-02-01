@@ -244,7 +244,7 @@ class Patient(Database):
 							where HapID = ?
 							''', (hapid,))
 
-					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall()}
+					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall() }
 
 					self.sql.execute("INSERT INTO PatHaplotypes_OLD VALUES(?,?,?,?)", (refid,0, 0, 0))
 
@@ -277,8 +277,6 @@ class Patient(Database):
 						match_score1 = float(len(shared_al1.keys()))/ float(len(uniques_dct.keys()))
 						match_score2 = float(len(shared_al2.keys())) / float(len(uniques_dct.keys()))
 
-						print hapid
-						
 						self.sql.execute("INSERT INTO PatHaplotypes_OLD VALUES(?,?,?,?)", (hapid, match_score1, match_score2, hapLen))
 						self.conn.commit()
 
@@ -299,8 +297,6 @@ class Patient(Database):
 					f.write(">{}\n{}\n".format(refid, refseq))
 
 					for var, values in varValues.items():
-
-						print var
 
 						seq = seqMaker(rsidorder, varValues[refid], values)
 
@@ -323,7 +319,7 @@ class Patient(Database):
 
 			self.sql.execute("SELECT DISTINCT HapID FROM Haplotypes WHERE hgvs LIKE '%[=]%' AND GeneID = ?", (gid,))
 
-			refids = [hapid for (hapid) in self.sql.fetchall()]
+			refids = [hapid for (hapid,) in self.sql.fetchall()]
 
 			fn = self.path + output + gid + "_aln.fasta"
 
@@ -331,7 +327,9 @@ class Patient(Database):
 
 			of = fn.replace("alignments/", "alignments/aligned/")
 
-			tn = of.strip(".fasta")+"_tree.dnd"
+			tn1 = of.strip(".fasta")+".dnd"
+
+			tn2 = of.strip(".fasta")+"_rooted.dnd"
 
 			try:
 
@@ -344,9 +342,9 @@ class Patient(Database):
 
 				continue
 
-			s.check_call("{}/plugins/FastTree -quiet -nopr -gtr -nt {} > {}".format(self.path, of, tn), shell=True)
+			s.check_call("{}/plugins/FastTree -quiet -nopr -gtr -nt {} > {}".format(self.path, of, tn1), shell=True)
 
-			tree = Phylo.read(tn, "newick")
+			tree = Phylo.read(tn1, "newick")
 
 			names = []
 
@@ -359,6 +357,10 @@ class Patient(Database):
 				except:
 
 					continue
+
+			# add tree to db
+
+			Phylo.write(tree,tn2,"newick")
 
 			for clade in tree.find_clades():
 
@@ -382,7 +384,7 @@ class Patient(Database):
 
 						distances["al%i" %i] = dist
 
-					sql = self.insertSQL("pathaplotypes").render(json = distances)
+					sql = self.insertSQL("pathaplotypes").render(json = distances, gid=gid)
 
 					print sql
 
