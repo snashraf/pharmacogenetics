@@ -45,6 +45,7 @@ class Interpreter(Database):
 
 		for (gid, genesymbol) in self.sql.fetchall():
 
+			print genesymbol
 			self.sql.executescript('''
 			DROP VIEW IF EXISTS CurView;
 			CREATE VIEW CurView AS
@@ -95,7 +96,7 @@ class Interpreter(Database):
 
 				# shuffle for ref at the top
 				for (starname, score) in self.sql.fetchall():
-					if float(score) == refhap["new{}".format(i)] and starname != refhap['starname'] and refhap['starname'] not in allelesNEW[i]:
+					if float(score) == refhap["new{}".format(i)] and starname != refhap['starname'] and starname not in allelesNEW[i]:
 						allelesNEW[i].append(refhap['starname'])
 						allelesNEW[i].append(starname)
 					else:
@@ -109,21 +110,34 @@ class Interpreter(Database):
 				'''.format(i, i), (gid,))
 
 				for (starname, score, mlen) in self.sql.fetchall():
-					if float(score) == 0.0 and starname != refhap['starname'] and refhap['starname'] not in allelesOLD[i]:
+					if float(score) == 0.0 and starname != refhap['starname'] and starname not in allelesOLD[i]:
 						allelesOLD[i].append(refhap['starname'])
 						allelesOLD[i].append(starname)
 					else:
 						allelesOLD[i].append(starname)
-			try:
+
+			if len(allelesNEW[1]) == 0:
+				continue
+			elif len(allelesNEW[1]) >= 3:
 				item = (gid, allelesNEW[1][0],allelesNEW[1][1],allelesNEW[1][2],
 				allelesNEW[2][0],allelesNEW[2][1],allelesNEW[2][2],
 				allelesOLD[1][0], allelesOLD[1][1], allelesOLD[1][2],
 				allelesOLD[2][0], allelesOLD[2][1], allelesOLD[2][2])
-				print item
-				self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", item)
-				self.conn.commit()
-			except:
+			elif len(allelesNEW[1]) == 2:
+				item = (gid, allelesNEW[1][0],allelesNEW[1][1], "n/a",
+				allelesNEW[2][0],allelesNEW[2][1],"n/a",
+				allelesOLD[1][0], allelesOLD[1][1], "n/a",
+				allelesOLD[2][0], allelesOLD[2][1], "n/a")
+			elif len(allelesNEW[1]) == 1:
+				item = (gid, allelesNEW[1][0],"n/a", "n/a",
+				allelesNEW[2][0], "n/a","n/a",
+				allelesOLD[1][0], "n/a", "n/a",
+				allelesOLD[2][0], "n/a", "n/a")
+			else:
 				continue
+			print item
+			self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", item)
+			self.conn.commit()
 
 	def FindGuidelines(self):
 

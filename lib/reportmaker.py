@@ -41,20 +41,20 @@ class ReportMaker(Database):
 
 		# AnnotationView
 
-		#self.template = self.getTemplate("latex/python_template.tex")
+		self.template = self.getTemplate("latex/python_template.tex")
 
 	def MakeJson(self):
 		self.sn = raw_input("Please enter a sample name: ")
 
 		# gather data for tables
-		JSON = {"sampleName":self.sn,
+		JSON = {"samplename":self.sn,
 					  "haplotable":[],
 					  "annotable":[],
 					  "pairs":[]
 					  }
 
 		self.sql.execute('''
-					select g.genesymbol, g.geneid,
+					select distinct g.genesymbol, g.geneid,
 					new1_1, new1_2, new1_3,
 					new2_1, new2_2, new2_3,
 					old1_1, old1_2, old1_3,
@@ -63,6 +63,7 @@ class ReportMaker(Database):
 					patgenotypes p
 					join genes g
 					on g.GeneID = p.GeneID
+					order by g.genesymbol
 								''')
 
 		for (symbol, gid, n11, n12, n13, n21, n22, n23, o11, o12, o13, o21, o22, o23) in self.sql.fetchall():
@@ -79,10 +80,12 @@ class ReportMaker(Database):
 					for line in content:
 						for hapid, starname in hapconvert.items():
 							starname = starname.replace(",", "")
+							if "(" in starname:
+								starname = starname.split(" (")[0]
 							line = line.replace(hapid, starname).replace("a1", "{}_hap1".format(self.sn)).replace("a2", "{}_hap2".format(self.sn))
 						tree += line.replace(" ", "").rstrip("\n")
 					entry['tree'] = tree
-					JSON['haplotable'].append(entry)
+				JSON['haplotable'].append(entry)
 
 				# ------------------------------
 
@@ -142,7 +145,7 @@ class ReportMaker(Database):
 
 			# entry for summary table 2
 
-			annoEntry = {"drug":drugname,
+			annoEntry = {"drugname":drugname,
 								  "gene":symbol,
 								  "guid":guid,
 								  "annCount":
@@ -153,7 +156,7 @@ class ReportMaker(Database):
 			JSON['annotable'].append(annoEntry)
 
 			# ------ get more data on guidelines and annotations -----
-			geneEntry = {"drug":drugname,
+			geneEntry = {"drugname":drugname,
 			"genesymbol":symbol,
 			"genename":genename,
 			"guideline":
@@ -194,12 +197,11 @@ class ReportMaker(Database):
 			JSON['pairs'].append(geneEntry)
 
 		pp.pprint(JSON['pairs'])
-
 		self.JSON = JSON
 # -----------------------------------------------------------------------------------------
 
 	def MakeReport(self):
-		reportText = self.template.render(sampleName=self.sn, jsonlist=self.JSON)
+		reportText = self.template.render(sampleName=self.sn, json=self.JSON)
 		with open(self.outfile + self.sn + ".tex", "wb") as f:
 			f.write(reportText.encode('utf-8'))
 

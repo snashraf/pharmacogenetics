@@ -392,12 +392,6 @@ class Patient(Database):
 
 					self.conn.commit()
 
-		else:
-
-			# standard mode
-
-			pass
-
 		self.conn.commit()
 
 
