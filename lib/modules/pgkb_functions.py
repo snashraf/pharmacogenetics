@@ -220,8 +220,7 @@ def DeconstructGuideline(markdown):
 			tex += unicode(line + "\\\\")
 	else:
 		for i, line in enumerate(table):
-			print line
-			spl_line = [item for item in line.split("|") if line != ""]
+			spl_line = [item for item in line.split("|") if item != " "]
 			andjoin = "&".join(spl_line)
 			tex += unicode(andjoin + "\\\\")
 

@@ -1,0 +1,18 @@
+cyp2e1 J02843.1 (genbank)
+10   +  135338036 135353203  15168
+cyp2d6 M33388.1 (genbank)
+22   -   42518970  42528417
+cyp2a6
+NG_008377.1
+cyp2b6
+NG_000008.7
+cyp2c8
+NC_000010.9
+cyp3a4 AF280107.1 (genbank)
+ 7   -   99428537  99443726 (partial!)
+nat2
+ 8   +   18256793  18258682
+ugt1a1 AF297093
+
+ugt1a3 - a4 -a5 -a6 -a7 -a9
+FOR THE UGTs - new website: https://www.pharmacogenomics.pha.ulaval.ca/ugt-alleles-nomenclature/

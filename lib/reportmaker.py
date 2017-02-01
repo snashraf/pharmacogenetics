@@ -11,25 +11,12 @@ from modules.pgkb_functions import DeconstructGuideline
 
 # Needed for document:
 
-JSON_TEMPLATE = '''
-{"drugID":DrugID, "drugName":DrugName,relatedGenes:
-	[
-		{"geneID":geneID, "description":desc, "geneName":geneName, "patGuideline":
-												{"metaType":metaType, "phenotype":phenotype,
-												"recommendation":reccomendation},
-										"patAnnotations":
-													[
-										{"varID":varID, "patAllele":patAllele, "annotation":annotation},
-										{} etc.
-													]
-	]
-}
-
+JSON_TEMPLATE ='''
 # --------------------------------------------------------------------------------------
 
-{samplename, haplotable:[ {symbol, new1:{1, 2, 3}, new2{1, 2, 3}, old1{1, 2, 3}, old2{1, 2, 3}, tree}, ...],
+{samplename, haplotable:[ {symbol:{ new1:{1, 2, 3}, new2{1, 2, 3}, old1{1, 2, 3}, old2{1, 2, 3}, tree)}, ...],
 						annotable:[ (drug, gene, guidelinelink, Ann1-2, Ann3-4), ...],
-						drugs:[{drugname, genes:[{symbol, hapNEW, hapOLD, guideline, annotations:[:{1A,
+						drugs:[drugname:{drugDesc, genes:[{symbol, hapNEW, hapOLD, guideline, annotations:[:{1A,
 						 	1B:{patAllele, rsid, text},
 							2A, 2B, 3, 4}, ...]
 						]}
@@ -54,110 +41,166 @@ class ReportMaker(Database):
 
 		# AnnotationView
 
-		self.sql.executescript('''DROP VIEW IF EXISTS AnnOverview;
-						CREATE VIEW AnnOverview AS
-				        SELECT DISTINCT v.GeneID, g.GeneName, a.DrugID, g.GeneSymbol, v.RSID, a.LoE, p.PatAllele, p.Phenotype
-		                FROM Annotations a
-		                JOIN Variants v ON a.VarHapID = v.VarID
-		                JOIN Genes g ON v.GeneID = g.GeneID
-                        JOIN PatAnnotations p
-                        ON p.AnID = a.AnID;''')
-
-		self.template = self.getTemplate("latex/template_python.tex")
-
-		# Hap/GuidelineView
-
-		self.sql.executescript('''DROP VIEW IF EXISTS HapOverview;
-						CREATE VIEW HapOverview AS
-						SELECT DISTINCT
-						GuID,
-						g.GeneID,
-						DrugID,
-						Allele1_Phyl as new1,
-						Allele2_Phyl as new2,
-						Allele1_Set as old1,
-						Allele2_Set as old2,
-						Markdown
-						FROM Guidelines g
-						JOIN PatGenotypes p
-						on p.GeneID = g.GeneID;''')
-
-		# List of drugs (sorted alphabetically, maybe?)
+		#self.template = self.getTemplate("latex/python_template.tex")
 
 	def MakeJson(self):
+		self.sn = raw_input("Please enter a sample name: ")
 
-		colorchart = {
-								"1A":"red",
-								"1B":"orange",
-								"2A":"cyan",
-								"2B":"blue",
-								"3":"teal",
-								"4":"green"
-								}
+		# gather data for tables
+		JSON = {"sampleName":self.sn,
+					  "haplotable":[],
+					  "annotable":[],
+					  "pairs":[]
+					  }
 
-		self.sql.execute('''SELECT DISTINCT a.DrugID, d.ChemName
-							FROM AnnOverview a
-							JOIN Drugs d
-							ON d.DrugID = a.DrugID
-							ORDER BY d.ChemName ASC''')
+		self.sql.execute('''
+					select g.genesymbol, g.geneid,
+					new1_1, new1_2, new1_3,
+					new2_1, new2_2, new2_3,
+					old1_1, old1_2, old1_3,
+					old2_1, old2_2, old2_3
+					from
+					patgenotypes p
+					join genes g
+					on g.GeneID = p.GeneID
+								''')
 
-		self.jsons = []
+		for (symbol, gid, n11, n12, n13, n21, n22, n23, o11, o12, o13, o21, o22, o23) in self.sql.fetchall():
+				entry = {"symbol":symbol,
+				 "new1":{"1":n11, "2":n12, "3":n13},
+				 "new2":{"1":n21, "2":n22, "3":n23},
+				 "old1":{"1":o11, "2":o12, "3":o13},
+				 "old2":{"1":o21, "2":o22, "3":o23}}
+				tree = ""
+				with open(self.path + "/output/alignments/aligned/" + gid + "_aln_rooted.dnd", "rb") as f:
+					self.sql.execute('SELECT DISTINCT hapid, starname FROM Haplotypes WHERE GeneID = ?', (gid,))
+					hapconvert = {hapid:starname for (hapid, starname) in self.sql.fetchall()}
+					content = f.readlines()
+					for line in content:
+						for hapid, starname in hapconvert.items():
+							starname = starname.replace(",", "")
+							line = line.replace(hapid, starname).replace("a1", "{}_hap1".format(self.sn)).replace("a2", "{}_hap2".format(self.sn))
+						tree += line.replace(" ", "").rstrip("\n")
+					entry['tree'] = tree
+					JSON['haplotable'].append(entry)
 
-		for (did, name) in self.sql.fetchall():
-			print did, name
-			js={}
-			js['drugID'] = did
-			js['drugName'] = name
+				# ------------------------------
 
-		# Collect involved genes (through bound variants in DrugVars)
+		# get gene-drug pairs
 
+		self.sql.executescript('''DROP VIEW IF EXISTS JsonView;
+								CREATE VIEW JsonView AS
+								select distinct
+								g.genesymbol as symbol,
+								g.geneid as geneid,
+								g.genename as genename,
+								d.chemname as drugname,
+								d.drugid as drugid,
+								l.guid as guid,
+								l.markdown as markdown,
+								l.summary as summary,
+								a.loe as loe,
+								v.rsid as rsid,
+								p.patallele as allele,
+								p.phenotype as phenotype
+								from genes g
+								join variants v
+								on v.geneid = g.geneid
+								join annotations a
+								on a.varhapid = v.varid
+								join drugs d
+								on a.drugid = d.drugid
+								join patannotations p
+								on p.anid = a.anid
+								left join guidelines l
+								on l.geneid = g.geneid
+								and l.drugid = d.drugid
+								order by d.chemname asc;
+									''')
+
+		self.sql.execute('''
+		SELECT DISTINCT symbol, geneid, genename, drugname, drugid, guid from JsonView
+		''')
+		for (symbol, gid, genename, drugname, did, guid) in self.sql.fetchall():
+			# get annotation amounts
 			self.sql.execute('''
-		                        SELECT DISTINCT GeneID, GeneSymbol, GeneName
-		                        FROM AnnOverview
-								WHERE DrugID = ?''', (did,))
+					select distinct LoE, count(*) from JsonView
+					where geneid = ?
+					and drugid = ?
+					group by LoE;
+					''', (gid, did))
 
-		# For each gene:
-			print name
-			for (gid, symbol, name) in self.sql.fetchall():
-				js_gene = {}
-				js_gene['geneID'] = gid
-				js_gene['geneName'] = symbol
-				js_gene['geneDesc'] = name
-				print name
+			for (loe, amount) in self.sql.fetchall():
+				cat1 = 0
+				cat2 = 0
+				if "1" in loe or "2" in loe:
+					cat1 += amount
+				elif "2" in loe or "3" in loe:
+					cat2 += amount
+				else:
+					pass
 
-				self.sql.execute('''
-				        SELECT DISTINCT new1, new2, old1, old2, Markdown FROM HapOverview
-						WHERE DrugID = ? AND GeneID = ?''', (did, gid))
+			# entry for summary table 2
 
-				for (n1, n2, o1, o2, markdown) in self.sql.fetchall():
-					js_guide = js_gene['patGuide'] = {}
-					js_guide['hapNEW'] = "{}/{}".format(n1, n2)
-					js_guide['hapOLD'] =  "{}/{}".format(o1, o2)
-					tex = DeconstructGuideline(markdown)
-					print tex
-					js_guide['tex'] = tex
+			annoEntry = {"drug":drugname,
+								  "gene":symbol,
+								  "guid":guid,
+								  "annCount":
+								  		{"1-2":cat1, "3-4":cat2}
+								 }
 
-		# Print Annotations for this gene-drug combination
+			mainEntry = {}
+			JSON['annotable'].append(annoEntry)
 
-				self.sql.execute('''
-									SELECT DISTINCT RSID, PatAllele, phenotype, LoE
-									FROM AnnOverview
-									WHERE DrugID = ? AND GeneID = ?
-									ORDER BY LoE ASC
-									''', (did, gid))
+			# ------ get more data on guidelines and annotations -----
+			geneEntry = {"drug":drugname,
+			"genesymbol":symbol,
+			"genename":genename,
+			"guideline":
+				{"guid":"", "summary":"", "tex":""},
+			"annotations":{"1A":[], "1B":[], "2A":[], "2B":[], "3":[], "4":[]}}
 
-				for (rsid, allele, phenotype, loe) in self.sql.fetchall():
-					item = {"varName":rsid, "patAllele":allele, "annotation":phenotype, "strength":loe, "color":colorchart[loe]}
-					js_gene.setdefault("patAnnotations", []).append(item)
-				js.setdefault("relatedGenes", []).append(js_gene)
+			for hap in JSON['haplotable']:
+				if hap["symbol"] != symbol:
+					continue
+				else:
+					geneEntry['hapNEW'] = "{}/{}".format(hap['new1']["1"], hap['new2']["1"])
+					geneEntry['hapOLD'] = "{}/{}".format(hap['old1']["1"], hap['old2']["1"])
 
-			self.jsons.append(js)
+			# ^ this goes in json[drugs][DRUGNAME][genes] through append to list ^
+
+			# --- get the annotation data ---
+			self.sql.execute('''
+						select distinct
+						loe, allele,
+						rsid, phenotype,
+						guid, markdown, summary
+						from JsonView
+						where geneid = ?
+						and drugid = ?
+						''', (gid, did))
+
+			for (loe, allele, rsid, phenotype, guid, markdown, summary) in self.sql.fetchall():
+				# get guideline info
+				if guid != None:
+					geneEntry['guideline']['guid']=guid
+					geneEntry['guideline']['summary']=summary
+					geneEntry['guideline']['tex']=DeconstructGuideline(markdown)
+				# get annotation info
+				annEntry = {"rsid":rsid, "patAllele":allele, "phenotype":phenotype}
+				if annEntry not in geneEntry['annotations'][loe]:
+					geneEntry['annotations'][loe].append(annEntry)
+
+			JSON['pairs'].append(geneEntry)
+
+		pp.pprint(JSON['pairs'])
+
+		self.JSON = JSON
+# -----------------------------------------------------------------------------------------
 
 	def MakeReport(self):
-		sn = raw_input("Please enter a sample name: ")
-
-		reportText = self.template.render(sampleName=sn, jsonlist=self.jsons)
-		with open(self.outfile + sn + ".tex", "wb") as f:
+		reportText = self.template.render(sampleName=self.sn, jsonlist=self.JSON)
+		with open(self.outfile + self.sn + ".tex", "wb") as f:
 			f.write(reportText.encode('utf-8'))
 
 # ----------------------------------------------------------------------------

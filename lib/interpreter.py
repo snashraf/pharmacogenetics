@@ -31,8 +31,10 @@ class Interpreter(Database):
 						DROP TABLE IF EXISTS PatGenotypes;
 						CREATE TABLE IF NOT EXISTS PatGenotypes
 						(GeneID text,
-						Allele1_Phyl text, Allele2_Phyl text,
-						Allele1_Set text, Allele2_Set text);
+						New1_1 text, New1_2 text, New1_3 text,
+						New2_1 text, New2_2 text, New2_3 text,
+						Old1_1 text, Old1_2 text, Old1_3 text,
+						Old2_1 text, Old2_2 text, Old2_3 text);
 		''')
 
 		self.sql.execute('''
@@ -113,9 +115,12 @@ class Interpreter(Database):
 					else:
 						allelesOLD[i].append(starname)
 			try:
-				item = (gid, allelesNEW[1][0], allelesNEW[2][0], allelesOLD[1][0], allelesOLD[2][0])
+				item = (gid, allelesNEW[1][0],allelesNEW[1][1],allelesNEW[1][2],
+				allelesNEW[2][0],allelesNEW[2][1],allelesNEW[2][2],
+				allelesOLD[1][0], allelesOLD[1][1], allelesOLD[1][2],
+				allelesOLD[2][0], allelesOLD[2][1], allelesOLD[2][2])
 				print item
-				self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?)", item)
+				self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", item)
 				self.conn.commit()
 			except:
 				continue
@@ -152,8 +157,8 @@ class Interpreter(Database):
 
 				self.sql.execute('''
 				SELECT DISTINCT
-				Allele1_Phyl, Allele2_Phyl,
-				Allele1_Set, Allele2_Set
+				New1_1, New2_1,
+				Old1_1, Old2_1
 				FROM PatGenotypes
 				WHERE GeneID = ?
 				''', (genesymbol,))
