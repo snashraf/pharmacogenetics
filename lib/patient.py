@@ -40,6 +40,9 @@ class Patient(Database):
 
 		Database.__init__(self, dbpath)
 
+		self.fname = os.path.basename(f).rstrip(".g.vcf.gz")
+		self.sql.execute("attach '{}.db' as pat".format(self.fname))
+
 # -------------------------------------------------------------
 
 		self.f = f
@@ -69,9 +72,7 @@ class Patient(Database):
 
 		positions = self.sql.fetchall()
 
-		print "Fetching patient variants... o(* ^ *o)"
-
-		for (loc, start, end, ref, muttype, varid) in tqdm(positions):
+		for (loc, start, end, ref, muttype, varid) in tqdm(positions, desc="Fetching patient variants o(* ^ *o)"):
 
 			try:
 				records = self.reader.fetch(str(loc.lstrip("chr")), start - 1, end = end)
@@ -106,14 +107,14 @@ class Patient(Database):
 
 			gids = [tup[0] for tup in self.sql.fetchall()]
 
-			self.sql.executescript('''DROP TABLE IF EXISTS PatHaplotypes_OLD;
-												CREATE TABLE PatHaplotypes_OLD(hapid text, score1 text, score2 text, matchLen text);''')
+			self.sql.executescript('''DROP TABLE IF EXISTS pat.Haplotypes_OLD;
+												CREATE TABLE pat.Haplotypes_OLD(hapid text, score1 text, score2 text, matchLen text);''')
 
 			# create view with everything
 			self.sql.executescript('''
 					DROP VIEW IF EXISTS Overview;
 
-					CREATE VIEW Overview AS
+					CREATE TEMP VIEW Overview AS
 					SELECT DISTINCT
 
 					hap.GeneID as GeneID,
@@ -138,7 +139,7 @@ class Patient(Database):
 					   JOIN
 					   locvcf locv ON locv.varid = v.varid
 					   JOIN
-					   patientvars pat ON pat.start = locv.start
+					   pat.Variants pat ON pat.start = locv.start
 					   JOIN
 					   haplotypes hap ON hap.hapid = h.HapID
 					   JOIN
@@ -246,7 +247,7 @@ class Patient(Database):
 
 					haprsids = { rsid : alt for (rsid, alt) in self.sql.fetchall() }
 
-					self.sql.execute("INSERT INTO PatHaplotypes_OLD VALUES(?,?,?,?)", (refid,0, 0, 0))
+					self.sql.execute("INSERT INTO pat.Haplotypes_OLD VALUES(?,?,?,?)", (refid,0, 0, 0))
 
 					if len(haprsids.items()) == 0:
 						print "no rsids found for", hapid
@@ -277,14 +278,14 @@ class Patient(Database):
 						match_score1 = float(len(shared_al1.keys()))/ float(len(uniques_dct.keys()))
 						match_score2 = float(len(shared_al2.keys())) / float(len(uniques_dct.keys()))
 
-						self.sql.execute("INSERT INTO PatHaplotypes_OLD VALUES(?,?,?,?)", (hapid, match_score1, match_score2, hapLen))
+						self.sql.execute("INSERT INTO pat.Haplotypes_OLD VALUES(?,?,?,?)", (hapid, match_score1, match_score2, hapLen))
 						self.conn.commit()
 
 # -------------------------------------------------------------------------------------------------------------------
 
 				output = "/output/alignments/"
 
-				fn = self.path + output + gid + "_aln.fasta"
+				fn = self.path + output + self.fname + "_"+ gid + "_aln.fasta"
 
 				prev_seqs = []
 
@@ -315,13 +316,13 @@ class Patient(Database):
 
 		self.sql.execute("SELECT DISTINCT GeneID FROM Haplotypes")
 
-		for (gid,) in tqdm(self.sql.fetchall()):
+		for (gid,) in tqdm(self.sql.fetchall(), desc="Scoring haplotypes..."):
 
 			self.sql.execute("SELECT DISTINCT HapID FROM Haplotypes WHERE hgvs LIKE '%[=]%' AND GeneID = ?", (gid,))
 
 			refids = [hapid for (hapid,) in self.sql.fetchall()]
 
-			fn = self.path + output + gid + "_aln.fasta"
+			fn = self.path + output + self.fname + "_" + gid + "_aln.fasta"
 
 			# phylogenetic tree
 

@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS PatGuidelines;
+DROP TABLE IF EXISTS pat.Guidelines;

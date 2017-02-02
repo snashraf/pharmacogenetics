@@ -4,6 +4,7 @@
 import sqlite3
 from jinja2 import Template, FileSystemLoader, Environment
 import os
+from tqdm import tqdm
 import pprint as pp
 from db import Database
 from patient import Patient
@@ -29,13 +30,16 @@ JSON_TEMPLATE ='''
 
 class ReportMaker(Database):
 
-	def __init__(self, dbname, outfile):
+	def __init__(self, patObj, outfile):
+		self.sn = patObj.fname.split("_")[0].replace("BLOOD", "").replace("blood", "")
+		print self.sn
+		self.sql = patObj.sql
+		self.conn = patObj.conn
+		self.tempfolder = patObj.tempfolder
+		self.templateEnv = patObj.templateEnv
 		print "Initiating Report..."
 		self.path = os.path.dirname(__file__)
-		dbfolder = os.path.join(self.path, 'db')
-		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
 		self.outfile = outfile
-		Database.__init__(self, dbpath)
 
 	# ==========================================================
 
@@ -44,8 +48,6 @@ class ReportMaker(Database):
 		self.template = self.getTemplate("latex/python_template.tex")
 
 	def MakeJson(self):
-		self.sn = raw_input("Please enter a sample name: ")
-
 		# gather data for tables
 		JSON = {"samplename":self.sn,
 					  "haplotable":[],
@@ -66,7 +68,7 @@ class ReportMaker(Database):
 					order by g.genesymbol
 								''')
 
-		for (symbol, gid, n11, n12, n13, n21, n22, n23, o11, o12, o13, o21, o22, o23) in self.sql.fetchall():
+		for (symbol, gid, n11, n12, n13, n21, n22, n23, o11, o12, o13, o21, o22, o23) in tqdm(self.sql.fetchall(), desc="Creating haplotype table..."):
 				entry = {"symbol":symbol,
 				 "new1":{"1":n11, "2":n12, "3":n13},
 				 "new2":{"1":n21, "2":n22, "3":n23},
@@ -91,7 +93,8 @@ class ReportMaker(Database):
 
 		# get gene-drug pairs
 
-		self.sql.executescript('''DROP VIEW IF EXISTS JsonView;
+		self.sql.executescript('''
+								DROP VIEW IF EXISTS JsonView;
 								CREATE VIEW JsonView AS
 								select distinct
 								g.genesymbol as symbol,
@@ -124,14 +127,13 @@ class ReportMaker(Database):
 		self.sql.execute('''
 		SELECT DISTINCT symbol, geneid, genename, drugname, drugid, guid from JsonView
 		''')
-		for (symbol, gid, genename, drugname, did, guid) in self.sql.fetchall():
+		for (symbol, gid, genename, drugname, did, guid) in tqdm(self.sql.fetchall(), desc="Generating report..."):
 			# get annotation amounts
 			self.sql.execute('''
 					select distinct LoE, count(*) from JsonView
-					where geneid = ?
-					and drugid = ?
+					where drugid = ?
 					group by LoE;
-					''', (gid, did))
+					''',  (did,))
 
 			for (loe, amount) in self.sql.fetchall():
 				cat1 = 0
@@ -146,14 +148,13 @@ class ReportMaker(Database):
 			# entry for summary table 2
 
 			annoEntry = {"drugname":drugname,
-								  "gene":symbol,
-								  "guid":guid,
 								  "annCount":
 								  		{"1-2":cat1, "3-4":cat2}
 								 }
 
 			mainEntry = {}
-			JSON['annotable'].append(annoEntry)
+			if annoEntry not in JSON['annotable']:
+				JSON['annotable'].append(annoEntry)
 
 			# ------ get more data on guidelines and annotations -----
 			geneEntry = {"drugname":drugname,

@@ -1,4 +1,4 @@
-CREATE TABLE PatGuidelines (
+CREATE TABLE pat.Guidelines (
 	GuID text,
 	Genotype text,
 	MetaCat text,

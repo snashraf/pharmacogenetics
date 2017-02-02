@@ -24,20 +24,17 @@ def main():
 	{"short":"a" , "long":"action", "action":"append","dest":"pattasks", "default":[],
 		"help":"Which actions to perform on patient file. Current options: 'import' \
 		(import important snp sites from vcf), 'haplotype' (phylogenetically haplotype patient),\
-		'annotate' (annotate found changes and identified patient haplotypes)."},
+		'annotate' (annotate found changes and identified patient haplotypes). Use 'guidelines' to find patient matching guidelines and add to DB.\
+		Use 'annotate' to do the same for annotations. Use 'report' after this to generate a patient report using this info (use -o to specify a location for the resulting .tex file.)"},
 
 	{"short":"p" , "long":"patient", "action":"store","dest":"gvcf", "default":None,
 			"help":"Patient compressed vcf [g.vcf.gz] file to parse"},
 
-	{"short":"o" , "long":"outfile", "action":"store","dest":"outfile", "default":".",
+	{"short":"o" , "long":"outfile", "action":"store","dest":"outfile", "default":"",
 			"help":"Location to send report TEX file to."},
 
 	{"short":"r" , "long":"reset", "action":"append","dest":"reset", "default":[],
-			"help":"Database table to reset (mostly for testing purposes)"},
-
-	{"short":"i" , "long":"interpret", "action":"append","dest":"interpret", "default":[],
-			"help":'''Do something with collected data. Use 'guidelines' to find patient matching guidelines and add to DB.
-			Use 'annotate' to do the same for annotations. Use 'report' after this to generate a patient report using this info.'''}]
+			"help":"Database table to reset (mostly for testing purposes)"}]
 
 	parser = OptionParser(usage='usage: %prog [options] filename',
 						version='%prog 1.0')
@@ -58,9 +55,7 @@ def main():
 	if len(options.dbtasks) > 0:
 		CreateDB(options.dbname, options.dbtasks, options.reset)
 	if options.gvcf:
-		CreatePatient(options.dbname, options.gvcf, options.pattasks)
-	if len(options.interpret) > 0:
-		InterpretResults(options.dbname, options.interpret, options.outfile)
+		CreatePatient(options.dbname, options.gvcf, options.pattasks, options.outfile)
 
 def CreateDB(dbname, tables, reset):
 
@@ -145,9 +140,11 @@ def CreateDB(dbname, tables, reset):
 	d.conn.commit()
 
 
-def CreatePatient(dbname, gvcf, tables):
+def CreatePatient(dbname, gvcf, tables, outfile):
 
 	p = Patient(dbname, gvcf)
+	i = Interpreter(p)
+	r = ReportMaker(p, outfile)
 
 	options = OrderedDict ([
 
@@ -155,7 +152,15 @@ def CreatePatient(dbname, gvcf, tables):
 
 	("haplotype", p.GetHaplotypes),
 
-	("score", p.HapScorer)
+	("score", p.HapScorer),
+
+	("genotype", i.Genotype),
+
+	("guidelines", i.FindGuidelines),
+
+	("annotate", i.Annotate),
+
+	("report", [r.MakeJson, r.MakeReport])
 
 	])
 
@@ -186,47 +191,6 @@ def CreatePatient(dbname, gvcf, tables):
 			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
 
 	p.conn.commit()
-
-def InterpretResults(dbname, opts, outfile):
-
-	i = Interpreter(dbname)
-	r = ReportMaker(dbname, outfile)
-
-# ===========================
-
-	options = OrderedDict ([
-
-	("haplotype", i.Haplotype),
-
-	("guidelines", i.FindGuidelines),
-
-	("annotate", i.Annotate),
-
-	("report", [r.MakeJson, r.MakeReport])
-
-	])
-
-	for opt in opts:
-
-		try:
-
-			o = options[opt]
-
-			if type(o) is not list:
-
-				options[opt]()
-
-			elif type(o) is list:
-
-				for item in o:
-
-					item()
-
-		except:
-			raise
-			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
-			return
-
 
 # --------------------------------------------------------------------------------
 

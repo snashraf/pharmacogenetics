@@ -1,4 +1,4 @@
-CREATE TABLE PatientVars (
+CREATE TABLE pat.Variants (
 	Chromosome text,
 	Start integer,
 	RefAllele text,

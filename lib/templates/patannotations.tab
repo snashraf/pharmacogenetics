@@ -1,4 +1,4 @@
-CREATE TABLE PatAnnotations (
+CREATE TABLE pat.Annotations (
 	AnID text,
 	PatAllele text,
 	AlleleID text,

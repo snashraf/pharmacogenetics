@@ -1,4 +1,4 @@
-CREATE TABLE PatHaplotypes (
+CREATE TABLE pat.Haplotypes (
 	HapID text,
 	Distance1 text,
 	Distance2 text);

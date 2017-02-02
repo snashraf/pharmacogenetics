@@ -11,12 +11,12 @@ import os
 
 class Interpreter(Database):
 
-	def __init__(self, dbname):
-		self.path = os.path.dirname(__file__)
-		dbfolder = os.path.join(self.path, 'db')
-		dbpath = os.path.join(dbfolder, '%s.db' % dbname)
+	def __init__(self, patObj):
 
-		Database.__init__(self, dbpath)
+		self.sql = patObj.sql
+		self.conn = patObj.conn
+		self.tempfolder = patObj.tempfolder
+		self.templateEnv = patObj.templateEnv
 
 		self.advice = {}
 
@@ -24,12 +24,50 @@ class Interpreter(Database):
 
 		self.conn.commit()
 
-
-	def Haplotype(self):
+	def Genotype(self):
 
 		self.sql.executescript('''
-						DROP TABLE IF EXISTS PatGenotypes;
-						CREATE TABLE IF NOT EXISTS PatGenotypes
+				DROP VIEW IF EXISTS Overview;
+
+				CREATE TEMP VIEW Overview AS
+				SELECT DISTINCT
+
+				hap.GeneID as GeneID,
+				hap.HapID as HapID,
+				hap.HGVS as HGVS,
+				hap.starname as starname,
+				VarName, MutType,
+				v.VarID as VarID,
+				h.AltAllele as HapAllele,
+				locb.RefAllele as RefPGKB,
+				a.AltPGKB as AltPGKB,
+				locv.RefAllele as RefVCF,
+				a.AltVCF as AltVCF,
+				pat.RefAllele as PatRef,
+				pat.AltAllele as PatAlt,
+				CallNum,
+				locv.start as start
+
+				FROM hapvars h
+				   JOIN
+				   variants v ON v.rsid = h.VarName
+				   JOIN
+				   locvcf locv ON locv.varid = v.varid
+				   JOIN
+				   pat.Variants pat ON pat.start = locv.start
+				   JOIN
+				   haplotypes hap ON hap.hapid = h.HapID
+				   JOIN
+				   genes gen ON gen.geneid = hap.geneid
+				   JOIN
+				   locpgkb locb ON locb.varid = locv.varid
+				   JOIN
+				   altalleles a on a.VarID = locv.VarID
+				   ORDER BY locv.start asc;
+						''')
+		self.sql.executescript('''
+						DROP TABLE IF EXISTS pat.Genotypes;
+						CREATE TABLE IF NOT EXISTS pat.Genotypes
 						(GeneID text,
 						New1_1 text, New1_2 text, New1_3 text,
 						New2_1 text, New2_2 text, New2_3 text,
@@ -48,7 +86,7 @@ class Interpreter(Database):
 			print genesymbol
 			self.sql.executescript('''
 			DROP VIEW IF EXISTS CurView;
-			CREATE VIEW CurView AS
+			create temp view CurView AS
 			SELECT DISTINCT
 			h.GeneID as GeneID,
 			p.HapID,
@@ -56,8 +94,8 @@ class Interpreter(Database):
 			po.score1 as old1, po.score2 as old2,
 			po.MatchLen,
 			h.hgvs, starname
-			FROM PatHaplotypes p
-			JOIN PatHaplotypes_OLD po
+			FROM pat.Haplotypes p
+			JOIN pat.Haplotypes_OLD po
 			on p.hapid = po.hapid
 			JOIN Haplotypes h
 			on h.HapID = P.HapID
@@ -136,7 +174,7 @@ class Interpreter(Database):
 			else:
 				continue
 			print item
-			self.sql.execute("INSERT INTO PatGenotypes VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", item)
+			self.sql.execute("INSERT INTO pat.Genotypes VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", item)
 			self.conn.commit()
 
 	def FindGuidelines(self):
@@ -173,7 +211,7 @@ class Interpreter(Database):
 				SELECT DISTINCT
 				New1_1, New2_1,
 				Old1_1, Old2_1
-				FROM PatGenotypes
+				FROM pat.Genotypes
 				WHERE GeneID = ?
 				''', (genesymbol,))
 
@@ -219,6 +257,7 @@ class Interpreter(Database):
 
 	def Annotate(self):
 
+			self.remakeTable("patannotations")
 			# only when there is no haplotype available?
 
 			self.sql.execute('''
@@ -240,7 +279,7 @@ class Interpreter(Database):
 							on a.VarHapID = VarID
 							WHERE RefVCF = PatRef
 							AND a.AnID NOT IN
-							(SELECT DISTINCT AnID FROM PatAnnotations)''')
+							(SELECT DISTINCT AnID FROM pat.Annotations)''')
 
 			print "Annotating SNPs... /(* ` ^ `*/)"
 

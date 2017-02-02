@@ -79,13 +79,17 @@
 \newpage
 
 \section{Drug annotations}
+
+\scriptsize
 \begin{tabularx}{1.3\textwidth}{XXXX}
-\textbf{Drug} & \textbf{Gene}  &  \textbf{Guideline} & \textbf{Annotations\footnote{ Level 1A and 1B clinical annotations meet the highest levels of criteria and are manually curated by PharmGKB. Level 1A annotations contain a variant-drug combination in a CPIC or medical society endorsed PGx guideline, or, implemented at a PGRN site, or, in another major health system. Level 1B annotations contain a variant-drug combination where the preponderance of evidence shows an association. The association must be replicated in more than one cohort with significant p-values, and, preferably with a strong effect size. Lower levels (3-4) are less significant and may only be based on a single study or case report, which may be performed in vitro.(PHARMGKB) }}  \\
+\textbf{Drug} & \textbf{Level 1-2\footnote{ Level 1A and 1B clinical annotations meet the highest levels of criteria and are manually curated by PharmGKB. Level 1A annotations contain a variant-drug combination in a CPIC or medical society endorsed PGx guideline, or, implemented at a PGRN site, or, in another major health system. Level 1B annotations contain a variant-drug combination where the preponderance of evidence shows an association. The association must be replicated in more than one cohort with significant p-values, and, preferably with a strong effect size. Lower levels (3-4) are less significant and may only be based on a single study or case report, which may be performed in vitro.(PHARMGKB) }} & \textbf{Level 3-4\footnote{ See above }}   \\
 \hline \\
 {%- for item in json.annotable | sort(attribute="drugname") -%}
-{{item.drugname}} & {{item.gene}} & {{item.guid}} & \textit{Level 1-2}: {{item.annCount['1-2'] }} \newline \textit{Level 3-4}: {{item.annCount['3-4']}} \\
+{{item.drugname}} &  {{item.annCount['1-2'] }} & {{item.annCount['3-4']}} \\
 {%- endfor -%}
 \end{tabularx}
+
+\normalsize
 
 \newpage
 
@@ -94,66 +98,80 @@
 \section{Haplotype Guidelines}
 
 {%- for pair in json.pairs | sort(attribute="drugname") -%}
-{%- if pair.guideline.guid != "" -%}
-{%- if pair.drugname != curdrug -%}
-\subsection{ {{pair.drugname}} }
- - Empty description here -
-{% set curdrug = pair.drugname %}
-{%- endif -%}
 
-\subsubsection{ {{pair.gene}} }
+  {%- if pair.guideline.guid != "" -%}
 
-\begin{center}
-Patient haplotype
-\textbf{ {{pair.hapNEW}} } | \textbf{ {{pair.hapOLD}} } \newline\newline
-\scriptsize
-\begin{tabularx}{\textwidth}{ssbb}
-{{pair.guideline.summary}}
-\end{tabularx}
+    {% if not curdrug %}
 
-\end{center}
-{%- else -%}
-{%- endif -%}
+      {% set curdrug = "NULL" %}
+
+    {% endif %}
+
+      Current drug: {{ curdrug }}
+
+      {% if pair.drugname != "curdrug" -%}
+
+        \subsection{ {{pair.drugname}} }
+        {% set curdrug = "pair.drugname" %}
+
+      {%- endif -%}
+
+      \subsubsection{ {{pair.genesymbol}} }
+      \textit{ {{pair.genename}} }
+      \begin{center}
+      Patient haplotype
+      \textbf{ {{pair.hapNEW}} } | \textbf{ {{pair.hapOLD}}\footnote{For alternate close matches see Appendix II.} } \newline\newline
+      \scriptsize
+      \begin{tabularx}{\textwidth}{ssbb}
+      \textbf{ {{pair.guideline.summary | replace("#", "\#") | replace("_", "-") | replace("%", "\%")}} }
+      {{pair.guideline.tex  | replace("#", "\#") | replace("_", "-") | replace("%", "\%")}}
+      \end{tabularx}
+      \end{center}
+
+  {%- endif -%}
+
 {%- endfor -%}
+
 \newpage
 \normalsize
 
 % ----------------  High level Clinical Variations ----------------------
 
-{% raw %}
 \section{Clinical Annotations}
 
-{% for drug in json.drugs %}
+{% for pair in json.pairs | sort(attribute="drugname") %}
 
-\subsection{ {{drug.drugname}} }
-{{drug.drugdesc}}
+{% if pair.annotations['1A'] | length > 0 or
+ pair.annotations['1B'] | length > 0 or
+  pair.annotations['2A'] | length > 0  or
+   pair.annotations['2B'] | length > 0 %}
+\subsubsection{ {{pair.genesymbol}} }
+\subsubsection{ {{pair.genename}} }
 
-{% if drug.genes %}
-{% for gene in drug.genes %}
-\subsubsection{ {{gene.symbol}} }
+\subsection{ {{pair.drugname}} }
+{{pair.drugdesc}}
 
 \begin{center}
-{% for ann in gene.annotations['1A'] %}
+{% for ann in pair.annotations['1A'] -%}
 \textbf{\colorbox{red} {Class 1A}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.text}}
-{% endfor %}
-{% for ann in gene.annotations['1B'] %}
+{{ann.phenotype}}
+{%- endfor %}
+{% for ann in pair.annotations['1B'] -%}
 \textbf{\colorbox{orange} {Class 1B}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.text}}
-{% endfor %}
-{% for ann in gene.annotations['2A'] %}
+{{ann.phenotype}}
+{%- endfor %}
+{% for ann in pair.annotations['2A'] -%}
 \textbf{\colorbox{yellow} {Class 2A}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.text}}
-{% endfor %}
-{% for ann in gene.annotations['2B'] %}
+{{ann.phenotype}}
+{%- endfor %}
+{% for ann in pair.annotations['2B'] -%}
 \textbf{\colorbox{green} {Class 1A}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.text}}
-{% endfor %}
-
-{% else %}
-{% endif %}
+{{ann.phenotype}}
+{%- endfor %}
 
 \end{center}
+
+{% endif %}
 
 {% endfor %}
 
@@ -181,44 +199,37 @@ Patient haplotype
 
 \begin{tabularx}{\textwidth}{ c c c c c }
 test & \textbf{Allele 1 (Tree) } & \textbf{Allele 2 (Tree)} & \textbf{Allele 1 (Set) } & \textbf{Allele 2 (Set)} \\
-{% for gene in json.haplotable %}
+{%- for gene in json.haplotable -%}
 \multirow{3}{200pt}{ {{gene.symbol}} } &
-{{gene.new1.1}} & {{gene.new2.1}} & {{gene.old1.1}} & {{gene.old2.1}} \\
-{{gene.new1.2}} & {{gene.new2.2}} & {{gene.old1.2}} & {{gene.old2.2}}  \\
-{{gene.new1.3}} & {{gene.new2.3}} & {{gene.old1.3}} & {{gene.old2.3}} \\
-{% endfor %}
+{{gene.new1['1']}} & {{gene.new2['1']}} & {{gene.old1['1']}} & {{gene.old2['1']}} \\
+{{gene.new1['2']}} & {{gene.new2['2']}} & {{gene.old1['2']}} & {{gene.old2['2']}}  \\
+{{gene.new1['3']}} & {{gene.new2['3']}} & {{gene.old1['3']}} & {{gene.old2['3']}} \\
+{%- endfor %}
 \end{tabularx}
+
 
 \section{Appendix 3: Low level annotations}
 
-{% for drug in json.drugs %}
+{% for pair in json.pairs -%}
 
-\subsection{ {{drug.drugname}} }
-{{drug.drugdesc}}
+\subsection{ {{pair.drugname}} }
+{{pair.drugdesc}}
 
-{% if drug.genes %}
-{% for gene in drug.genes %}
-\subsubsection{ {{gene.symbol}} }
+\subsubsection{ {{pair.genesymbol}} }
 
 \begin{center}
-{% for ann in gene.annotations.3%}
+{%- for ann in pair.annotations['3'] -%}
 \textbf{\colorbox{cyan} {Class 3}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.text}}
-{% endfor %}
-{% for ann in gene.annotations.4 %}
+{{ann.phenotype}}
+{%- endfor -%}
+{% for ann in pair.annotations['4']  -%}
 \textbf{\colorbox{blue} {Class 4}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.text}}
-{% endfor %}
-
-{% else %}
-No Annotations available.
-{% endif %}
+{{ann.phenotype}}
+{%- endfor -%}
 
 \end{center}
 
-{% endfor %}
-
-
-{% endraw %}
+{%- endfor -%}
 % ------------------
+
 \end{document}

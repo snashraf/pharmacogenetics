@@ -2,7 +2,7 @@
 
 	{% for ann in json.data.annotations %}
 
-	INSERT INTO PatGuidelines VALUES(
+	INSERT INTO pat.Guidelines VALUES(
 				'{{guid}}',
 				'{{genotype | safe }}',
 				'{{json.data.name}}',

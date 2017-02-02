@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS PatientVars;
+DROP TABLE IF EXISTS pat.Variants;

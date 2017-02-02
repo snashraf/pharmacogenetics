@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS PatHaplotypes;
+DROP TABLE IF EXISTS pat.Haplotypes;
