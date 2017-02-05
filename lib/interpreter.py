@@ -20,7 +20,7 @@ class Interpreter(Database):
 
 		self.advice = {}
 
-		self.authobj = Authenticate()
+		#self.authobj = Authenticate()
 
 		self.conn.commit()
 

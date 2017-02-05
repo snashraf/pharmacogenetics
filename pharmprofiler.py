@@ -113,29 +113,17 @@ def CreateDB(dbname, tables, reset):
 
 	for table in tables:
 
-		try:
+		o = options[table]
 
-			o = options[table]
+		if not hasattr( d, "authobj"):
+			d.Authenticate()
 
-			if not hasattr( d, "authobj"):
+		if type(o) is not list:
+			options[table]()
 
-				d.Authenticate()
-
-			if type(o) is not list:
-
-				options[table]()
-
-			elif type(o) is list:
-
-				for item in o:
-
-					item()
-
-		except:
-
-			raise
-
-			print "Invalid option entered. \n Valid options: {}".format(", ".join(options.keys()))
+		elif type(o) is list:
+			for item in o:
+				item()
 
 	d.conn.commit()
 

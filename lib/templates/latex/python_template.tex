@@ -1,8 +1,10 @@
+\iffalse
 %----------------------------------------------------------------------------------------
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
+\fi
 
-\documentclass{book}
+\documentclass{report}
 \usepackage{pstricks, pst-node,pst-tree}
 \usepackage{newicktree}
 \usepackage{graphicx}
@@ -11,6 +13,7 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{ltablex}
+\usepackage[a4paper,inner=2cm,outer=2cm]{geometry}
 \hypersetup{
     colorlinks,
     linkcolor=black,
@@ -21,46 +24,50 @@
 \newcolumntype{b}{X}
 \newcolumntype{s}{>{\hsize=.5\hsize}X}
 
-
+\iffalse
 %----------------------------------------------------------------------------------------
 %					TITLE PAGE
 %----------------------------------------------------------------------------------------
+\fi
 
-\newcommand*{\titleGM}{\begingroup % Create the command for including the title page in the document
-\hbox{ % Horizontal box
-\hspace*{0.1\textwidth} % Whitespace to the left of the title page
-\rule{1pt}{\textheight} % Vertical line
-\hspace*{0.05\textwidth} % Whitespace between the vertical line and title page text
-\parbox[b]{0.5\textwidth}{ % Paragraph box which restricts text to less than the width of the page
+\newcommand*{\titleGM}{\begingroup
+\hbox{
+\hspace*{0.1\textwidth}
+\rule{1pt}{\textheight}
+\hspace*{0.05\textwidth}
+\parbox[b]{0.5\textwidth}{
 
-{\noindent\Huge\bfseries Pharmacogenetic Passport}\\[2\baselineskip] % Title
-{\large \textit{Pharmacogenetic guidelines and clinical annotations connected to influential DNA changes}}\\[4\baselineskip] % Tagline or further description
-{\large \textsc{ {{json.samplename}} }}\\% Author name\\
-{\normalsize \textsc{Creation date: \today}} % Date
+{\noindent\Huge\bfseries Pharmacogenetic Passport}\\[2\baselineskip]
+{\large \textit{Pharmacogenetic guidelines and clinical annotations connected to influential DNA changes}}\\[4\baselineskip]
+{\large \textsc{ {{json.samplename}} }}\\
+{\normalsize \textsc{Creation date: \today}}
 
-\vspace{0.3\textheight} % Whitespace between the title block and the publisher
-{\noindent \includegraphics{pilldna}}\\[\baselineskip] % Publisher and logo
+\vspace{0.3\textheight}
+{\noindent \includegraphics{pilldna}}\\[\baselineskip]
 }}
 \endgroup}
 
+\iffalse
 %----------------------------------------------------------------------------------------
 %				BLANK DOCUMENT
 %----------------------------------------------------------------------------------------
+\fi
 
 \begin{document}
 
-\pagestyle{empty} % Removes page numbers
+\titleGM
 
-\titleGM % This command includes the title page
-
-
+\iffalse
 % ------------- TABLE OF CONTENTS -------------------
+\fi
 
 \tableofcontents
 
 \newpage
 
+\iffalse
 % ----------------  SUMMARY PAGES ----------------------
+\fi
 
 \section{Patient haplotypes}
 
@@ -70,7 +77,7 @@
 \textbf{Gene} & \textbf{Phylogenetic method}\footnote{Method using phylogenetic trees to find closest 'relative' to patient alleles. Trees can be seen in Appendix A.} &  \textbf{Set method}\footnote{Method looking for overlap of haplotype non-reference variants and patient non-reference variants. Reference variants are filtered out of both sets prior to comparison. Top 5 hits can be seen in Appendix 2.}  \\
 \hline \\
 {%- for gene in json.haplotable | sort(attribute="symbol") -%}
-{{gene.symbol}} & {{gene.new1['1'] | replace("#", "\#") | replace("_", "-") }} / {{gene.new2['1'] | replace("#", "\#") | replace("_", "-") }} & {{gene.old1['1'] | replace("#", "\#") | replace("_", "-") }} / {{gene.old2['1'] | replace("#", "\#") | replace("_", "-") }} \\
+{{gene.symbol}} & {{gene.new1['1'] }} / {{gene.new2['1'] }} & {{gene.old1['1'] }} / {{gene.old2['1'] }} \\
 {%- endfor -%}
 \end{tabularx}
 
@@ -81,7 +88,7 @@
 \section{Drug annotations}
 
 \scriptsize
-\begin{tabularx}{1.3\textwidth}{XXXX}
+\begin{tabularx}{\textwidth}{bss}
 \textbf{Drug} & \textbf{Level 1-2\footnote{ Level 1A and 1B clinical annotations meet the highest levels of criteria and are manually curated by PharmGKB. Level 1A annotations contain a variant-drug combination in a CPIC or medical society endorsed PGx guideline, or, implemented at a PGRN site, or, in another major health system. Level 1B annotations contain a variant-drug combination where the preponderance of evidence shows an association. The association must be replicated in more than one cohort with significant p-values, and, preferably with a strong effect size. Lower levels (3-4) are less significant and may only be based on a single study or case report, which may be performed in vitro.(PHARMGKB) }} & \textbf{Level 3-4\footnote{ See above }}   \\
 \hline \\
 {%- for item in json.annotable | sort(attribute="drugname") -%}
@@ -93,143 +100,136 @@
 
 \newpage
 
+\iffalse
 % ----------------  Guidelines ----------------------
+\fi
 
 \section{Haplotype Guidelines}
 
-{%- for pair in json.pairs | sort(attribute="drugname") -%}
+{%- for drug, dict in json.drugs.iteritems() %}
 
-  {%- if pair.guideline.guid != "" -%}
+{% if dict.hasGuide == True and dict.genes | length > 0 %}
 
-    {% if not curdrug %}
+\subsection{ {{drug}} }
 
-      {% set curdrug = "NULL" %}
+{% for gene in dict.genes -%}
 
-    {% endif %}
-
-      Current drug: {{ curdrug }}
-
-      {% if pair.drugname != "curdrug" -%}
-
-        \subsection{ {{pair.drugname}} }
-        {% set curdrug = "pair.drugname" %}
-
-      {%- endif -%}
-
-      \subsubsection{ {{pair.genesymbol}} }
-      \textit{ {{pair.genename}} }
-      \begin{center}
-      Patient haplotype
-      \textbf{ {{pair.hapNEW}} } | \textbf{ {{pair.hapOLD}}\footnote{For alternate close matches see Appendix II.} } \newline\newline
+  {%- if gene.guideline -%}
+      \subsubsection{ {{gene.genesymbol}} }
+     \textit{ {{gene.genename }} } \begin{flushright} \textsc{ {{json.samplename}} \\ {{gene.hapNEW}}  | {{gene.hapOLD}}\footnote{For alternate close matches see Appendix II.} }\end{flushright}
+      \hrule \vspace{6pt}
+      {{gene.guideline.summary}} \newline
       \scriptsize
-      \begin{tabularx}{\textwidth}{ssbb}
-      \textbf{ {{pair.guideline.summary | replace("#", "\#") | replace("_", "-") | replace("%", "\%")}} }
-      {{pair.guideline.tex  | replace("#", "\#") | replace("_", "-") | replace("%", "\%")}}
+      {% for cols, table in gene.guideline.tables.iteritems() %}
+      \begin{tabularx}{\textwidth}{ {{cols}} }
+      {% for line in table %}{{line}} \\ {% endfor %}
       \end{tabularx}
-      \end{center}
-
+      {% endfor %}
+      \normalsize
+      {%- endif -%}
+    {%- endfor -%}
   {%- endif -%}
-
 {%- endfor -%}
 
 \newpage
-\normalsize
 
+\iffalse
 % ----------------  High level Clinical Variations ----------------------
+\fi
 
 \section{Clinical Annotations}
 
-{% for pair in json.pairs | sort(attribute="drugname") %}
+{%- for drug, dict in json.drugs.iteritems() -%}
 
-{% if pair.annotations['1A'] | length > 0 or
- pair.annotations['1B'] | length > 0 or
-  pair.annotations['2A'] | length > 0  or
-   pair.annotations['2B'] | length > 0 %}
-\subsubsection{ {{pair.genesymbol}} }
-\subsubsection{ {{pair.genename}} }
+{% if dict.hasAnno12 == True and dict.genes | length > 0%}
 
-\subsection{ {{pair.drugname}} }
-{{pair.drugdesc}}
+\subsection{ {{drug}} }
 
-\begin{center}
-{% for ann in pair.annotations['1A'] -%}
+{%- for gene in dict.genes if gene.annotations['1A'] | length > 0 or
+ gene.annotations['1B'] | length > 0 or
+  gene.annotations['2A'] | length > 0  or
+   gene.annotations['2B'] | length > 0 -%}
+
+\subsubsection{ {{gene.genesymbol}} }
+\textit{ {{gene.genename}} } \newline
+
+{% for ann in gene.annotations['1A'] %}
 \textbf{\colorbox{red} {Class 1A}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.phenotype}}
-{%- endfor %}
-{% for ann in pair.annotations['1B'] -%}
+{{ann.phenotype}}\newline
+{% endfor %}
+{% for ann in gene.annotations['1B'] %}
 \textbf{\colorbox{orange} {Class 1B}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.phenotype}}
-{%- endfor %}
-{% for ann in pair.annotations['2A'] -%}
+{{ann.phenotype}}\newline
+{% endfor %}
+{% for ann in gene.annotations['2A'] %}
 \textbf{\colorbox{yellow} {Class 2A}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.phenotype}}
-{%- endfor %}
-{% for ann in pair.annotations['2B'] -%}
-\textbf{\colorbox{green} {Class 1A}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.phenotype}}
-{%- endfor %}
-
-\end{center}
-
-{% endif %}
-
+{{ann.phenotype}}\newline
 {% endfor %}
+{% for ann in gene.annotations['2B'] %}
+\textbf{\colorbox{green} {Class 2B}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
+{{ann.phenotype}}\newline
+{%- endfor %}
+
+{%- endfor -%}
+
+{%- endif -%}
+
+{%- endfor -%}
 
 \newpage
 
+\iffalse
 % ----------------  APPENDICES ----------------------
+\fi
 
-\section{Appendix 1: Haplotype trees}
-\begin{center}
+\section{Appendix 1: Top 3 haplotypes per gene}
 \scriptsize
-{% for gene in json.haplotable %}
-\textbf{ {{gene.symbol}} }
-\begin{newicktree}
-\nobranchlengths
-\nonodemarkers
-\righttree \setunitlength{0.5cm}
-\drawtree{ {{gene.tree}} }\end{newicktree}
-{% endfor %}
-\normalsize
-\end{center}
 
-\newpage
-
-\section{Appendix 2: Top 3 haplotypes per gene}
-
-\begin{tabularx}{\textwidth}{ c c c c c }
-test & \textbf{Allele 1 (Tree) } & \textbf{Allele 2 (Tree)} & \textbf{Allele 1 (Set) } & \textbf{Allele 2 (Set)} \\
-{%- for gene in json.haplotable -%}
-\multirow{3}{200pt}{ {{gene.symbol}} } &
-{{gene.new1['1']}} & {{gene.new2['1']}} & {{gene.old1['1']}} & {{gene.old2['1']}} \\
+\begin{table}[!ht]
+\begin{tabularx}{\textwidth}{ @{} l X @{} }
+\textbf{Gene} & \textbf{Allele 1 (Tree) } & \textbf{Allele 2 (Tree)} & \textbf{Allele 1 (Set) } & \textbf{Allele 2 (Set)} \\
+\toprule
+{%- for gene in json.haplotable %}
+{{gene.symbol}} & {{gene.new1['1']}} & {{gene.new2['1']}} & {{gene.old1['1']}} & {{gene.old2['1']}} \\
 {{gene.new1['2']}} & {{gene.new2['2']}} & {{gene.old1['2']}} & {{gene.old2['2']}}  \\
 {{gene.new1['3']}} & {{gene.new2['3']}} & {{gene.old1['3']}} & {{gene.old2['3']}} \\
-{%- endfor %}
+\midrule
+{% endfor %}
 \end{tabularx}
+\end{table}
+\normalsize
+\newpage
 
+\iffalse
+% -------------------- LOW LEVEL ANNOTATIONS --------------
+\fi
 
 \section{Appendix 3: Low level annotations}
 
-{% for pair in json.pairs -%}
+{%- for drug, dict in json.drugs.iteritems() -%}
 
-\subsection{ {{pair.drugname}} }
-{{pair.drugdesc}}
+{% if dict.hasAnno34 == True and dict.genes | length > 0 -%}
 
-\subsubsection{ {{pair.genesymbol}} }
+\subsection{ {{drug}} }
 
-\begin{center}
-{%- for ann in pair.annotations['3'] -%}
+{%- for gene in dict.genes -%}
+
+{%- if gene.annotations['3'] | length > 0 or gene.annotations['4'] | length > 0 -%}
+\subsubsection{ {{gene.genesymbol}} }
+\textit{ {{gene.genename}} }
+
+{% for ann in gene.annotations['3'] -%}
 \textbf{\colorbox{cyan} {Class 3}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.phenotype}}
+{{ann.phenotype}}\newline
 {%- endfor -%}
-{% for ann in pair.annotations['4']  -%}
-\textbf{\colorbox{blue} {Class 4}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
-{{ann.phenotype}}
+{% for ann in gene.annotations['4']  -%}
+\textbf{\colorbox{teal} {Class 4}} \textbf{ {{ann.rsid}} } \textit{ {{ann.patAllele}} }
+{{ann.phenotype}}\newline
 {%- endfor -%}
 
-\end{center}
-
+{%- endif -%}
 {%- endfor -%}
-% ------------------
+{%- endif -%}
+{%- endfor -%}
 
 \end{document}

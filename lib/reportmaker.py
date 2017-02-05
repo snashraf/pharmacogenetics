@@ -5,10 +5,73 @@ import sqlite3
 from jinja2 import Template, FileSystemLoader, Environment
 import os
 from tqdm import tqdm
+import sys
 import pprint as pp
 from db import Database
 from patient import Patient
+from collections import OrderedDict
 from modules.pgkb_functions import DeconstructGuideline
+import re
+
+def tex_escape(text):
+    """
+        :param text: a plain text message
+        :return: the message escaped to appear correctly in LaTeX
+    """
+    conv = {
+        '%': r'\%',
+        '$': r'\$',
+        '#': r'\#',
+        '*':r'\**',
+        '_': r'',
+        '^': r'-',
+		u"\u0001":""
+    }
+    regex = re.compile('|'.join(re.escape(unicode(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
+    return regex.sub(lambda match: conv[match.group()], text)
+
+def convert_latex(obj):
+	conv = OrderedDict([
+			("%","\%"),
+			("_",""),
+			(";",","),
+			("[","("),
+			("]",")"),
+			("^a^",""),
+			("^b^",""),
+			("^c^",""),
+			("^d^",""),
+			("&gt;",">"),
+			("&lt;","<"),
+			(u"\u0001",""),
+			("&#34,","\""),
+			("#","\#"),
+				])
+	for before, after in conv.items():
+		obj = obj.replace(before, after)
+	return obj
+
+def change_dict_naming_convention(d, convert_function):
+    """
+    Recursivly goes through the dictionnary obj and replaces keys with the convert function.
+    """
+    new = {}
+    if isinstance(d, unicode) or isinstance(d, str):
+    	new = convert_function(d)
+        return new
+    else:
+        for k, v in d.items():
+            new_v = v
+            if isinstance(v, dict):
+                new_v = change_dict_naming_convention(v, convert_function)
+            elif isinstance(v, list):
+                new_v = list()
+                for x in v:
+                    new_v.append(change_dict_naming_convention(x, convert_function))
+            elif isinstance(v, unicode) or isinstance(v, str):
+                new_v = convert_function(v)
+            new[convert_function(k)] = new_v
+    return new
 
 # Needed for document:
 
@@ -23,7 +86,6 @@ JSON_TEMPLATE ='''
 						]}
 							}
 						} , ...]
-
 }
 '''
 # ============================================================
@@ -49,10 +111,11 @@ class ReportMaker(Database):
 
 	def MakeJson(self):
 		# gather data for tables
+
 		JSON = {"samplename":self.sn,
 					  "haplotable":[],
 					  "annotable":[],
-					  "pairs":[]
+					  "drugs":{}
 					  }
 
 		self.sql.execute('''
@@ -74,20 +137,21 @@ class ReportMaker(Database):
 				 "new2":{"1":n21, "2":n22, "3":n23},
 				 "old1":{"1":o11, "2":o12, "3":o13},
 				 "old2":{"1":o21, "2":o22, "3":o23}}
-				tree = ""
-				with open(self.path + "/output/alignments/aligned/" + gid + "_aln_rooted.dnd", "rb") as f:
-					self.sql.execute('SELECT DISTINCT hapid, starname FROM Haplotypes WHERE GeneID = ?', (gid,))
-					hapconvert = {hapid:starname for (hapid, starname) in self.sql.fetchall()}
-					content = f.readlines()
-					for line in content:
-						for hapid, starname in hapconvert.items():
-							starname = starname.replace(",", "")
-							if "(" in starname:
-								starname = starname.split(" (")[0]
-							line = line.replace(hapid, starname).replace("a1", "{}_hap1".format(self.sn)).replace("a2", "{}_hap2".format(self.sn))
-						tree += line.replace(" ", "").rstrip("\n")
-					entry['tree'] = tree
 				JSON['haplotable'].append(entry)
+
+#				tree = ""
+#				with open(self.path + "/output/alignments/aligned/" + gid + "_aln_rooted.dnd", "rb") as f:
+#					self.sql.execute('SELECT DISTINCT hapid, starname FROM Haplotypes WHERE GeneID = ?', (gid,))
+#					hapconvert = {hapid:starname for (hapid, starname) in self.sql.fetchall()}
+#					content = f.readlines()
+#					for line in content:
+#						for hapid, starname in hapconvert.items():
+#							starname = starname.replace(",", "")
+#							if "(" in starname:
+#								starname = starname.split(" (")[0]
+#							line = line.replace(hapid, starname).replace("a1", "{}_hap1".format(self.sn)).replace("a2", "{}_hap2".format(self.sn))
+#						tree += line.replace(" ", "").rstrip("\n")
+#					entry['tree'] = tree
 
 				# ------------------------------
 
@@ -112,7 +176,7 @@ class ReportMaker(Database):
 								from genes g
 								join variants v
 								on v.geneid = g.geneid
-								join annotations a
+								left join annotations a
 								on a.varhapid = v.varid
 								join drugs d
 								on a.drugid = d.drugid
@@ -128,6 +192,13 @@ class ReportMaker(Database):
 		SELECT DISTINCT symbol, geneid, genename, drugname, drugid, guid from JsonView
 		''')
 		for (symbol, gid, genename, drugname, did, guid) in tqdm(self.sql.fetchall(), desc="Generating report..."):
+
+			if drugname not in JSON['drugs'].keys():
+				JSON['drugs'][drugname] = {"genes":[]}
+				hasGuide = False
+				hasAnno12 = False
+				hasAnno34 = False
+
 			# get annotation amounts
 			self.sql.execute('''
 					select distinct LoE, count(*) from JsonView
@@ -157,12 +228,10 @@ class ReportMaker(Database):
 				JSON['annotable'].append(annoEntry)
 
 			# ------ get more data on guidelines and annotations -----
-			geneEntry = {"drugname":drugname,
+			geneEntry = {
 			"genesymbol":symbol,
 			"genename":genename,
-			"guideline":
-				{"guid":"", "summary":"", "tex":""},
-			"annotations":{"1A":[], "1B":[], "2A":[], "2B":[], "3":[], "4":[]}}
+			}
 
 			for hap in JSON['haplotable']:
 				if hap["symbol"] != symbol:
@@ -187,23 +256,40 @@ class ReportMaker(Database):
 			for (loe, allele, rsid, phenotype, guid, markdown, summary) in self.sql.fetchall():
 				# get guideline info
 				if guid != None:
+					hasGuide = True
+					geneEntry["guideline"] = {}
 					geneEntry['guideline']['guid']=guid
 					geneEntry['guideline']['summary']=summary
-					geneEntry['guideline']['tex']=DeconstructGuideline(markdown)
+					geneEntry['guideline']['text']=DeconstructGuideline(markdown)['nontable']
+					geneEntry['guideline']['tables']=DeconstructGuideline(markdown)['tables']
+
 				# get annotation info
-				annEntry = {"rsid":rsid, "patAllele":allele, "phenotype":phenotype}
+				if phenotype != None:
+					if "1" in loe or "2" in loe:
+						hasAnno12 = True
+					if "3" in loe or "4" in loe:
+						hasAnno34 = True
+					try:
+						g= geneEntry['annotations']
+					except:
+						geneEntry["annotations"]={"1A":[], "1B":[], "2A":[], "2B":[], "3":[], "4":[]}
+					annEntry = {"rsid":rsid, "patAllele":allele, "phenotype":phenotype}
 				if annEntry not in geneEntry['annotations'][loe]:
 					geneEntry['annotations'][loe].append(annEntry)
+			if geneEntry not in JSON['drugs'][drugname]['genes']:
+				JSON['drugs'][drugname]['genes'].append(geneEntry)
+				JSON['drugs'][drugname]['hasGuide'] = hasGuide
+				JSON['drugs'][drugname]['hasAnno12'] = hasAnno12
+				JSON['drugs'][drugname]['hasAnno34'] = hasAnno34
 
-			JSON['pairs'].append(geneEntry)
+		from HTMLParser import HTMLParser
+		h = HTMLParser()
 
-		pp.pprint(JSON['pairs'])
-		self.JSON = JSON
+		self.JSON = change_dict_naming_convention(JSON, h.unescape)
+
 # -----------------------------------------------------------------------------------------
 
 	def MakeReport(self):
 		reportText = self.template.render(sampleName=self.sn, json=self.JSON)
 		with open(self.outfile + self.sn + ".tex", "wb") as f:
-			f.write(reportText.encode('utf-8'))
-
-# ----------------------------------------------------------------------------
+			f.write(tex_escape(reportText.encode("utf-8")))

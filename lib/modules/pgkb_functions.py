@@ -205,23 +205,26 @@ def DeconstructGuideline(markdown):
 	markdown = markdown.split("\n")
 	tex = ""
 	# ------------
-	conv = {
-"%":"\%",
-	}
-	# ------------
 	nontable = []
-	table = []
+	tables = {}
+	cols="XXXX"
+	repline = "reference allele at all positions"
 	for line in markdown:
+		if repline in line:
+			line = line.replace(repline, "Reference | Reference")
 		if "|" in line:
-			table.append(line)
+			spl_line = [item for item in line.split("|") if item.strip() != ""]
+			cols = len(spl_line) * "X"
+			# ----------------------------------
+			try:
+				if "---" in spl_line[0]:
+					tables[cols].append( "\hline")
+				else:
+					tables[cols].append( "&".join(spl_line))
+			except:
+				tables[cols] =["&".join(["\\textbf{%s}" %item for item in spl_line])]
+		# -------------------------------------
 		else:
 			nontable.append(line)
-	if len(table) == 0:
-			tex += unicode(line + "\\\\")
-	else:
-		for i, line in enumerate(table):
-			spl_line = [item for item in line.split("|") if item != " "]
-			andjoin = "&".join(spl_line)
-			tex += unicode(andjoin + "\\\\")
 
-	return tex
+	return {'nontable':nontable, "tables":tables}
