@@ -8,6 +8,7 @@
 \usepackage{pstricks, pst-node,pst-tree}
 \usepackage{newicktree}
 \usepackage{graphicx}
+\usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{multirow}
 \usepackage{xcolor}
@@ -185,18 +186,18 @@
 \section{Appendix 1: Top 3 haplotypes per gene}
 \scriptsize
 
-\begin{table}[!ht]
-\begin{tabularx}{\textwidth}{ @{} l X @{} }
-\textbf{Gene} & \textbf{Allele 1 (Tree) } & \textbf{Allele 2 (Tree)} & \textbf{Allele 1 (Set) } & \textbf{Allele 2 (Set)} \\
+\begin{tabularx}{\textwidth}{ X | XXXX }
 \toprule
-{%- for gene in json.haplotable %}
-{{gene.symbol}} & {{gene.new1['1']}} & {{gene.new2['1']}} & {{gene.old1['1']}} & {{gene.old2['1']}} \\
-{{gene.new1['2']}} & {{gene.new2['2']}} & {{gene.old1['2']}} & {{gene.old2['2']}}  \\
-{{gene.new1['3']}} & {{gene.new2['3']}} & {{gene.old1['3']}} & {{gene.old2['3']}} \\
+\textbf{Gene} & \textbf{Allele 1 (Tree) } & \textbf{Allele 2 (Tree)} & \textbf{Allele 1 (Set) } & \textbf{Allele 2 (Set)} \\
 \midrule
-{% endfor %}
+{%- for gene in json.haplotable %}
+{{gene.symbol}}
+& {{gene.new1['1']}} & {{gene.new2['1']}} & {{gene.old1['1']}} & {{gene.old2['1']}} \\
+& {{gene.new1['2']}} & {{gene.new2['2']}} & {{gene.old1['2']}} & {{gene.old2['2']}}  \\
+& {{gene.new1['3']}} & {{gene.new2['3']}} & {{gene.old1['3']}} & {{gene.old2['3']}} \\
+{%- endfor %}
+\bottomrule
 \end{tabularx}
-\end{table}
 \normalsize
 \newpage
 
@@ -206,6 +207,7 @@
 
 \section{Appendix 3: Low level annotations}
 
+\scriptsize
 {%- for drug, dict in json.drugs.iteritems() -%}
 
 {% if dict.hasAnno34 == True and dict.genes | length > 0 -%}

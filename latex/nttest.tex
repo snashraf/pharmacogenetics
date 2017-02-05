@@ -1,0 +1,30 @@
+
+%% This is nttest.tex
+%  It will compile only if your newicktree installation has been successful
+
+
+\documentclass{article}
+
+\usepackage{pst-tree}
+
+\usepackage{newicktree}
+
+\begin{document}
+
+\title{\textsf{newicktree} test document}
+\author{George Savva}
+\date{December '03}
+\maketitle
+
+If this document has compiled and your tree looks okay, then \textsf{newicktree} has been successfully installed on your system!
+
+If the document compiled but the tree does not look okay, then it is possible that you are using a dvi preview to view / print the document.  Please use a dvi-ps converter (preferably dvips) to generate a PostScript file, and try looking at that.
+
+\begin{newicktree}
+\righttree
+%\drawtree{((STE0097hap:1,STE0097hap:1.5):0.005,(\sf newicktree:2,tree!:2.5):0.5):0.5;}
+\drawtree{((((STE0097hap:0.000001,STE0097hap:0.000001):0.05779,a:0.18562):2.78101,a:0.17212)0.95:0.04052,a:0.000001):0.000001;}
+\end{newicktree}
+
+
+\end{document}

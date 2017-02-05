@@ -1,0 +1,4874 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6100) (preloaded format=pdflatex 2016.8.30)  5 FEB 2017 23:32
+entering extended mode
+**./STE0097.tex
+(STE0097.tex
+LaTeX2e <2016/03/31> patch level 3
+Babel <3.9r> and hyphenation patterns for 75 language(s) loaded.
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\report.cls"
+Document Class: report 2014/09/29 v1.4h Standard LaTeX document class
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\size10.clo"
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\pstricks\pstricks.sty"
+Package: pstricks 2015/11/14 v0.62 LaTeX wrapper for `PSTricks' (RN,HV)
+
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\latex\xcolor\xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics-def\pdftex.def"
+File: pdftex.def 2016/07/10 v0.06j Graphics/color for pdfTeX
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count88
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\pstricks\pstricks.tex"
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\xkeyval\pst-xkey.tex"
+File: pst-xkey.tex 2005/11/25 v1.6 PSTricks specialization of xkeyval (HA)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\xkeyval\xkeyval.sty"
+Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\xkeyval\xkeyval.tex"
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\xkeyval\xkvutils.tex"
+\XKV@toks=\toks14
+\XKV@tempa@toks=\toks15
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\xkeyval\keyval.tex"))
+\XKV@depth=\count89
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+)))
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\pstricks\pst-fp.tex"
+`pst-fp' v0.05, 2010/01/17 (hv)
+\pstFP@xs=\count90
+\pstFP@xia=\count91
+\pstFP@xib=\count92
+\pstFP@xfa=\count93
+\pstFP@xfb=\count94
+\pstFP@rega=\count95
+\pstFP@regb=\count96
+\pstFP@regs=\count97
+\pstFP@times=\count98
+)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\utilities\pgfutil-com
+mon.tex
+\pgfutil@everybye=\toks16
+\pgfutil@tempdima=\dimen103
+\pgfutil@tempdimb=\dimen104
+
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\utilities\pgfutil-com
+mon-lists.tex))
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\utilities\pgfkeys.cod
+e.tex
+\pgfkeys@pathtoks=\toks17
+\pgfkeys@temptoks=\toks18
+
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\utilities\pgfkeysfilt
+ered.code.tex
+\pgfkeys@tmptoks=\toks19
+))
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\utilities\pgffor.code
+.tex
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmath.code.tex
+
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathcalc.code
+.tex
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathutil.code
+.tex
+\pgf@x=\dimen105
+\pgf@xa=\dimen106
+\pgf@xb=\dimen107
+\pgf@xc=\dimen108
+\pgf@y=\dimen109
+\pgf@ya=\dimen110
+\pgf@yb=\dimen111
+\pgf@yc=\dimen112
+\c@pgf@counta=\count99
+\c@pgf@countb=\count100
+\c@pgf@countc=\count101
+\c@pgf@countd=\count102
+\pgfutil@tempcnta=\count103
+\pgfutil@tempcntb=\count104
+)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathparser.co
+de.tex
+\pgfmath@dimen=\dimen113
+\pgfmath@count=\count105
+\pgfmath@box=\box26
+\pgfmath@toks=\toks20
+\pgfmath@stack@operand=\toks21
+\pgfmath@stack@operation=\toks22
+)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.code.tex
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.basic.code.tex)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.trigonometric.code.tex)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.random.code.tex)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.comparison.code.tex)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.base.code.tex)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.round.code.tex)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.misc.code.tex)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfunctions
+.integerarithmetics.code.tex)))
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pgf\math\pgfmathfloat.cod
+e.tex
+\c@pgfmathroundto@lastzeros=\count106
+))
+\pgffor@iter=\dimen114
+\pgffor@skip=\dimen115
+\pgffor@stack=\toks23
+\pgffor@toks=\toks24
+)
+\psLoopIndex=\count107
+
+`PSTricks' v2.70  <2016/09/23> (tvz)
+\pst@dima=\dimen116
+\pst@dimb=\dimen117
+\pst@dimc=\dimen118
+\pst@dimd=\dimen119
+\pst@dimg=\dimen120
+\pst@dimh=\dimen121
+\pst@dimm=\dimen122
+\pst@dimn=\dimen123
+\pst@dimo=\dimen124
+\pst@dimp=\dimen125
+\pst@hbox=\box27
+\pst@ibox=\box28
+\pst@boxg=\box29
+\pst@cnta=\count108
+\pst@cntb=\count109
+\pst@cntc=\count110
+\pst@cntd=\count111
+\pst@cntg=\count112
+\pst@cnth=\count113
+\pst@cntm=\count114
+\pst@cntn=\count115
+\pst@cnto=\count116
+\pst@cntp=\count117
+\@zero=\count118
+\pst@toks=\toks25
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\pstricks\pstricks.con")
+\psunit=\dimen126
+\psxunit=\dimen127
+\psyunit=\dimen128
+\pst@C@@rType=\count119
+\pslinewidth=\dimen129
+\psk@startLW=\dimen130
+\psk@endLW=\dimen131
+\pst@customdefs=\toks26
+\pslinearc=\dimen132
+\pst@symbolStep=\dimen133
+\pst@symbolWidth=\dimen134
+\pst@symbolLinewidth=\dimen135
+\everypsbox=\toks27
+\psframesep=\dimen136
+\pslabelsep=\dimen137
+\sh@wgridXunit=\dimen138
+\sh@wgridYunit=\dimen139
+\pst@shift=\dimen140
+)
+File: pstricks.tex 2016/09/23 v2.70 `PSTricks' (tvz,hv)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\pstricks\pst-fp.tex")
+File: pst-fp.tex 2016/09/23 v2.70 `PST-fp' (hv)
+)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\latex\pst-node\pst-node.sty
+Package: pst-node 2012/09/18 v1.01 LaTeX wrapper for `pst-node' (HV)
+Package: pst-node 2010/04/22 package wrapper for pst-node.tex
+
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pst-node\pst-node.tex
+ v1.39, 2017/01/20
+\psrow=\count120
+\pscol=\count121
+\psmatrixcnt=\count122
+\psrowsep=\skip43
+\pscolsep=\skip44
+\pst@args=\count123
+\num@pts=\count124
+\pst@argcnt=\count125
+)
+File: pst-node.tex 2017/01/20 1.39 `pst-node' (tvz,hv)
+)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\latex\pst-tree\pst-tree.sty
+Package: pst-tree 2009/01/25 package wrapper for pst-tree.tex
+
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\generic\pst-tree\pst-tree.tex
+ v1.12, 2011/02/28(tvz,dg,hv)
+\pstree@rootbox=\box30
+\pstree@box=\box31
+\psnodecnt=\count126
+\pstreelevel=\count127
+\pstreecnt=\count128
+\pstree@cnt=\count129
+\pstree@stop=\count130
+)
+File: pst-tree.tex 2011/02/28 1.12 `pst-tree' (tvz,hv)
+) (newicktree.sty
+Package: newicktree 2004/02/22
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2016/07/10 v1.0t Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 99.
+)
+\Gin@req@height=\dimen141
+\Gin@req@width=\dimen142
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\tabularx.sty"
+Package: tabularx 2016/02/03 v2.11 `tabularx' package (DPC)
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\array.sty"
+Package: array 2014/10/28 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen143
+\extrarowheight=\dimen144
+\NC@list=\toks28
+\extratabsurround=\skip45
+\backup@length=\skip46
+)
+\TX@col@width=\dimen145
+\TX@old@table=\dimen146
+\TX@old@col=\dimen147
+\TX@target=\dimen148
+\TX@delta=\dimen149
+\TX@cols=\count131
+\TX@ftn=\toks29
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\multirow\multirow.sty"
+Package: multirow 2016/10/11 v2.1 Span multiple rows of a table
+\multirow@colwidth=\skip47
+\multirow@cnta=\count132
+\multirow@cntb=\count133
+\multirow@dima=\skip48
+\bigstrutjot=\dimen150
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\hyperref.sty"
+Package: hyperref 2016/06/24 v6.83q Hypertext links for LaTeX
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\hobsub-hyperref.sty"
+Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
+
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\hobsub-generic.sty"
+Package: hobsub-generic 2016/05/16 v1.14 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2016/05/16 v1.14 Construct package bundles (HO)
+Package hobsub Info: Skipping package `infwarerr' (already loaded).
+Package hobsub Info: Skipping package `ltxcmds' (already loaded).
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+Package: intcalc 2016/05/16 v1.2 Expandable calculations with integers (HO)
+Package: ifpdf 2016/05/14 v3.1 Provides the ifpdf switch
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+Package: pdftexcmds 2016/05/21 v0.22 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+Package: pdfescape 2016/05/16 v1.14 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2016/05/16 v1.4 Expandable calculations on big integers (HO
+)
+Package: bitset 2016/05/16 v1.2 Handle bit-vector datatype (HO)
+Package: uniquecounter 2016/05/16 v1.3 Provide unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2016/05/16 v1.5 Let assignment for LaTeX macros (HO)
+Package: hopatch 2016/05/16 v1.3 Wrapper for package hooks (HO)
+Package: xcolor-patch 2016/05/16 xcolor patch
+Package: atveryend 2016/05/16 v1.9 Hooks at the very end of document (HO)
+Package atveryend Info: \enddocument detected (standard20110627).
+Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
+Package: refcount 2016/05/16 v3.5 Data extraction from label references (HO)
+Package: hycolor 2016/05/16 v1.8 Color options for hyperref/bookmark (HO)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\ifxetex\ifxetex.sty"
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\oberdiek\auxhook.sty"
+Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\oberdiek\kvoptions.sty"
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+)
+\@linkdim=\dimen151
+\Hy@linkcounter=\count134
+\Hy@pagecounter=\count135
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\pd1enc.def"
+File: pd1enc.def 2016/06/24 v6.83q Hyperref: PDFDocEncoding definition (HO)
+)
+\Hy@SavedSpaceFactor=\count136
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\00miktex\hyperref.cfg"
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Hyper figures OFF on input line 4486.
+Package hyperref Info: Link nesting OFF on input line 4491.
+Package hyperref Info: Hyper index ON on input line 4494.
+Package hyperref Info: Plain pages OFF on input line 4501.
+Package hyperref Info: Backreferencing OFF on input line 4506.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4735.
+\c@Hy@tempcnt=\count137
+
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\latex\url\url.sty
+\Urlmuskip=\muskip10
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 5088.
+\XeTeXLinkMargin=\dimen152
+\Fld@menulength=\count138
+\Field@Width=\dimen153
+\Fld@charsize=\dimen154
+Package hyperref Info: Hyper figures OFF on input line 6342.
+Package hyperref Info: Link nesting OFF on input line 6347.
+Package hyperref Info: Hyper index ON on input line 6350.
+Package hyperref Info: backreferencing OFF on input line 6357.
+Package hyperref Info: Link coloring OFF on input line 6362.
+Package hyperref Info: Link coloring with OCG OFF on input line 6367.
+Package hyperref Info: PDF/A mode OFF on input line 6372.
+LaTeX Info: Redefining \ref on input line 6412.
+LaTeX Info: Redefining \pageref on input line 6416.
+\Hy@abspage=\count139
+\c@Item=\count140
+\c@Hfootnote=\count141
+)
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\hpdftex.def"
+File: hpdftex.def 2016/06/24 v6.83q Hyperref driver for pdfTeX
+\Fld@listcount=\count142
+\c@bookmark@seq@number=\count143
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\oberdiek\rerunfilecheck.sty"
+Package: rerunfilecheck 2016/05/16 v1.8 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip49
+)
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\latex\ltablex\ltablex.sty
+Package: ltablex 2014/08/13 v1.1 Modified tabularx
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\longtable.sty"
+Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip50
+\LTright=\skip51
+\LTpre=\skip52
+\LTpost=\skip53
+\LTchunksize=\count144
+\LTcapwidth=\dimen155
+\LT@head=\box32
+\LT@firsthead=\box33
+\LT@foot=\box34
+\LT@lastfoot=\box35
+\LT@cols=\count145
+\LT@rows=\count146
+\c@LT@tables=\count147
+\c@LT@chunks=\count148
+\LT@p@ftn=\toks30
+))
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\latex\booktabs\booktabs.sty
+Package: booktabs 2005/04/14 v1.61803 publication quality tables
+\heavyrulewidth=\dimen156
+\lightrulewidth=\dimen157
+\cmidrulewidth=\dimen158
+\belowrulesep=\dimen159
+\belowbottomsep=\dimen160
+\aboverulesep=\dimen161
+\abovetopsep=\dimen162
+\cmidrulesep=\dimen163
+\cmidrulekern=\dimen164
+\defaultaddspace=\dimen165
+\@cmidla=\count149
+\@cmidlb=\count150
+\@aboverulesep=\dimen166
+\@belowrulesep=\dimen167
+\@thisruleclass=\count151
+\@lastruleclass=\count152
+\@thisrulewidth=\dimen168
+)
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.sty"
+Package: geometry 2010/09/12 v5.6 Page Geometry
+\Gm@cnth=\count153
+\Gm@cntv=\count154
+\c@Gm@tempcnt=\count155
+\Gm@bindingoffset=\dimen169
+\Gm@wd@mp=\dimen170
+\Gm@odd@mp=\dimen171
+\Gm@even@mp=\dimen172
+\Gm@layoutwidth=\dimen173
+\Gm@layoutheight=\dimen174
+\Gm@layouthoffset=\dimen175
+\Gm@layoutvoffset=\dimen176
+\Gm@dimlist=\toks31
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\geometry\geometry.cfg"))
+Package hyperref Info: Option `colorlinks' set `true' on input line 23.
+
+(STE0097.aux)
+\openout1 = `STE0097.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 57.
+LaTeX Font Info:    ... okay on input line 57.
+
+(C:\Users\skye\AppData\Roaming\MiKTeX\2.9\tex\context\base\supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count156
+\scratchdimen=\dimen177
+\scratchbox=\box36
+\nofMPsegments=\count157
+\nofMParguments=\count158
+\everyMPshowfont=\toks32
+\MPscratchCnt=\count159
+\MPscratchDim=\dimen178
+\MPnumerator=\count160
+\makeMPintoPDFobject=\count161
+\everyMPtoPDFconversion=\toks33
+) ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\oberdiek\epstopdf-base.sty"
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\oberdiek\grfext.sty"
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+)
+\AtBeginShipoutBox=\box37
+Package hyperref Info: Link coloring ON on input line 57.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
+Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
+Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
+)
+\c@section@level=\count162
+)
+LaTeX Info: Redefining \ref on input line 57.
+LaTeX Info: Redefining \pageref on input line 57.
+LaTeX Info: Redefining \nameref on input line 57.
+
+(STE0097.out) (STE0097.out)
+\@outlinefile=\write3
+\openout3 = `STE0097.out'.
+
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(56.9055pt, 483.69687pt, 56.9055pt)
+* v-part:(T,H,B)=(101.40665pt, 591.5302pt, 152.11pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=483.69687pt
+* \textheight=591.5302pt
+* \oddsidemargin=-15.36449pt
+* \evensidemargin=-15.36449pt
+* \topmargin=-7.86334pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=65.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 59--59
+\OT1/cmr/bx/n/24.88 Pharmacogenetic
+ []
+
+<pilldna.jpg, id=595, 510.90875pt x 339.2675pt>
+File: pilldna.jpg Graphic file (type jpg)
+ <use pilldna.jpg>
+Package pdftex.def Info: pilldna.jpg used on input line 59.
+(pdftex.def)             Requested size: 510.9075pt x 339.26666pt.
+
+Overfull \hbox (269.05907pt too wide) in paragraph at lines 59--59
+[] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 59--59
+
+ []
+
+[1
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+
+
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!
+Non-PDF special ignored!{C:/Users/skye/AppData/Local/MiKTeX/2.9/pdftex/config/p
+dftex.map}]
+Overfull \vbox (114.4988pt too high) has occurred while \output is active []
+
+
+[2 <./pilldna.jpg>] (STE0097.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 1.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 1.
+ [3
+
+] [4] [5])
+\tf@toc=\write4
+\openout4 = `STE0097.toc'.
+
+ [6]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 79.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 79.
+ [7] [8] [9]
+Underfull \hbox (badness 10000) in paragraph at lines 133--135
+
+ []
+
+
+Underfull \hbox (badness 5681) in paragraph at lines 138--138
+[]| \OT1/cmr/bx/n/7 Phe-no-type (geno-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/7 Homozygous wild-type
+ []
+
+
+Underfull \hbox (badness 1533) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 or nor-mal, high DPD
+ []
+
+
+Underfull \hbox (badness 1867) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 ac-tiv-ity (two or more
+ []
+
+
+Underfull \hbox (badness 5119) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/7 Normal DPD ac-tiv-ity
+ []
+
+
+Underfull \hbox (badness 1320) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 and "nor-mal" risk for
+ []
+
+
+Underfull \hbox (badness 6188) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 flu-o-ropy-rim-i-dine tox-i-c-
+ []
+
+
+Underfull \hbox (badness 1748) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/7 Heterozygous or in-ter-
+ []
+
+
+Underfull \hbox (badness 3657) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 me-di-ate ac-tiv-ity ( 3-
+ []
+
+
+Underfull \hbox (badness 2253) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 5% of pa-tients), may
+ []
+
+
+Underfull \hbox (badness 2237) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 i-c-ity with drug ex-po-
+ []
+
+
+Underfull \hbox (badness 6691) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/7 *1/*2A; *1/*13; *1/
+ []
+
+
+Underfull \hbox (badness 1331) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 (leuko-cyte DPD ac-tiv-
+ []
+
+
+Underfull \hbox (badness 1142) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 for se-vere or even fa-
+ []
+
+
+Underfull \hbox (badness 2753) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 treated with flu-o-ropy-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/7 Start with at least
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 a 50% re-duc-tion in
+ []
+
+
+Underfull \hbox (badness 3942) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 start-ing dose fol-lowed
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 by titra-tion of dose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/7 Homozygous vari-ant,
+ []
+
+
+Underfull \hbox (badness 1033) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 tox-i-c-ity with drug ex-
+ []
+
+
+Underfull \hbox (badness 2443) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 al-le-les - *2A, *13 or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/7 *2A/*2A; *13/*13;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 rs67376798A -c- /
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+[]|\OT1/cmr/m/n/7 Complete DPD de-fi-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 ciency and in-creased
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 fa-tal drug tox-i-c-ity
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
+\OT1/cmr/m/n/7 when treated with
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 151--153
+
+ []
+
+
+Underfull \hbox (badness 5681) in paragraph at lines 156--156
+[]| \OT1/cmr/bx/n/7 Phe-no-type (geno-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+[]|\OT1/cmr/m/n/7 Homozygous wild-type
+ []
+
+
+Underfull \hbox (badness 1533) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 or nor-mal, high DPD
+ []
+
+
+Underfull \hbox (badness 1867) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 ac-tiv-ity (two or more
+ []
+
+
+Underfull \hbox (badness 5119) in paragraph at lines 156--156
+[]|\OT1/cmr/m/n/7 Normal DPD ac-tiv-ity
+ []
+
+
+Underfull \hbox (badness 1320) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 and "nor-mal" risk for
+ []
+
+
+Underfull \hbox (badness 6188) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 flu-o-ropy-rim-i-dine tox-i-c-
+ []
+
+
+Underfull \hbox (badness 1748) in paragraph at lines 156--156
+[]|\OT1/cmr/m/n/7 Heterozygous or in-ter-
+ []
+
+
+Underfull \hbox (badness 3657) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 me-di-ate ac-tiv-ity ( 3-
+ []
+
+
+Underfull \hbox (badness 2253) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 5% of pa-tients), may
+ []
+
+
+Underfull \hbox (badness 2237) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 i-c-ity with drug ex-po-
+ []
+
+
+Underfull \hbox (badness 6691) in paragraph at lines 156--156
+[]|\OT1/cmr/m/n/7 *1/*2A; *1/*13; *1/
+ []
+
+
+Underfull \hbox (badness 1331) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 (leuko-cyte DPD ac-tiv-
+ []
+
+
+Underfull \hbox (badness 1142) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 for se-vere or even fa-
+ []
+
+
+Underfull \hbox (badness 2753) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 treated with flu-o-ropy-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+[]|\OT1/cmr/m/n/7 Start with at least
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 a 50% re-duc-tion in
+ []
+
+
+Underfull \hbox (badness 3942) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 start-ing dose fol-lowed
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 by titra-tion of dose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+[]|\OT1/cmr/m/n/7 Homozygous vari-ant,
+ []
+
+
+Underfull \hbox (badness 1033) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 tox-i-c-ity with drug ex-
+ []
+
+
+Underfull \hbox (badness 2443) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 al-le-les - *2A, *13 or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+[]|\OT1/cmr/m/n/7 *2A/*2A; *13/*13;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 rs67376798A -c- /
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+[]|\OT1/cmr/m/n/7 Complete DPD de-fi-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 ciency and in-creased
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 fa-tal drug tox-i-c-ity
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--156
+\OT1/cmr/m/n/7 when treated with
+ []
+
+[10]
+Underfull \hbox (badness 10000) in paragraph at lines 167--169
+
+ []
+
+
+Underfull \hbox (badness 5681) in paragraph at lines 172--172
+[]| \OT1/cmr/bx/n/7 Phe-no-type (geno-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+[]| \OT1/cmr/bx/n/7 Clas-si-fi-ca-tion of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+[]|\OT1/cmr/m/n/7 Homozygous wild-type
+ []
+
+
+Underfull \hbox (badness 1533) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 or nor-mal, high DPD
+ []
+
+
+Underfull \hbox (badness 1867) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 ac-tiv-ity (two or more
+ []
+
+
+Underfull \hbox (badness 5119) in paragraph at lines 172--172
+[]|\OT1/cmr/m/n/7 Normal DPD ac-tiv-ity
+ []
+
+
+Underfull \hbox (badness 1320) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 and "nor-mal" risk for
+ []
+
+
+Underfull \hbox (badness 6188) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 flu-o-ropy-rim-i-dine tox-i-c-
+ []
+
+
+Underfull \hbox (badness 1748) in paragraph at lines 172--172
+[]|\OT1/cmr/m/n/7 Heterozygous or in-ter-
+ []
+
+
+Underfull \hbox (badness 3657) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 me-di-ate ac-tiv-ity ( 3-
+ []
+
+
+Underfull \hbox (badness 2253) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 5% of pa-tients), may
+ []
+
+
+Underfull \hbox (badness 2237) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 i-c-ity with drug ex-po-
+ []
+
+
+Underfull \hbox (badness 6691) in paragraph at lines 172--172
+[]|\OT1/cmr/m/n/7 *1/*2A; *1/*13; *1/
+ []
+
+
+Underfull \hbox (badness 1331) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 (leuko-cyte DPD ac-tiv-
+ []
+
+
+Underfull \hbox (badness 1142) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 for se-vere or even fa-
+ []
+
+
+Underfull \hbox (badness 2753) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 treated with flu-o-ropy-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+[]|\OT1/cmr/m/n/7 Start with at least
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 a 50% re-duc-tion in
+ []
+
+
+Underfull \hbox (badness 3942) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 start-ing dose fol-lowed
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 by titra-tion of dose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+[]|\OT1/cmr/m/n/7 Homozygous vari-ant,
+ []
+
+
+Underfull \hbox (badness 1033) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 tox-i-c-ity with drug ex-
+ []
+
+
+Underfull \hbox (badness 2443) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 al-le-les - *2A, *13 or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+[]|\OT1/cmr/m/n/7 *2A/*2A; *13/*13;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 rs67376798A-c- /
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+[]|\OT1/cmr/m/n/7 Complete DPD de-fi-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 ciency and in-creased
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 fa-tal drug tox-i-c-ity
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
+\OT1/cmr/m/n/7 when treated with
+ []
+
+[11]
+Underfull \hbox (badness 10000) in paragraph at lines 182--186
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]| \OT1/cmr/bx/n/7 Rec-om-men-da-tions
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\OT1/cmr/m/n/7 Homozygous or Het-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 erozy-gous G551D-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 CFTR, [vari-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ant:rs75527207] geno-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\OT1/cmr/m/n/7 G551D/ F508del,
+ []
+
+
+Underfull \hbox (badness 1515) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 risk of pul-monary ex-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ac-er-ba-tion, pa-tient
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 re-ported out-comes,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 chlo-ride con-cen-tra-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\OT1/cmr/m/n/7 Homozygous for
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 F508del-CFTR, [vari-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ant:rs113993960] or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 [vari-ant:rs199826652]
+ []
+
+
+Underfull \hbox (badness 1102) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 in sweat chlo-ride con-
+ []
+
+
+Underfull \hbox (badness 1924) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 in other clin-i-cal mea-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 sure-ments in-clud-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 spiro-met-ric mea-sure-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ments, pul-monary
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\OT1/cmr/m/n/7 Ivacaftor is not
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\OT1/cmr/m/n/7 Homozygous or het-
+ []
+
+
+Underfull \hbox (badness 5403) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 erozy-gous for one of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 the fol-low-ing CFTR
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 vari-ants: G1244E
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ([vari-ant:rs267606723]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 geno-type AA or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 AG), G1349D ([vari-
+ []
+
+
+Underfull \hbox (badness 7291) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ant:rs193922525] geno-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ([vari-ant:rs80282562]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 geno-type AA or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 AG), G551S ([vari-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ant:rs121909013]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 geno-type AA or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 AG), S1251N ([vari-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ant:rs74503330] geno-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ([vari-ant:rs121909041]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 geno-type CC or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 CT), S549N ([vari-
+ []
+
+
+Underfull \hbox (badness 7291) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ant:rs121908755] geno-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ([vari-ant:rs121909005]
+ []
+
+
+Underfull \hbox (badness 2799) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 geno-type GG or GT,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 [vari-ant:rs121908757]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 geno-type AC or
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 CC), R117H ([vari-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ant:rs78655421] geno-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\OT1/cmr/m/n/7 Significantly en-hanced
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 chan-nel open prob-a-
+ []
+
+
+Underfull \hbox (badness 1226) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 bil-ity in vitro [PMID:
+ []
+
+
+Underfull \hbox (badness 4266) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 22293084]. In vitro
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 as-says with CFBEo-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 po-ten-ti-ated chlo-ride
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 chan-nel func-tion
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 [PMID: 23027855],
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 af-ter iva-caftor treat-
+ []
+
+
+Underfull \hbox (badness 1642) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ment in a 12-year-old
+ []
+
+
+Underfull \hbox (badness 3219) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 girl with CF with a
+ []
+
+
+Underfull \hbox (badness 1024) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 ant [PMID: 24081349].
+ []
+
+
+Underfull \hbox (badness 2521) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 Im-prove-ment in sweat
+ []
+
+
+Underfull \hbox (badness 6412) in paragraph at lines 186--186
+\OT1/cmr/m/n/7 in pa-tients with the
+ []
+
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 207--209
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+[]| \OT1/cmr/bx/n/7 Im-pli-ca-tions for
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+[]|\OT1/cmr/m/n/7 Favorable re-sponse
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+[]|\OT1/cmr/m/n/7 Approximately 70%
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 Con-sider im-pli-ca-tions
+ []
+
+
+Underfull \hbox (badness 1430) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 be-fore ini-ti-at-ing PEG-
+ []
+
+
+Underfull \hbox (badness 4242) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 IFN al-pha and RBV
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+[]|\OT1/cmr/m/n/7 Approximately 90%
+ []
+
+
+Underfull \hbox (badness 2538) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 chance for SVR af-ter
+ []
+
+
+Underfull \hbox (badness 2941) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 24-48 weeks of treat-
+ []
+
+
+Underfull \hbox (badness 1552) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 ment. Ap-prox-i-mately
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 el-i-gi-ble for short-ened
+ []
+
+
+Underfull \hbox (badness 4242) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 IFN al-pha and RBV
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+[]|\OT1/cmr/m/n/7 Unfavorable re-sponse
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+[]|\OT1/cmr/m/n/7 Approximately 30%
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 Con-sider im-pli-ca-tions
+ []
+
+
+Underfull \hbox (badness 1430) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 be-fore ini-ti-at-ing PEG-
+ []
+
+
+Underfull \hbox (badness 4242) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 IFN al-pha and RBV
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+[]|\OT1/cmr/m/n/7 Approximately 60%
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 chance for SVR af-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 ter 24-48 weeks of
+ []
+
+
+Underfull \hbox (badness 4467) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 treat-ment. Ap-prox-i-
+ []
+
+
+Underfull \hbox (badness 2486) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 are el-i-gi-ble for short-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 ened ther-apy (24-28
+ []
+
+
+Underfull \hbox (badness 6236) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 weeks)-d-. Con-sider
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 im-pli-ca-tions be-fore
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 ini-ti-at-ing PEG-IFN
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+\OT1/cmr/m/n/7 and RBV con-tain-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 227--229
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--232
+[]|\OT1/cmr/m/n/7 VKORC1 [vari-ant:rs9934438]
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 232--232
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 232--232
+[]|\OT1/cmr/m/n/7 VKORC1 [vari-ant:rs9934438]
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 232--232
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 263--265
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+[]|\OT1/cmr/m/n/7 Insufficient data to al-low
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 cal-cu-la-tion of dose ad-just-
+ []
+
+
+Underfull \hbox (badness 3758) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 (e.g., citalo-pram, ser-tra-line)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 or ad-just dose to clin-i-cal
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 re-sponse and mon-i-tor (O-
+ []
+
+
+Underfull \hbox (badness 4353) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 desmethyl)venlafaxine plasma
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+[]|\OT1/cmr/m/n/7 Clinical ef-fect (S): long-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 standing dis-com-fort (48-168
+ []
+
+
+Underfull \hbox (badness 7832) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 hr) with-out per-ma-nent in-
+ []
+
+
+Underfull \hbox (badness 3590) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 atyp-i-cal an-tipsy-chotic drugs;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 ex-trapyra-mi-dal side ef-fects;
+ []
+
+
+Underfull \hbox (badness 1337) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 parkin-son-ism; ADE re-sult-ing
+ []
+
+
+Underfull \hbox (badness 1448) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 from in-creased bioavail-abil-ity
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 of tri-cyclic an-tide-pres-sants,
+ []
+
+
+Underfull \hbox (badness 2142) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 tral ef-fects e.g. dizzi-ness);
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 INR 4.5-6.0; neu-trope-nia
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+[]|\OT1/cmr/m/n/7 Insufficient data to al-low
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 cal-cu-la-tion of dose ad-just-
+ []
+
+
+Underfull \hbox (badness 3758) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 (e.g., citalo-pram, ser-tra-line)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 or ad-just dose to clin-i-cal
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 re-sponse and mon-i-tor (O-
+ []
+
+
+Underfull \hbox (badness 4353) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 desmethyl)venlafaxine plasma
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+[]|\OT1/cmr/m/n/7 Clinical ef-fect (S): long-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 standing dis-com-fort (48-168
+ []
+
+
+Underfull \hbox (badness 7832) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 hr) with-out per-ma-nent in-
+ []
+
+
+Underfull \hbox (badness 3590) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 atyp-i-cal an-tipsy-chotic drugs;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 ex-trapyra-mi-dal side ef-fects;
+ []
+
+
+Underfull \hbox (badness 1337) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 parkin-son-ism; ADE re-sult-ing
+ []
+
+
+Underfull \hbox (badness 1448) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 from in-creased bioavail-abil-ity
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 of tri-cyclic an-tide-pres-sants,
+ []
+
+
+Underfull \hbox (badness 2142) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 tral ef-fects e.g. dizzi-ness);
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 INR 4.5-6.0; neu-trope-nia
+ []
+
+
+Underfull \hbox (badness 4108) in paragraph at lines 268--268
+[]|\OT1/cmr/m/n/7 Be alert to de-creased ven-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 lafax-ine and in-creased (O-
+ []
+
+
+Underfull \hbox (badness 4353) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 desmethyl)venlafaxine plasma
+ []
+
+
+Underfull \hbox (badness 1622) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 con-cen-tra-tion. Titrate dose
+ []
+
+
+Underfull \hbox (badness 1817) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 nor-mal dose or se-lect al-ter-
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 268--268
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 299--301
+
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 5147) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 dis-com-fort (< 48 hr) with-
+ []
+
+
+Underfull \hbox (badness 2990) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 out per-ma-nent in-jury: e.g.
+ []
+
+
+Underfull \hbox (badness 5288) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 re-duced de-crease in rest-ing
+ []
+
+
+Underfull \hbox (badness 1360) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 heart rate; re-duc-tion in ex-
+ []
+
+
+Underfull \hbox (badness 1838) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 er-cise tachy-car-dia; de-creased
+ []
+
+
+Underfull \hbox (badness 4492) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 pain re-lief from oxy-codone;
+ []
+
+
+Underfull \hbox (badness 2229) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 sleep dis-tur-bance etc); neu-
+ []
+
+
+Underfull \hbox (badness 1960) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 crease fol-low-ing oral glu-cose
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 3482) in paragraph at lines 304--304
+[]|\OT1/cmr/m/n/7 Check INR more fre-quently
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 304--304
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Overfull \vbox (2.15833pt too high) has occurred while \output is active []
+
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 309--311
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 314--314
+[]|\OT1/cmr/m/n/7 VKORC1 [vari-ant:rs9934438]
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 314--314
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 314--314
+[]|\OT1/cmr/m/n/7 VKORC1 [vari-ant:rs9934438]
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 314--314
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 365--367
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 379--381
+
+ []
+
+[16]
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+[]| \OT1/cmr/bx/n/7 Im-pli-ca-tions for
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+[]|\OT1/cmr/m/n/7 Favorable re-sponse
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+[]|\OT1/cmr/m/n/7 Approximately 70%
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 Con-sider im-pli-ca-tions
+ []
+
+
+Underfull \hbox (badness 1430) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 be-fore ini-ti-at-ing PEG-
+ []
+
+
+Underfull \hbox (badness 4242) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 IFN al-pha and RBV
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+[]|\OT1/cmr/m/n/7 Approximately 90%
+ []
+
+
+Underfull \hbox (badness 2538) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 chance for SVR af-ter
+ []
+
+
+Underfull \hbox (badness 2941) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 24-48 weeks of treat-
+ []
+
+
+Underfull \hbox (badness 1552) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 ment. Ap-prox-i-mately
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 el-i-gi-ble for short-ened
+ []
+
+
+Underfull \hbox (badness 4242) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 IFN al-pha and RBV
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+[]|\OT1/cmr/m/n/7 Unfavorable re-sponse
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+[]|\OT1/cmr/m/n/7 Approximately 30%
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 Con-sider im-pli-ca-tions
+ []
+
+
+Underfull \hbox (badness 1430) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 be-fore ini-ti-at-ing PEG-
+ []
+
+
+Underfull \hbox (badness 4242) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 IFN al-pha and RBV
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+[]|\OT1/cmr/m/n/7 Approximately 60%
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 chance for SVR af-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 ter 24-48 weeks of
+ []
+
+
+Underfull \hbox (badness 4467) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 treat-ment. Ap-prox-i-
+ []
+
+
+Underfull \hbox (badness 2486) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 are el-i-gi-ble for short-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 ened ther-apy (24-28
+ []
+
+
+Underfull \hbox (badness 6236) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 weeks)-d-. Con-sider
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 im-pli-ca-tions be-fore
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 ini-ti-at-ing PEG-IFN
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--384
+\OT1/cmr/m/n/7 and RBV con-tain-ing
+ []
+
+
+Overfull \hbox (85.52637pt too wide) in paragraph at lines 413--415
+\OT1/cmr/m/n/10 The best way to es-ti-mate the an-tic-i-pated sta-ble dose of w
+ar-farin is to use the al-go-rithms avail-able on [http://www.warfarindosing.or
+g] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 413--415
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[]| \OT1/cmr/bx/n/7 VKORC1
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 Geno-type (-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 1639G>A,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 [vari-
+ []
+
+
+Overfull \hbox (3.28902pt too wide) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 ant:rs9923231])| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 CYP2C9*1/*1| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 CYP2C9*1/*2| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 CYP2C9*1/*3| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 CYP2C9*2/*2| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 CYP2C9*2/*3| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 422--422
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 422--422
+\OT1/cmr/bx/n/7 CYP2C9*3/*3| 
+ []
+
+[17]
+Overfull \hbox (85.52637pt too wide) in paragraph at lines 427--429
+\OT1/cmr/m/n/10 The best way to es-ti-mate the an-tic-i-pated sta-ble dose of w
+ar-farin is to use the al-go-rithms avail-able on [http://www.warfarindosing.or
+g] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 427--429
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+[]| \OT1/cmr/bx/n/7 VKORC1
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 Geno-type (-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 1639G>A,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 [vari-
+ []
+
+
+Overfull \hbox (3.28902pt too wide) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 ant:rs9923231])| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 CYP2C9*1/*1| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 CYP2C9*1/*2| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 CYP2C9*1/*3| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 CYP2C9*2/*2| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 CYP2C9*2/*3| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
+[]|
+ []
+
+
+Overfull \hbox (0.57814pt too wide) in paragraph at lines 436--436
+\OT1/cmr/bx/n/7 CYP2C9*3/*3| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 455--457
+
+ []
+
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no ™ in font cmr7!
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no ™ in font cmr7!
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no ™ in font cmr7!
+
+Underfull \hbox (badness 6157) in paragraph at lines 460--460
+[]| \OT1/cmr/bx/n/7 Likely phe-no-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+[]| \OT1/cmr/bx/n/7 Ex-am-ples of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+[]| \OT1/cmr/bx/n/7 Rec-om-men-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/bx/n/7 da-tions for
+ []
+
+
+Underfull \hbox (badness 3872) in paragraph at lines 460--460
+\OT1/cmr/bx/n/7 atazanavir ther-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/bx/n/7 rec-om-men-da-tion
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/bx/n/7 for atazanavir
+ []
+
+
+Underfull \hbox (badness 1377) in paragraph at lines 460--460
+[]|\OT1/cmr/m/n/7 Extensive Me-tab-o-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+[]|\OT1/cmr/m/n/7 *1/*1; *1/*36;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 *36/*36; [vari-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+[]|\OT1/cmr/m/n/7 Reference -c-
+ []
+
+
+Underfull \hbox (badness 7613) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 UGT1A1 ac-tiv-ity;
+ []
+
+
+Underfull \hbox (badness 1112) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 of bilirubin-related
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 dis-con-tin-u-a-tion of
+ []
+
+
+Underfull \hbox (badness 1924) in paragraph at lines 460--460
+[]|\OT1/cmr/m/n/7 There is no need
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+[]|\OT1/cmr/m/n/7 Intermediate Me-
+ []
+
+
+Underfull \hbox (badness 1596) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 or in-creased func-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 tion al-lele (*36)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 het-erozy-gos-ity for
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 [vari-ant:rs887829]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+[]|\OT1/cmr/m/n/7 *1/*28; *1/*37;
+ []
+
+
+Underfull \hbox (badness 2393) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 *36/*28; *36/*37;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 [vari-ant:rs887829]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+[]|\OT1/cmr/m/n/7 Somewhat de-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 creased UGT1A1
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 ac-tiv-ity; low
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 like-li-hood of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 bilirubin-related
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 dis-con-tin-u-a-tion of
+ []
+
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no ™ in font cmr7!
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 UGT1A1 ge-netic
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 the pa-tient that
+ []
+
+
+Underfull \hbox (badness 2707) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 that this pa-tients
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 geno-type makes
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 ho-mozy-gos-ity for
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 [vari-ant:rs887829]
+ []
+
+
+Underfull \hbox (badness 2393) in paragraph at lines 460--460
+[]|\OT1/cmr/m/n/7 *28/*28; *28/*37;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 *37/*37; [vari-
+ []
+
+
+Underfull \hbox (badness 4132) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 ant:rs887829] T/T
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 (*80/*80), *6/*6
+ []
+
+
+Underfull \hbox (badness 7613) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 UGT1A1 ac-tiv-ity;
+ []
+
+
+Underfull \hbox (badness 2790) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 high like-li-hood of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 bilirubin-related
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 dis-con-tin-u-a-tion of
+ []
+
+
+Underfull \hbox (badness 2617) in paragraph at lines 460--460
+\OT1/cmr/m/n/7 dice would be of
+ []
+
+[18]
+Underfull \hbox (badness 10000) in paragraph at lines 471--473
+
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 476--476
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+
+Underfull \hbox (badness 1661) in paragraph at lines 476--476
+\OT1/cmr/m/n/7 ven-tion of breast can-cer re-
+ []
+
+
+Underfull \hbox (badness 1297) in paragraph at lines 476--476
+\OT1/cmr/m/n/7 lapse; ar-rhyth-mia; neu-trope-
+ []
+
+
+Underfull \hbox (badness 2970) in paragraph at lines 476--476
+\OT1/cmr/m/n/7 < 25x10-9-/l; life-threatening
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 476--476
+\OT1/cmr/m/n/7 tients or healthy vol-un-teers,
+ []
+
+[19]
+Underfull \hbox (badness 10000) in paragraph at lines 493--495
+
+ []
+
+
+Underfull \hbox (badness 5147) in paragraph at lines 503--503
+\OT1/cmr/m/n/7 dis-com-fort (< 48 hr) with-
+ []
+
+
+Underfull \hbox (badness 2990) in paragraph at lines 503--503
+\OT1/cmr/m/n/7 out per-ma-nent in-jury: e.g.
+ []
+
+
+Underfull \hbox (badness 5288) in paragraph at lines 503--503
+\OT1/cmr/m/n/7 re-duced de-crease in rest-ing
+ []
+
+
+Underfull \hbox (badness 1360) in paragraph at lines 503--503
+\OT1/cmr/m/n/7 heart rate; re-duc-tion in ex-
+ []
+
+
+Underfull \hbox (badness 1838) in paragraph at lines 503--503
+\OT1/cmr/m/n/7 er-cise tachy-car-dia; de-creased
+ []
+
+
+Underfull \hbox (badness 4492) in paragraph at lines 503--503
+\OT1/cmr/m/n/7 pain re-lief from oxy-codone;
+ []
+
+
+Underfull \hbox (badness 2229) in paragraph at lines 503--503
+\OT1/cmr/m/n/7 sleep dis-tur-bance etc); neu-
+ []
+
+
+Underfull \hbox (badness 1960) in paragraph at lines 503--503
+\OT1/cmr/m/n/7 crease fol-low-ing oral glu-cose
+ []
+
+[20]
+Underfull \hbox (badness 10000) in paragraph at lines 522--524
+
+ []
+
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no œ in font cmr7!
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no  in font cmr7!
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no œ in font cmr7!
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no  in font cmr7!
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no œ in font cmr7!
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no  in font cmr7!
+
+Underfull \hbox (badness 6157) in paragraph at lines 527--527
+[]| \OT1/cmr/bx/n/7 Likely phe-no-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]| \OT1/cmr/bx/n/7 Ex-am-ples of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]| \OT1/cmr/bx/n/7 Im-pli-ca-tions
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/bx/n/7 for tacrolimus
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/bx/n/7 phar-ma-co-logic
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]| \OT1/cmr/bx/n/7 Ther-a-peu-tic
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/bx/n/7 Rec-om-men-da-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]| \OT1/cmr/bx/n/7 Clas-si-fi-ca-tion
+ []
+
+
+Underfull \hbox (badness 4060) in paragraph at lines 527--527
+\OT1/cmr/bx/n/7 of rec-om-men-da-
+ []
+
+
+Underfull \hbox (badness 2393) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Extensive me-tab-o-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 An in-di-vid-ual
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Lower dose-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 adjusted trough
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 con-cen-tra-tions of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 tacrolimus and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 de-creased chance
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 of achiev-ing tar-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 get tacrolimus
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Increase start-
+ []
+
+
+Underfull \hbox (badness 3989) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 start-ing dose -d-.
+ []
+
+
+Underfull \hbox (badness 1371) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 should not ex-ceed
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 ther-a-peu-tic drug
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Intermediate me-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Lower dose-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 adjusted trough
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 con-cen-tra-tions of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 tacrolimus and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 de-creased chance
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 of achiev-ing tar-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 get tacrolimus
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Increase start-
+ []
+
+
+Underfull \hbox (badness 3989) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 start-ing dose -d-.
+ []
+
+
+Underfull \hbox (badness 1371) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 should not ex-ceed
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 ther-a-peu-tic drug
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Poor me-tab-o-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 lizer (CYP3A5
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 An in-di-vid-ual
+ []
+
+
+Underfull \hbox (badness 1715) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 car-ry-ing two non-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 *3/*3, *6/*6,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 *7/*7, *3/*6,
+ []
+
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no œ in font cmr7!
+Missing character: There is no â in font cmr7!
+Missing character: There is no € in font cmr7!
+Missing character: There is no  in font cmr7!
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Higher (nor-mal)
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 dose-adjusted
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 trough con-cen-tra-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 and in-creased
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 tar-get tacrolimus
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|\OT1/cmr/m/n/7 Initiate ther-apy
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 om-mended dose.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 Use ther-a-peu-tic
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 drug mon-i-tor-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+\OT1/cmr/m/n/7 to guide dose
+ []
+
+[21]
+Underfull \hbox (badness 10000) in paragraph at lines 546--547
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 549--551
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 552--554
+
+ []
+
+
+Overfull \hbox (17.37608pt too wide) in paragraph at lines 555--557
+[][][][][][][]  \OT1/cmr/bx/n/10 rs67376798   \OT1/cmr/m/it/10 TT  \OT1/cmr/m/n
+/10 Pa-tients with the TT geno-type and can-cer who are treated with fluoropyri
+midine-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 555--557
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 563--564
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 566--568
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 569--571
+
+ []
+
+[22]
+Overfull \hbox (17.37608pt too wide) in paragraph at lines 572--574
+[][][][][][][]  \OT1/cmr/bx/n/10 rs67376798   \OT1/cmr/m/it/10 TT  \OT1/cmr/m/n
+/10 Pa-tients with the TT geno-type and can-cer who are treated with fluoropyri
+midine-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 572--574
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 580--581
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 583--585
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 586--588
+
+ []
+
+
+Overfull \hbox (17.37608pt too wide) in paragraph at lines 589--591
+[][][][][][][]  \OT1/cmr/bx/n/10 rs67376798   \OT1/cmr/m/it/10 TT  \OT1/cmr/m/n
+/10 Pa-tients with the TT geno-type and can-cer who are treated with fluoropyri
+midine-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 589--591
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 597--598
+
+ []
+
+[23]
+Underfull \hbox (badness 10000) in paragraph at lines 602--604
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 605--607
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 611--612
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 616--618
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 622--623
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 628--629
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 630--631
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 636--637
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 638--639
+
+ []
+
+[24]
+Underfull \hbox (badness 10000) in paragraph at lines 644--646
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 648--649
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 651--653
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 659--660
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 664--666
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 668--669
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 673--675
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 679--680
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 684--686
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 688--689
+
+ []
+
+[25]
+Underfull \hbox (badness 10000) in paragraph at lines 693--695
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 699--700
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 702--704
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 705--707
+
+ []
+
+
+Overfull \hbox (17.37608pt too wide) in paragraph at lines 708--710
+[][][][][][][]  \OT1/cmr/bx/n/10 rs67376798   \OT1/cmr/m/it/10 TT  \OT1/cmr/m/n
+/10 Pa-tients with the TT geno-type and can-cer who are treated with fluoropyri
+midine-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 708--710
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 716--717
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 722--724
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 726--727
+
+ []
+
+[26]
+Underfull \hbox (badness 10000) in paragraph at lines 732--734
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 736--737
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 741--743
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 745--746
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 750--752
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 754--755
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 759--761
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 765--766
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 770--772
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 776--777
+
+ []
+
+[27]
+Underfull \hbox (badness 10000) in paragraph at lines 782--784
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 786--787
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 792--794
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 796--797
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 802--806
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 808--809
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 814--815
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 816--817
+
+ []
+
+[28]
+Underfull \hbox (badness 10000) in paragraph at lines 822--823
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 824--825
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 830--831
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 832--833
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 838--839
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 840--841
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 846--847
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 848--849
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 854--855
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 856--857
+
+ []
+
+[29]
+Underfull \hbox (badness 10000) in paragraph at lines 862--864
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 866--867
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 871--873
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 874--876
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 880--881
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 883--885
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 888--890
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 891--893
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 895--896
+
+ []
+
+Missing character: There is no â in font cmr10!
+Missing character: There is no € in font cmr10!
+Missing character: There is no ™ in font cmr10!
+
+Underfull \hbox (badness 10000) in paragraph at lines 899--901
+
+ []
+
+[30]
+Underfull \hbox (badness 10000) in paragraph at lines 903--905
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 906--908
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 910--911
+
+ []
+
+Missing character: There is no â in font cmr10!
+Missing character: There is no € in font cmr10!
+Missing character: There is no ™ in font cmr10!
+
+Underfull \hbox (badness 10000) in paragraph at lines 914--916
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 918--920
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 921--923
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 925--926
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 927--928
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 932--934
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 935--937
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 941--942
+
+ []
+
+[31]
+Underfull \hbox (badness 10000) in paragraph at lines 946--948
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 949--951
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 955--956
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 960--962
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 964--965
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 969--971
+
+ []
+
+[32]
+Underfull \vbox (badness 10000) detected at line 1280
+ []
+
+[33] [34] [35]
+Underfull \hbox (badness 10000) in paragraph at lines 1292--1293
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1296--1297
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1300--1301
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1304--1306
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1309--1311
+
+ []
+
+[36]
+Underfull \hbox (badness 10000) in paragraph at lines 1314--1316
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1319--1320
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1323--1324
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1327--1328
+
+ []
+
+[37]
+Underfull \hbox (badness 10000) in paragraph at lines 1331--1333
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1336--1337
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1340--1342
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1345--1346
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1349--1350
+
+ []
+
+[38]
+Underfull \hbox (badness 10000) in paragraph at lines 1353--1356
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1359--1362
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1365--1368
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1371--1374
+
+ []
+
+[39]
+Underfull \hbox (badness 10000) in paragraph at lines 1377--1380
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1383--1384
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1387--1388
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1391--1394
+
+ []
+
+[40]
+Underfull \hbox (badness 10000) in paragraph at lines 1397--1400
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1403--1404
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1407--1408
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1411--1412
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1415--1417
+
+ []
+
+[41]
+Underfull \hbox (badness 10000) in paragraph at lines 1420--1422
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1425--1426
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1429--1430
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1433--1434
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1437--1438
+
+ []
+
+[42]
+Underfull \hbox (badness 10000) in paragraph at lines 1441--1442
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1445--1446
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1449--1450
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1453--1454
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1457--1458
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1461--1462
+
+ []
+
+[43]
+Underfull \hbox (badness 10000) in paragraph at lines 1465--1466
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1469--1470
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1473--1474
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1477--1478
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1481--1484
+
+ []
+
+[44]
+Underfull \hbox (badness 10000) in paragraph at lines 1487--1489
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1492--1495
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1498--1505
+
+ []
+
+[45]
+Underfull \hbox (badness 10000) in paragraph at lines 1508--1510
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1513--1514
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1517--1518
+
+ []
+
+[46]
+Underfull \hbox (badness 10000) in paragraph at lines 1521--1522
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1525--1526
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1529--1530
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1533--1534
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1537--1538
+
+ []
+
+[47]
+Underfull \hbox (badness 10000) in paragraph at lines 1541--1542
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1545--1546
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1549--1550
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1553--1554
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1557--1559
+
+ []
+
+[48]
+Underfull \hbox (badness 10000) in paragraph at lines 1562--1563
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1566--1567
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1570--1571
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1574--1577
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1580--1582
+
+ []
+
+[49]
+Underfull \hbox (badness 10000) in paragraph at lines 1585--1586
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1589--1590
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1593--1595
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1598--1599
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1602--1606
+
+ []
+
+[50]
+Underfull \hbox (badness 10000) in paragraph at lines 1609--1610
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1613--1615
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1618--1619
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1622--1623
+
+ []
+
+[51]
+Underfull \hbox (badness 10000) in paragraph at lines 1626--1627
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1630--1631
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1634--1635
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1638--1639
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1642--1643
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1646--1647
+
+ []
+
+[52]
+Underfull \hbox (badness 10000) in paragraph at lines 1650--1651
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1654--1655
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1658--1659
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1662--1663
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1666--1667
+
+ []
+
+[53]
+Underfull \hbox (badness 10000) in paragraph at lines 1670--1671
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1674--1675
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1678--1680
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1683--1684
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1687--1688
+
+ []
+
+[54]
+Underfull \hbox (badness 10000) in paragraph at lines 1691--1692
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1695--1696
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1699--1700
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1703--1704
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1707--1709
+
+ []
+
+[55]
+Underfull \hbox (badness 10000) in paragraph at lines 1712--1714
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1717--1718
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1721--1722
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1725--1726
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1729--1730
+
+ []
+
+[56]
+Underfull \hbox (badness 10000) in paragraph at lines 1733--1734
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1737--1738
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1741--1742
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1745--1746
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1749--1750
+
+ []
+
+[57]
+Underfull \hbox (badness 10000) in paragraph at lines 1753--1754
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1757--1758
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1761--1762
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1765--1767
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1770--1771
+
+ []
+
+[58]
+Underfull \hbox (badness 10000) in paragraph at lines 1774--1775
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1778--1779
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1782--1783
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1786--1787
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1790--1791
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1794--1795
+
+ []
+
+[59]
+Underfull \hbox (badness 10000) in paragraph at lines 1798--1799
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1802--1803
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1806--1807
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1810--1811
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1814--1815
+
+ []
+
+[60]
+Underfull \hbox (badness 10000) in paragraph at lines 1818--1819
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1822--1823
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1826--1827
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1830--1832
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1835--1838
+
+ []
+
+[61]
+Underfull \hbox (badness 10000) in paragraph at lines 1841--1842
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1845--1846
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1849--1850
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1853--1855
+
+ []
+
+[62]
+Underfull \hbox (badness 10000) in paragraph at lines 1858--1860
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1863--1865
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1868--1872
+
+ []
+
+[63]
+Underfull \hbox (badness 10000) in paragraph at lines 1875--1880
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1883--1888
+
+ []
+
+[64]
+Underfull \hbox (badness 10000) in paragraph at lines 1891--1896
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1899--1904
+
+ []
+
+[65]
+Underfull \hbox (badness 10000) in paragraph at lines 1907--1912
+
+ []
+
+[66]
+Underfull \hbox (badness 10000) in paragraph at lines 1915--1920
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1923--1928
+
+ []
+
+[67]
+Underfull \hbox (badness 10000) in paragraph at lines 1931--1936
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1939--1940
+
+ []
+
+[68]
+Underfull \hbox (badness 10000) in paragraph at lines 1943--1944
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1947--1949
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1952--1953
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1956--1957
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1960--1961
+
+ []
+
+[69]
+Underfull \hbox (badness 10000) in paragraph at lines 1964--1968
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1971--1972
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1975--1976
+
+ []
+
+[70]
+Underfull \hbox (badness 10000) in paragraph at lines 1979--1980
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1983--1984
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1987--1988
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1991--1993
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1996--1997
+
+ []
+
+[71]
+Underfull \hbox (badness 10000) in paragraph at lines 2000--2001
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2004--2005
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2008--2009
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2012--2014
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2017--2018
+
+ []
+
+[72]
+Underfull \hbox (badness 10000) in paragraph at lines 2021--2022
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2025--2026
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2029--2030
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2033--2034
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2037--2038
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2041--2042
+
+ []
+
+[73]
+Underfull \hbox (badness 10000) in paragraph at lines 2045--2046
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2049--2050
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2053--2054
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2057--2060
+
+ []
+
+[74]
+Underfull \hbox (badness 10000) in paragraph at lines 2063--2065
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2068--2070
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2073--2075
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2078--2080
+
+ []
+
+[75]
+Underfull \hbox (badness 10000) in paragraph at lines 2083--2084
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2087--2088
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2091--2093
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2096--2097
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2100--2101
+
+ []
+
+[76]
+Underfull \hbox (badness 10000) in paragraph at lines 2104--2105
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2108--2109
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2112--2113
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2116--2117
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2120--2121
+
+ []
+
+[77]
+Underfull \hbox (badness 10000) in paragraph at lines 2124--2125
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2128--2129
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2132--2133
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2136--2137
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2140--2141
+
+ []
+
+[78]
+Underfull \hbox (badness 10000) in paragraph at lines 2144--2145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2148--2149
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2152--2153
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2156--2157
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2160--2161
+
+ []
+
+[79]
+Underfull \hbox (badness 10000) in paragraph at lines 2164--2165
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2168--2170
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2173--2175
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2178--2181
+
+ []
+
+[80]
+Underfull \hbox (badness 10000) in paragraph at lines 2184--2185
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2188--2192
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2195--2196
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2199--2200
+
+ []
+
+[81]
+Underfull \hbox (badness 10000) in paragraph at lines 2203--2204
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2207--2210
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2213--2216
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2219--2223
+
+ []
+
+[82]
+Underfull \hbox (badness 10000) in paragraph at lines 2226--2230
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2233--2234
+
+ []
+
+[83]
+Underfull \hbox (badness 10000) in paragraph at lines 2237--2238
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2241--2242
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2245--2246
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2249--2250
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2253--2254
+
+ []
+
+[84]
+Underfull \hbox (badness 10000) in paragraph at lines 2257--2258
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2261--2263
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2266--2267
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2270--2271
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2274--2276
+
+ []
+
+[85]
+Underfull \hbox (badness 10000) in paragraph at lines 2279--2281
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2284--2286
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2289--2291
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2294--2296
+
+ []
+
+[86]
+Underfull \hbox (badness 10000) in paragraph at lines 2299--2301
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2304--2306
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2309--2310
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2313--2315
+
+ []
+
+[87]
+Underfull \hbox (badness 10000) in paragraph at lines 2318--2320
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2323--2325
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2328--2329
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2332--2333
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2336--2337
+
+ []
+
+[88]
+Underfull \hbox (badness 10000) in paragraph at lines 2340--2341
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2344--2345
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2348--2349
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2352--2354
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2357--2360
+
+ []
+
+[89]
+Underfull \hbox (badness 10000) in paragraph at lines 2363--2364
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2367--2368
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2371--2372
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2375--2376
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2379--2380
+
+ []
+
+[90]
+Underfull \hbox (badness 10000) in paragraph at lines 2383--2384
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2387--2388
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2391--2392
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2395--2396
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2399--2400
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2403--2404
+
+ []
+
+[91]
+Underfull \hbox (badness 10000) in paragraph at lines 2407--2408
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2411--2414
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2417--2420
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2423--2426
+
+ []
+
+[92]
+Underfull \hbox (badness 10000) in paragraph at lines 2429--2432
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2435--2438
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2441--2444
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2447--2450
+
+ []
+
+[93]
+Underfull \hbox (badness 10000) in paragraph at lines 2453--2456
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2459--2462
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2465--2468
+
+ []
+
+[94]
+Underfull \hbox (badness 10000) in paragraph at lines 2471--2472
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2475--2476
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2479--2480
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2483--2485
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2488--2489
+
+ []
+
+[95]
+Underfull \hbox (badness 10000) in paragraph at lines 2492--2493
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2496--2499
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2502--2505
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2508--2511
+
+ []
+
+[96]
+Underfull \hbox (badness 10000) in paragraph at lines 2514--2517
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2520--2523
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2526--2529
+
+ []
+
+[97]
+Underfull \hbox (badness 10000) in paragraph at lines 2532--2535
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2538--2541
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2544--2547
+
+ []
+
+[98]
+Underfull \hbox (badness 10000) in paragraph at lines 2550--2553
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2556--2557
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2560--2562
+
+ []
+
+[99]
+Underfull \hbox (badness 10000) in paragraph at lines 2565--2568
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2571--2574
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2577--2580
+
+ []
+
+[100]
+Underfull \hbox (badness 10000) in paragraph at lines 2583--2586
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2589--2592
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2595--2598
+
+ []
+
+[101]
+Underfull \hbox (badness 10000) in paragraph at lines 2601--2604
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2607--2610
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2613--2616
+
+ []
+
+[102]
+Underfull \hbox (badness 10000) in paragraph at lines 2619--2622
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2625--2627
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2630--2631
+
+ []
+
+[103]
+Underfull \hbox (badness 10000) in paragraph at lines 2634--2635
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2638--2639
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2642--2644
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2647--2648
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2651--2653
+
+ []
+
+[104]
+Underfull \hbox (badness 10000) in paragraph at lines 2656--2657
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2660--2661
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2664--2665
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2668--2669
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2672--2682
+
+ []
+
+[105]
+Underfull \hbox (badness 10000) in paragraph at lines 2685--2690
+
+ []
+
+[106]
+Underfull \hbox (badness 10000) in paragraph at lines 2693--2698
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2701--2708
+
+ []
+
+[107]
+Underfull \hbox (badness 10000) in paragraph at lines 2711--2714
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2717--2718
+
+ []
+
+[108]
+Underfull \hbox (badness 10000) in paragraph at lines 2721--2723
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2726--2729
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2732--2733
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2736--2737
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2740--2741
+
+ []
+
+[109]
+Underfull \hbox (badness 10000) in paragraph at lines 2744--2746
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2749--2750
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2753--2754
+
+ []
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2758.
+
+Underfull \hbox (badness 10000) in paragraph at lines 2757--2758
+
+ []
+
+[110]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 2758.
+ (STE0097.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2758.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2758.
+
+Package rerunfilecheck Info: File `STE0097.out' has not changed.
+(rerunfilecheck)             Checksum: 06B6705815C4A08A6C7AC1CBEF2E4445;10366.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 2758.
+ ) 
+Here is how much of TeX's memory you used:
+ 14592 strings out of 493334
+ 240878 string characters out of 3136675
+ 463344 words of memory out of 3000000
+ 17291 multiletter control sequences out of 15000+200000
+ 9192 words of font info for 32 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 36i,11n,40p,2893b,484s stack positions out of 5000i,500n,10000p,200000b,50000s
+pdfTeX warning (dest): name{Hfootnote.4} has been referenced but does not exi
+st, replaced by a fixed one
+
+pdfTeX warning (dest): name{Hfootnote.3} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{Hfootnote.2} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{Hfootnote.1} has been referenced but does not exist
+, replaced by a fixed one
+
+<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C
+:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/
+Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx7.pfb><C:/Pro
+gram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Prog
+ram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program
+ Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Program Fil
+es (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Program Files (
+x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files (x86)
+/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/MiK
+TeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files (x86)/MiKTe
+X 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on STE0097.pdf (110 pages, 617861 bytes).
+PDF statistics:
+ 1826 PDF objects out of 2073 (max. 8388607)
+ 669 named destinations out of 1000 (max. 500000)
+ 1190 words of extra memory for PDF output out of 10000 (max. 10000000)
+
