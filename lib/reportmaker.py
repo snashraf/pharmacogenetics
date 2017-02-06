@@ -14,20 +14,24 @@ from modules.pgkb_functions import DeconstructGuideline
 import re
 
 def tex_escape(text):
-    """
-        :param text: a plain text message
-        :return: the message escaped to appear correctly in LaTeX
-    """
-    conv = {
-        '%': r'\%',
-        '$': r'\$',
-        '#': r'\#',
-        '_': r'',
-        '^': r'-',
+	"""
+		:param text: a plain text message
+		:return: the message escaped to appear correctly in LaTeX
+	"""
+	conv = {
+		'%': r'\%',
+		'$': r'\$',
+		'#': r'\#',
+		'_': r'',
+		'^': r'-',
+		"^a^":"",
+		"^b^":"",
+		"^c^":"",
+		"^d^":"",
 		u"\u0001":""
-    }
-    regex = re.compile('|'.join(re.escape(unicode(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
-    return regex.sub(lambda match: conv[match.group()], text)
+	}
+	regex = re.compile('|'.join(re.escape(unicode(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
+	return regex.sub(lambda match: conv[match.group()], text)
 
 def convert_latex(obj):
 	conv = OrderedDict([
@@ -51,26 +55,26 @@ def convert_latex(obj):
 	return obj
 
 def change_dict_naming_convention(d, convert_function):
-    """
-    Recursivly goes through the dictionnary obj and replaces keys with the convert function.
-    """
-    new = {}
-    if isinstance(d, unicode) or isinstance(d, str):
-    	new = convert_function(d)
-        return new
-    else:
-        for k, v in d.items():
-            new_v = v
-            if isinstance(v, dict):
-                new_v = change_dict_naming_convention(v, convert_function)
-            elif isinstance(v, list):
-                new_v = list()
-                for x in v:
-                    new_v.append(change_dict_naming_convention(x, convert_function))
-            elif isinstance(v, unicode) or isinstance(v, str):
-                new_v = convert_function(v)
-            new[convert_function(k)] = new_v
-    return new
+	"""
+	Recursivly goes through the dictionnary obj and replaces keys with the convert function.
+	"""
+	new = {}
+	if isinstance(d, unicode) or isinstance(d, str):
+		new = convert_function(d)
+		return new
+	else:
+		for k, v in d.items():
+			new_v = v
+			if isinstance(v, dict):
+				new_v = change_dict_naming_convention(v, convert_function)
+			elif isinstance(v, list):
+				new_v = list()
+				for x in v:
+					new_v.append(change_dict_naming_convention(x, convert_function))
+			elif isinstance(v, unicode) or isinstance(v, str):
+				new_v = convert_function(v)
+			new[convert_function(k)] = new_v
+	return new
 
 # Needed for document:
 
@@ -80,7 +84,7 @@ JSON_TEMPLATE ='''
 {samplename, haplotable:[ {symbol:{ new1:{1, 2, 3}, new2{1, 2, 3}, old1{1, 2, 3}, old2{1, 2, 3}, tree)}, ...],
 						annotable:[ (drug, gene, guidelinelink, Ann1-2, Ann3-4), ...],
 						drugs:[drugname:{drugDesc, genes:[{symbol, hapNEW, hapOLD, guideline, annotations:[:{1A,
-						 	1B:{patAllele, rsid, text},
+							1B:{patAllele, rsid, text},
 							2A, 2B, 3, 4}, ...]
 						]}
 							}
@@ -116,7 +120,8 @@ class ReportMaker(Database):
 					  "annotable":[],
 					  "drugs":{}
 					  }
-
+		self.sql.execute("select name from pat.sqlite_master where type = 'table';")
+		print self.sql.fetchall()
 		self.sql.execute('''
 					select distinct g.genesymbol, g.geneid,
 					new1_1, new1_2, new1_3,
@@ -124,7 +129,7 @@ class ReportMaker(Database):
 					old1_1, old1_2, old1_3,
 					old2_1, old2_2, old2_3
 					from
-					patgenotypes p
+					pat.genotypes p
 					join genes g
 					on g.GeneID = p.GeneID
 					order by g.genesymbol
@@ -158,7 +163,7 @@ class ReportMaker(Database):
 
 		self.sql.executescript('''
 								DROP VIEW IF EXISTS JsonView;
-								CREATE VIEW JsonView AS
+								CREATE TEMP VIEW JsonView AS
 								select distinct
 								g.genesymbol as symbol,
 								g.geneid as geneid,
@@ -179,7 +184,7 @@ class ReportMaker(Database):
 								on a.varhapid = v.varid
 								join drugs d
 								on a.drugid = d.drugid
-								join patannotations p
+								join pat.annotations p
 								on p.anid = a.anid
 								left join guidelines l
 								on l.geneid = g.geneid
@@ -219,7 +224,7 @@ class ReportMaker(Database):
 
 			annoEntry = {"drugname":drugname,
 								  "annCount":
-								  		{"1-2":cat1, "3-4":cat2}
+										{"1-2":cat1, "3-4":cat2}
 								 }
 
 			mainEntry = {}

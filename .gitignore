@@ -1,4 +1,5 @@
 # no db files
 *.fasta
 *.dnd
+*.tex
 ./fasta/

@@ -5,30 +5,23 @@
 \fi
 
 \documentclass{report}
-\usepackage{pstricks, pst-node,pst-tree}
-\usepackage{newicktree}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
 \usepackage{graphicx}
-\usepackage{tabularx}
-\usepackage{multirow}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\usepackage{ltablex}
 \usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{ltablex}
 \usepackage[a4paper,inner=2cm,outer=2cm]{geometry}
-\hypersetup{
-    colorlinks,
-    linkcolor=black,
-    citecolor=red,
-    urlcolor=cyan
-}
 
 \newcolumntype{b}{X}
 \newcolumntype{s}{>{\hsize=.5\hsize}X}
-
 \iffalse
-\%----------------------------------------------------------------------------------------
-\%					TITLE PAGE
-\%----------------------------------------------------------------------------------------
+\\%----------------------------------------------------------------------------------------
+\\%					TITLE PAGE
+\\%----------------------------------------------------------------------------------------
 \fi
 
 \newcommand*{\titleGM}{\begingroup
@@ -41,27 +34,29 @@
 {\noindent\Huge\bfseries Pharmacogenetic Passport}\\[2\baselineskip]
 {\large \textit{Pharmacogenetic guidelines and clinical annotations connected to influential DNA changes}}\\[4\baselineskip]
 {\large \textsc{ STE0097 }}\\
-{\normalsize \textsc{Creation date: \today}}
-
-\vspace{0.3\textheight}
+{\normalsize \textsc{Creation date: \today}}\vspace{0.3\textheight}\\
 {\noindent \includegraphics{pilldna}}\\[\baselineskip]
 }}
 \endgroup}
 
+\newpage
+
 \iffalse
-\%----------------------------------------------------------------------------------------
-\%				BLANK DOCUMENT
-\%----------------------------------------------------------------------------------------
+\\%----------------------------------------------------------------------------------------
+\\%				BLANK DOCUMENT
+\\%----------------------------------------------------------------------------------------
 \fi
+
+\DeclareUnicodeCharacter{00A0}{ }
 
 \begin{document}
 
+\begin{titlepage}
 \titleGM
-
+\end{titlepage}
 \iffalse
-\% ------------- TABLE OF CONTENTS -------------------
+\\% ------------- TABLE OF CONTENTS -------------------
 \fi
-
 \tableofcontents
 
 \newpage
@@ -134,9 +129,10 @@
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXXX }
-      \textbf{ Phenotype (genotype) }&\textbf{ Examples of diplotypes }&\textbf{ Implications for phenotypic measures }&\textbf{ Dosing recommendations }&\textbf{ Classification of recommendations -a- } \\ \hline \\  Homozygous wild-type or normal, high DPD activity (two or more functional *1 alleles) & *1/*1 & Normal DPD activity and "normal" risk for fluoropyrimidine toxicity & Use label-recommended dosage and administration & Moderate  \\  Heterozygous or intermediate activity (~3-5\% of patients), may have partial DPD deficiency, at risk for toxicity with drug exposure (one functional allele *1, plus one nonfunctional allele - *2A, *13 or rs67376798A -c-) & *1/*2A; *1/*13; *1/ rs67376798A -c-) & Decreased DPD activity (leukocyte DPD activity at 30\% to 70\% that of the normal population) and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Start with at least a 50\% reduction in starting dose followed by titration of dose based on toxicity -b- or pharmacokinetic test (if available) & Moderate  \\  Homozygous variant, DPD deficiency (~0.2\% of patients), at risk for toxicity with drug exposure (2 nonfunctional alleles - *2A, *13 or rs67376798A -c-) & *2A/*2A; *13/*13; rs67376798A -c- / rs67376798A -c- & Complete DPD deficiency and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Select alternate drug & Strong  \\ 
+      \textbf{ Phenotype (genotype) }&\textbf{ Examples of diplotypes }&\textbf{ Implications for phenotypic measures }&\textbf{ Dosing recommendations }&\textbf{ Classification of recommendations  } \\ \hline \\  Homozygous wild-type or normal, high DPD activity (two or more functional *1 alleles) & *1/*1 & Normal DPD activity and "normal" risk for fluoropyrimidine toxicity & Use label-recommended dosage and administration & Moderate  \\  Heterozygous or intermediate activity (~3-5\% of patients), may have partial DPD deficiency, at risk for toxicity with drug exposure (one functional allele *1, plus one nonfunctional allele - *2A, *13 or rs67376798A ) & *1/*2A; *1/*13; *1/ rs67376798A ) & Decreased DPD activity (leukocyte DPD activity at 30\% to 70\% that of the normal population) and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Start with at least a 50\% reduction in starting dose followed by titration of dose based on toxicity  or pharmacokinetic test (if available) & Moderate  \\  Homozygous variant, DPD deficiency (~0.2\% of patients), at risk for toxicity with drug exposure (2 nonfunctional alleles - *2A, *13 or rs67376798A ) & *2A/*2A; *13/*13; rs67376798A  / rs67376798A  & Complete DPD deficiency and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Select alternate drug & Strong  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -152,9 +148,10 @@
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXXX }
-      \textbf{ Phenotype (genotype) }&\textbf{ Examples of diplotypes }&\textbf{ Implications for phenotypic measures }&\textbf{ Dosing recommendations }&\textbf{ Classification of recommendations -a- } \\ \hline \\  Homozygous wild-type or normal, high DPD activity (two or more functional *1 alleles) & *1/*1 & Normal DPD activity and "normal" risk for fluoropyrimidine toxicity & Use label-recommended dosage and administration & Moderate  \\  Heterozygous or intermediate activity (~3-5\% of patients), may have partial DPD deficiency, at risk for toxicity with drug exposure (one functional allele *1, plus one nonfunctional allele - *2A, *13 or rs67376798A -c-) & *1/*2A; *1/*13; *1/ rs67376798A -c-) & Decreased DPD activity (leukocyte DPD activity at 30\% to 70\% that of the normal population) and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Start with at least a 50\% reduction in starting dose followed by titration of dose based on toxicity -b- or pharmacokinetic test (if available) & Moderate  \\  Homozygous variant, DPD deficiency (~0.2\% of patients), at risk for toxicity with drug exposure (2 nonfunctional alleles - *2A, *13 or rs67376798A -c-) & *2A/*2A; *13/*13; rs67376798A -c- / rs67376798A -c- & Complete DPD deficiency and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Select alternate drug & Strong  \\ 
+      \textbf{ Phenotype (genotype) }&\textbf{ Examples of diplotypes }&\textbf{ Implications for phenotypic measures }&\textbf{ Dosing recommendations }&\textbf{ Classification of recommendations  } \\ \hline \\  Homozygous wild-type or normal, high DPD activity (two or more functional *1 alleles) & *1/*1 & Normal DPD activity and "normal" risk for fluoropyrimidine toxicity & Use label-recommended dosage and administration & Moderate  \\  Heterozygous or intermediate activity (~3-5\% of patients), may have partial DPD deficiency, at risk for toxicity with drug exposure (one functional allele *1, plus one nonfunctional allele - *2A, *13 or rs67376798A ) & *1/*2A; *1/*13; *1/ rs67376798A ) & Decreased DPD activity (leukocyte DPD activity at 30\% to 70\% that of the normal population) and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Start with at least a 50\% reduction in starting dose followed by titration of dose based on toxicity  or pharmacokinetic test (if available) & Moderate  \\  Homozygous variant, DPD deficiency (~0.2\% of patients), at risk for toxicity with drug exposure (2 nonfunctional alleles - *2A, *13 or rs67376798A ) & *2A/*2A; *13/*13; rs67376798A  / rs67376798A  & Complete DPD deficiency and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Select alternate drug & Strong  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -168,10 +165,34 @@
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXXX }
-      \textbf{ Phenotype (genotype) }&\textbf{ Examples of diplotypes }&\textbf{ Implications for phenotypic measures }&\textbf{ Dosing recommendations }&\textbf{ Classification of recommendations-a- } \\ \hline \\  Homozygous wild-type or normal, high DPD activity (two or more functional *1 alleles) & *1/*1 & Normal DPD activity and "normal" risk for fluoropyrimidine toxicity & Use label-recommended dosage and administration & Moderate  \\  Heterozygous or intermediate activity (~3-5\% of patients), may have partial DPD deficiency, at risk for toxicity with drug exposure (one functional allele *1, plus one nonfunctional allele - *2A, *13 or rs67376798A-c-) & *1/*2A; *1/*13; *1/ rs67376798A-c-) & Decreased DPD activity (leukocyte DPD activity at 30\% to 70\% that of the normal population) and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Start with at least a 50\% reduction in starting dose followed by titration of dose based on toxicity -b- or pharmacokinetic test (if available) & Moderate  \\  Homozygous variant, DPD deficiency (~0.2\% of patients), at risk for toxicity with drug exposure (2 nonfunctional alleles - *2A, *13 or rs67376798A -c-) & *2A/*2A; *13/*13; rs67376798A-c- / rs67376798A-c- & Complete DPD deficiency and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Select alternate drug & Strong  \\ 
+      \textbf{ Phenotype (genotype) }&\textbf{ Examples of diplotypes }&\textbf{ Implications for phenotypic measures }&\textbf{ Dosing recommendations }&\textbf{ Classification of recommendations } \\ \hline \\  Homozygous wild-type or normal, high DPD activity (two or more functional *1 alleles) & *1/*1 & Normal DPD activity and "normal" risk for fluoropyrimidine toxicity & Use label-recommended dosage and administration & Moderate  \\  Heterozygous or intermediate activity (~3-5\% of patients), may have partial DPD deficiency, at risk for toxicity with drug exposure (one functional allele *1, plus one nonfunctional allele - *2A, *13 or rs67376798A) & *1/*2A; *1/*13; *1/ rs67376798A) & Decreased DPD activity (leukocyte DPD activity at 30\% to 70\% that of the normal population) and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Start with at least a 50\% reduction in starting dose followed by titration of dose based on toxicity  or pharmacokinetic test (if available) & Moderate  \\  Homozygous variant, DPD deficiency (~0.2\% of patients), at risk for toxicity with drug exposure (2 nonfunctional alleles - *2A, *13 or rs67376798A ) & *2A/*2A; *13/*13; rs67376798A / rs67376798A & Complete DPD deficiency and increased risk for severe or even fatal drug toxicity when treated with fluoropyrimidine drugs & Select alternate drug & Strong  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \subsection{ ivacaftor }
@@ -181,10 +202,12 @@
       \hrule \vspace{6pt}
       Ivacaftor treatment is recommended only in cystic fibrosis (CF) patients that are either homozygous or heterozygous for certain CFTR variants.  See full guideline for disclaimers, further details and supporting evidence. \newline
       \scriptsize
+      
       \begin{tabularx}{\textwidth}{ XXXXX }
-      \textbf{ CFTR Genotype }&\textbf{ Examples of diplotypes }&\textbf{ Implications for ivacaftor effects }&\textbf{ Recommendations for ivacaftor therapy }&\textbf{ Classification of recommendation for ivacaftor therapy-c-} \\ \hline \\  Homozygous or Heterozygous G551D-CFTR, [variant:rs75527207] genotype AA or AG & G551D/ F508del, G551D/ G551D & Significant improvement in lung function, weight, risk of pulmonary exacerbation, patient reported outcomes, and reduction in sweat chloride concentrations through enhanced CFTR channel activity (increase probability of open channel). & Use ivacaftor according to the product label & Strong  \\  Homozygous for F508del-CFTR, [variant:rs113993960] or [variant:rs199826652] genotype del/del & F508del/F508del& No significant reduction in sweat chloride concentrations; no changes in other clinical measurements including spirometric measurements, pulmonary exacerbations, or body weight-b-. Unlikely to respond to treatment. & Ivacaftor is not recommended-a- & Moderate-b-  \\ Homozygous or heterozygous for one of the following CFTR variants: G1244E ([variant:rs267606723] genotype AA or AG), G1349D ([variant:rs193922525] genotype AA or AG), G178R ([variant:rs80282562] genotype AA or AG), G551S ([variant:rs121909013] genotype AA or AG), S1251N ([variant:rs74503330] genotype AA or AG), S1255P ([variant:rs121909041] genotype CC or CT), S549N ([variant:rs121908755] genotype AA or AG), S549R ([variant:rs121909005] genotype GG or GT, [variant:rs121908757] genotype AC or CC), R117H ([variant:rs78655421] genotype AA or AG)-d-  & F508del/S549N & Significantly enhanced channel open probability in vitro [PMID: 22293084]. In vitro assays with CFBEo- cells expressing S549N-CFTR showed ivacaftor potentiated chloride channel function [PMID: 23027855], and a case study showed improved lung function after ivacaftor treatment in a 12-year-old girl with CF with a copy of the S549N variant [PMID: 24081349]. Improvement in sweat chloride and CFQ-R respiratory domain scores in patients with the R117H variant [PMID: 26070913] & Use ivacaftor according to the product label & Moderate  \\ 
+      \textbf{ CFTR Genotype }&\textbf{ Examples of diplotypes }&\textbf{ Implications for ivacaftor effects }&\textbf{ Recommendations for ivacaftor therapy }&\textbf{ Classification of recommendation for ivacaftor therapy} \\ \hline \\  Homozygous or Heterozygous G551D-CFTR, [variant:rs75527207] genotype AA or AG & G551D/ F508del, G551D/ G551D & Significant improvement in lung function, weight, risk of pulmonary exacerbation, patient reported outcomes, and reduction in sweat chloride concentrations through enhanced CFTR channel activity (increase probability of open channel). & Use ivacaftor according to the product label & Strong  \\  Homozygous for F508del-CFTR, [variant:rs113993960] or [variant:rs199826652] genotype del/del & F508del/F508del& No significant reduction in sweat chloride concentrations; no changes in other clinical measurements including spirometric measurements, pulmonary exacerbations, or body weight. Unlikely to respond to treatment. & Ivacaftor is not recommended & Moderate  \\ Homozygous or heterozygous for one of the following CFTR variants: G1244E ([variant:rs267606723] genotype AA or AG), G1349D ([variant:rs193922525] genotype AA or AG), G178R ([variant:rs80282562] genotype AA or AG), G551S ([variant:rs121909013] genotype AA or AG), S1251N ([variant:rs74503330] genotype AA or AG), S1255P ([variant:rs121909041] genotype CC or CT), S549N ([variant:rs121908755] genotype AA or AG), S549R ([variant:rs121909005] genotype GG or GT, [variant:rs121908757] genotype AC or CC), R117H ([variant:rs78655421] genotype AA or AG)  & F508del/S549N & Significantly enhanced channel open probability in vitro [PMID: 22293084]. In vitro assays with CFBEo- cells expressing S549N-CFTR showed ivacaftor potentiated chloride channel function [PMID: 23027855], and a case study showed improved lung function after ivacaftor treatment in a 12-year-old girl with CF with a copy of the S549N variant [PMID: 24081349]. Improvement in sweat chloride and CFQ-R respiratory domain scores in patients with the R117H variant [PMID: 26070913] & Use ivacaftor according to the product label & Moderate  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -208,9 +231,10 @@
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXXX }
-      \textbf{ Genotype at [variant:rs12979860] }&\textbf{ Phenotype }&\textbf{ Implications for PEG-IFN alpha and RBV -a- }&\textbf{ Implications for protease inhibitor combinations with PEG-IFN alpha and RBV therapy }&\textbf{ Classification of recommendations -b- } \\ \hline \\  CC & Favorable response genotype & Approximately 70\% chance for SVR -c- after 48 weeks of treatment. Consider implications before initiating PEG-IFN alpha and RBV containing regimens. & Approximately 90\% chance for SVR after 24-48 weeks of treatment. Approximately 80-90\% of patients are eligible for shortened therapy (24-28 weeks vs. 48 weeks)-d-. Weighs in favor of using PEG-IFN alpha and RBV containing regimens.& Strong  \\  CT or TT & Unfavorable response genotype & Approximately 30\% chance for SVR -c- after 48 weeks of treatment. Consider implications before initiating PEG-IFN alpha and RBV containing regimens. & Approximately 60\% chance for SVR after 24-48 weeks of treatment. Approximately 50\% of patients are eligible for shortened therapy (24-28 weeks)-d-. Consider implications before initiating PEG-IFN and RBV containing regimens.& Strong  \\ 
+      \textbf{ Genotype at [variant:rs12979860] }&\textbf{ Phenotype }&\textbf{ Implications for PEG-IFN alpha and RBV  }&\textbf{ Implications for protease inhibitor combinations with PEG-IFN alpha and RBV therapy }&\textbf{ Classification of recommendations  } \\ \hline \\  CC & Favorable response genotype & Approximately 70\% chance for SVR  after 48 weeks of treatment. Consider implications before initiating PEG-IFN alpha and RBV containing regimens. & Approximately 90\% chance for SVR after 24-48 weeks of treatment. Approximately 80-90\% of patients are eligible for shortened therapy (24-28 weeks vs. 48 weeks). Weighs in favor of using PEG-IFN alpha and RBV containing regimens.& Strong  \\  CT or TT & Unfavorable response genotype & Approximately 30\% chance for SVR  after 48 weeks of treatment. Consider implications before initiating PEG-IFN alpha and RBV containing regimens. & Approximately 60\% chance for SVR after 24-48 weeks of treatment. Approximately 50\% of patients are eligible for shortened therapy (24-28 weeks). Consider implications before initiating PEG-IFN and RBV containing regimens.& Strong  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -231,6 +255,7 @@
       \textbf{ Genotype }&\textbf{ Therapeutic Dose Recommendation }&\textbf{ Level of Evidence }&\textbf{ Clinical Relevance } \\ \hline \\  VKORC1 [variant:rs9934438] AG & None & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms , <470 ms); INR increase < 4.5 Kinetic effect (S).  \\  VKORC1 [variant:rs9934438] AA & Check INR more frequently. & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms , <470 ms); INR increase < 4.5 Kinetic effect (S).  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -267,6 +292,7 @@
       \textbf{ Phenotype (Genotype) }&\textbf{ Therapeutic Dose Recommendation }&\textbf{ Level of Evidence }&\textbf{ Clinical Relevance } \\ \hline \\  PM (two inactive (*3-*8, *11-*16, *19-*21, *38, *40, *42) alleles) & Insufficient data to allow calculation of dose adjustment.  Select alternative drug (e.g., citalopram, sertraline) or adjust dose to clinical response and monitor (O-desmethyl)venlafaxine plasma concentration. & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (S): long-standing discomfort (48-168 hr) without permanent injury e.g. failure of therapy with tricyclic antidepressants, atypical antipsychotic drugs; extrapyramidal side effects; parkinsonism; ADE resulting from increased bioavailability of tricyclic antidepressants, metoprolol, propafenone (central effects e.g. dizziness); INR 4.5-6.0; neutropenia 1.0-1.5x10-9-/l; leucopenia 2.0-3.0x10-9-/l; thrombocytopenia 50-75x10-9-/l. \\ IM (two decreased-activity (*9, *10, *17, *29, *36, *41) alleles or carrying one active (*1, *2, *33, *35) and one inactive (*3-*8, *11-*16, *19-*21, *38, *40, *42) allele, or carrying one decreased-activity (*9, *10, *17, *29, *36, *41) allele and one inactive (*3-*8, *11-*16, *19-*21, *38, *40, *42) allele) & Insufficient data to allow calculation of dose adjustment.  Select alternative drug (e.g., citalopram, sertraline) or adjust dose to clinical response and monitor (O-desmethyl)venlafaxine plasma concentration.& Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. &Clinical effect (S): long-standing discomfort (48-168 hr) without permanent injury e.g. failure of therapy with tricyclic antidepressants, atypical antipsychotic drugs; extrapyramidal side effects; parkinsonism; ADE resulting from increased bioavailability of tricyclic antidepressants, metoprolol, propafenone (central effects e.g. dizziness); INR 4.5-6.0; neutropenia 1.0-1.5x10-9-/l; leucopenia 2.0-3.0x10-9-/l; thrombocytopenia 50-75x10-9-/l.  \\  UM (a gene duplication in absence of inactive (*3-*8, *11-*16, *19-*21, *38, *40, *42) or decreased-activity (*9, *10, *17, *29, *36, *41) alleles) & Be alert to decreased venlafaxine and increased (O-desmethyl)venlafaxine plasma concentration. Titrate dose to a maximum of 150\% of the normal dose or select alternative drug (e.g., citalopram, sertraline). & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. &Minor clinical effect (S): QTc prolongation (<450 ms female, <470 ms male); INR increase < 4.5.  Kinetic effect (S). \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -303,6 +329,7 @@
       \textbf{ Genotype }&\textbf{ Therapeutic Dose Recommendation }&\textbf{ Level of Evidence }&\textbf{ Clinical Relevance } \\ \hline \\  CYP2C9 *1/*2 & Check INR more frequently after initiating or discontinuing NSAIDs & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms females, <470 ms males); INR increase <4.5. Kinetic effect (S)  \\  CYP2C9 *2/*2 & Check INR more frequently after initiating or discontinuing NSAIDs & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms females, <470 ms males); INR increase <4.5. Kinetic effect (S)  \\  CYP2C9 *1/*3 & Check INR more frequently after initiating or discontinuing NSAIDs & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (S): short-lived discomfort (< 48 hr) without permanent injury: e.g. reduced decrease in resting heart rate; reduction in exercise tachycardia; decreased pain relief from oxycodone; ADE resulting from increased bioavailability of atomoxetine (decreased appetite, insomnia, sleep disturbance etc); neutropenia > 1.5x10-9-/l; leucopenia > 3.0x10-9-/l; thrombocytopenia  > 75x10-9-/l; moderate diarrhea not affecting daily activities; reduced glucose increase following oral glucose tolerance test.  \\  CYP2C9 *2/*3 & Check INR more frequently after initiating or discontinuing NSAIDs & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms females, <470 ms males); INR increase <4.5. Kinetic effect (S)  \\  CYP2C9 *3/*3 & Check INR more frequently during dose titration and after initiating or discontinuing NSAIDs & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms females, <470 ms males); INR increase <4.5. Kinetic effect (S)  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize\subsubsection{ VKORC1 }
      \textit{ vitamin K epoxide reductase complex, subunit 1 } \begin{flushright} \textsc{ STE0097 \\ H1/H2  | H1/*2\footnote{For alternate close matches see Appendix II.} }\end{flushright}
       \hrule \vspace{6pt}
@@ -313,6 +340,7 @@
       \textbf{ Genotype }&\textbf{ Therapeutic Dose Recommendation }&\textbf{ Level of Evidence }&\textbf{ Clinical Relevance } \\ \hline \\  VKORC1 [variant:rs9934438] AG & None & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms , <470 ms ); INR increase < 4.5; Kinetic effect (S).  \\  VKORC1 [variant:rs9934438] AA & Check INR more frequently. & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms , <470 ms ); INR increase < 4.5; Kinetic effect (S).  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -365,6 +393,7 @@
       A French joint working group comprising the National Pharmacogenetics Network (RNPGx) and the Group of Clinical Onco-pharmacology (GPCO-Unicancer) has published guidelines for the use of UGT1A1*28 genotype when prescribing irinotecan. They recommend that the dose of irinotecan be reduced in patients with the UGT1A1*28/*28 genotype, and that high-dose irinotecan (>=240 mg/m2) only be prescribed to patients with the UGT1A1*1/*1 genotype. \newline
       \scriptsize
       
+      \newpage
       \normalsize
 
 
@@ -380,9 +409,10 @@
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXXX }
-      \textbf{ Genotype at [variant:rs12979860] }&\textbf{ Phenotype }&\textbf{ Implications for PEG-IFN alpha and RBV -a- }&\textbf{ Implications for protease inhibitor combinations with PEG-IFN alpha and RBV therapy }&\textbf{ Classification of recommendations -b- } \\ \hline \\  CC & Favorable response genotype & Approximately 70\% chance for SVR -c- after 48 weeks of treatment. Consider implications before initiating PEG-IFN alpha and RBV containing regimens. & Approximately 90\% chance for SVR after 24-48 weeks of treatment. Approximately 80-90\% of patients are eligible for shortened therapy (24-28 weeks vs. 48 weeks)-d-. Weighs in favor of using PEG-IFN alpha and RBV containing regimens.& Strong  \\  CT or TT & Unfavorable response genotype & Approximately 30\% chance for SVR -c- after 48 weeks of treatment. Consider implications before initiating PEG-IFN alpha and RBV containing regimens. & Approximately 60\% chance for SVR after 24-48 weeks of treatment. Approximately 50\% of patients are eligible for shortened therapy (24-28 weeks)-d-. Consider implications before initiating PEG-IFN and RBV containing regimens.& Strong  \\ 
+      \textbf{ Genotype at [variant:rs12979860] }&\textbf{ Phenotype }&\textbf{ Implications for PEG-IFN alpha and RBV  }&\textbf{ Implications for protease inhibitor combinations with PEG-IFN alpha and RBV therapy }&\textbf{ Classification of recommendations  } \\ \hline \\  CC & Favorable response genotype & Approximately 70\% chance for SVR  after 48 weeks of treatment. Consider implications before initiating PEG-IFN alpha and RBV containing regimens. & Approximately 90\% chance for SVR after 24-48 weeks of treatment. Approximately 80-90\% of patients are eligible for shortened therapy (24-28 weeks vs. 48 weeks). Weighs in favor of using PEG-IFN alpha and RBV containing regimens.& Strong  \\  CT or TT & Unfavorable response genotype & Approximately 30\% chance for SVR  after 48 weeks of treatment. Consider implications before initiating PEG-IFN alpha and RBV containing regimens. & Approximately 60\% chance for SVR after 24-48 weeks of treatment. Approximately 50\% of patients are eligible for shortened therapy (24-28 weeks). Consider implications before initiating PEG-IFN and RBV containing regimens.& Strong  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -410,7 +440,7 @@
 \subsubsection{ CYP2C9 }
      \textit{ cytochrome P450, family 2, subfamily C, polypeptide 9 } \begin{flushright} \textsc{ STE0097 \\ *1/*18  | *1/*3\footnote{For alternate close matches see Appendix II.} }\end{flushright}
       \hrule \vspace{6pt}
-      The best way to estimate the anticipated stable dose of warfarin is to use the algorithms available on [http://www.warfarindosing.org] \newline
+      The best way to estimate the anticipated stable dose of warfarin is to use the algorithms available on [http://www.warfarindosing.org] \newline
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXX }
@@ -421,10 +451,11 @@
       \textbf{ VKORC1 Genotype (-1639G>A, [variant:rs9923231]) }&\textbf{ CYP2C9*1/*1 }&\textbf{ CYP2C9*1/*2 }&\textbf{ CYP2C9*1/*3 }&\textbf{ CYP2C9*2/*2 }&\textbf{ CYP2C9*2/*3 }&\textbf{ CYP2C9*3/*3} \\ \hline \\  GG & 5-7 & 5-7 & 3-4 & 3-4 & 3-4 & 0.5-2 \\  GA & 5-7 & 3-4 & 3-4 & 3-4 & 0.5-2 & 0.5-2 \\  AA & 3-4  & 3-4 & 0.5-2 & 0.5-2 & 0.5-2 & 0.5-2 \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize\subsubsection{ VKORC1 }
      \textit{ vitamin K epoxide reductase complex, subunit 1 } \begin{flushright} \textsc{ STE0097 \\ H1/H2  | H1/*2\footnote{For alternate close matches see Appendix II.} }\end{flushright}
       \hrule \vspace{6pt}
-      The best way to estimate the anticipated stable dose of warfarin is to use the algorithms available on [http://www.warfarindosing.org] \newline
+      The best way to estimate the anticipated stable dose of warfarin is to use the algorithms available on [http://www.warfarindosing.org] \newline
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXX }
@@ -435,6 +466,7 @@
       \textbf{ VKORC1 Genotype (-1639G>A, [variant:rs9923231]) }&\textbf{ CYP2C9*1/*1 }&\textbf{ CYP2C9*1/*2 }&\textbf{ CYP2C9*1/*3 }&\textbf{ CYP2C9*2/*2 }&\textbf{ CYP2C9*2/*3 }&\textbf{ CYP2C9*3/*3} \\ \hline \\  GG & 5-7 & 5-7 & 3-4 & 3-4 & 3-4 & 0.5-2 \\  GA & 5-7 & 3-4 & 3-4 & 3-4 & 0.5-2 & 0.5-2 \\  AA & 3-4  & 3-4 & 0.5-2 & 0.5-2 & 0.5-2 & 0.5-2 \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -456,9 +488,10 @@
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXXXX }
-      \textbf{ Likely phenotype }&\textbf{ Genotypes }&\textbf{ Examples of diplotypes }&\textbf{ Implications for phenotypic measures   }&\textbf{ Recommendations for atazanavir therapy }&\textbf{ Classification of recommendation for atazanavir therapy } \\ \hline \\ Extensive Metabolizer & An individual carrying 2 reference -b- function and/or increased function alleles; or individuals of genotype CC at [variant:rs887829] & *1/*1; *1/*36; *36/*36; [variant:rs887829] CC& Reference -c- UGT1A1 activity; very low likelihood of bilirubin-related discontinuation of atazanavir.  &  There is no need to avoid prescribing of atazanavir based on UGT1A1 genetic test result.  &  Strong  \\ Intermediate Metabolizer  & An individual carrying one reference -b- function (*1) -c- or increased function allele (*36) plus one decreased function allele (*6, *28, *37). Alternatively identified by heterozygosity for [variant:rs887829] C/T. & *1/*28; *1/*37; *36/*28; *36/*37; [variant:rs887829] C/T, *1/*6 & Somewhat decreased UGT1A1 activity; low likelihood of bilirubin-related discontinuation of atazanavir. & There is no need to avoid prescribing of atazanavir based on UGT1A1 genetic test result. Inform the patient that some patients stop atazanavir because of jaundice (yellow eyes and skin), but that this patient’s genotype makes this unlikely &  Strong  \\ Poor Metabolizer  & An individual carrying two decreased function alleles (*6, *28, *37). Alternatively identified by homozygosity for [variant:rs887829] T/T (*80/*80) & *28/*28; *28/*37; *37/*37; [variant:rs887829] T/T (*80/*80), *6/*6 -a- & Markedly decreased UGT1A1 activity; high likelihood of bilirubin-related discontinuation of atazanavir. & Consider an alternative agent particularly where jaundice would be of concern to the patient. &  Strong  \\ 
+      \textbf{ Likely phenotype }&\textbf{ Genotypes }&\textbf{ Examples of diplotypes }&\textbf{ Implications for phenotypic measures   }&\textbf{ Recommendations for atazanavir therapy }&\textbf{ Classification of recommendation for atazanavir therapy } \\ \hline \\ Extensive Metabolizer & An individual carrying 2 reference  function and/or increased function alleles; or individuals of genotype CC at [variant:rs887829] & *1/*1; *1/*36; *36/*36; [variant:rs887829] CC& Reference  UGT1A1 activity; very low likelihood of bilirubin-related discontinuation of atazanavir.  &  There is no need to avoid prescribing of atazanavir based on UGT1A1 genetic test result.  &  Strong  \\ Intermediate Metabolizer  & An individual carrying one reference  function (*1)  or increased function allele (*36) plus one decreased function allele (*6, *28, *37). Alternatively identified by heterozygosity for [variant:rs887829] C/T. & *1/*28; *1/*37; *36/*28; *36/*37; [variant:rs887829] C/T, *1/*6 & Somewhat decreased UGT1A1 activity; low likelihood of bilirubin-related discontinuation of atazanavir. & There is no need to avoid prescribing of atazanavir based on UGT1A1 genetic test result. Inform the patient that some patients stop atazanavir because of jaundice (yellow eyes and skin), but that this patient’s genotype makes this unlikely &  Strong  \\ Poor Metabolizer  & An individual carrying two decreased function alleles (*6, *28, *37). Alternatively identified by homozygosity for [variant:rs887829] T/T (*80/*80) & *28/*28; *28/*37; *37/*37; [variant:rs887829] T/T (*80/*80), *6/*6  & Markedly decreased UGT1A1 activity; high likelihood of bilirubin-related discontinuation of atazanavir. & Consider an alternative agent particularly where jaundice would be of concern to the patient. &  Strong  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -475,6 +508,7 @@
       \textbf{ Phenotype (Genotype) }&\textbf{ Therapeutic Dose Recommendation }&\textbf{ Level of Evidence }&\textbf{ Clinical Relevance } \\ \hline \\  IM (one inactive allele: *2, *3, *4-*18) & Select alternative drug or reduce dose by 50\%. Increase dose in response of hematologic monitoring and efficacy. & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (S): Failure of lifesaving therapy e.g. anticipated myelosuppression; prevention of breast cancer relapse; arrhythmia; neutropenia < 0.5x10-9-/l; leucopenia < 1.0x10-9-/l; thrombocytopenia < 25x10-9-/l; life-threatening complications from diarrhea.  \\  PM (two inactive alleles: *2, *3, *4-*18) & Select alternative drug or reduce dose by 90\%. Increase dose in response of hematologic monitoring and efficacy. & Published controlled studies of good quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (S): death; arrhythmia; unanticipated myelosuppression.  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -498,10 +532,10 @@
       \end{tabularx}
       
       \begin{tabularx}{\textwidth}{ XXXX }
-      \textbf{ Genotype }&\textbf{ Therapeutic Dose Recommendation }&\textbf{ Level of Evidence }&\textbf{ Clinical Relevance } \\ \hline \\  CYP2C9 *1/*2 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (NS) Kinetic effect (NS)  \\  CYP2C9 *2/*2 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (NS) Kinetic effect (NS)  \\  CYP2C9 *1/*3 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (S): short-lived discomfort (< 48 hr) without permanent injury: e.g. reduced decrease in resting heart rate; reduction in exercise tachycardia; decreased pain relief from oxycodone; ADE resulting from increased bioavailability of atomoxetine (decreased appetite, insomnia, sleep disturbance etc); neutropenia > 1.5x10-9-/l; leucopenia > 3.0x10-9-/l; thrombocytopenia  > 75x10-9-/l; moderate diarrhea not affecting daily activities; reduced glucose increase following oral glucose tolerance test.  \\  CYP2C9 *2/*3 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (NS) Kinetic effect (NS)  \\  CYP2C9 *3/*3 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms females, <470 ms males); INR increase < 4.5 
- \\ 
+      \textbf{ Genotype }&\textbf{ Therapeutic Dose Recommendation }&\textbf{ Level of Evidence }&\textbf{ Clinical Relevance } \\ \hline \\  CYP2C9 *1/*2 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (NS) Kinetic effect (NS)  \\  CYP2C9 *2/*2 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (NS) Kinetic effect (NS)  \\  CYP2C9 *1/*3 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (S): short-lived discomfort (< 48 hr) without permanent injury: e.g. reduced decrease in resting heart rate; reduction in exercise tachycardia; decreased pain relief from oxycodone; ADE resulting from increased bioavailability of atomoxetine (decreased appetite, insomnia, sleep disturbance etc); neutropenia > 1.5x10-9-/l; leucopenia > 3.0x10-9-/l; thrombocytopenia  > 75x10-9-/l; moderate diarrhea not affecting daily activities; reduced glucose increase following oral glucose tolerance test.  \\  CYP2C9 *2/*3 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Clinical effect (NS) Kinetic effect (NS)  \\  CYP2C9 *3/*3 & None & Published controlled studies of moderate quality* relating to phenotyped and/or genotyped patients or healthy volunteers, and having relevant pharmacokinetic or clinical endpoints. & Minor clinical effect (S): QTc prolongation (<450 ms females, <470 ms males); INR increase < 4.5  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -523,9 +557,10 @@
       \scriptsize
       
       \begin{tabularx}{\textwidth}{ XXXXXX }
-      \textbf{ Likely phenotype -a- }&\textbf{ Genotypes }&\textbf{ Examples of diplotypes -b- }&\textbf{ Implications for tacrolimus pharmacologic measures }&\textbf{ Therapeutic Recommendations -c- }&\textbf{ Classification of recommendations -e- } \\ \hline \\  Extensive metabolizer (CYP3A5 expresser) & An individual carrying two functional alleles & *1/*1 & Lower dose-adjusted trough concentrations of tacrolimus and decreased chance of achieving target tacrolimus concentrations & Increase starting dose 1.5 to 2 times recommended starting dose -d-. Total starting dose should not exceed 0.3mg/kg/day. Use therapeutic drug monitoring to guide dose adjustments & Strong  \\  Intermediate metabolizer (CYP3A5 expresser) & An individual carrying one functional allele and one non-functional allele & *1/*3, *1/*6, *1/*7& Lower dose-adjusted trough concentrations of tacrolimus and decreased chance of achieving target tacrolimus concentrations & Increase starting dose 1.5 to 2 times recommended starting dose -d-. Total starting dose should not exceed 0.3mg/kg/day. Use therapeutic drug monitoring to guide dose adjustments & Strong  \\  Poor metabolizer (CYP3A5 non-expresser) & An individual carrying two non-functional alleles & *3/*3, *6/*6, *7/*7, *3/*6, *3/*7, *6/*7& Higher (“normal”) dose-adjusted trough concentrations of tacrolimus and increased chance of achieving target tacrolimus concentrations & Initiate therapy with standard recommended dose. Use therapeutic drug monitoring to guide dose adjustments & Strong  \\ 
+      \textbf{ Likely phenotype  }&\textbf{ Genotypes }&\textbf{ Examples of diplotypes  }&\textbf{ Implications for tacrolimus pharmacologic measures }&\textbf{ Therapeutic Recommendations  }&\textbf{ Classification of recommendations -e- } \\ \hline \\  Extensive metabolizer (CYP3A5 expresser) & An individual carrying two functional alleles & *1/*1 & Lower dose-adjusted trough concentrations of tacrolimus and decreased chance of achieving target tacrolimus concentrations & Increase starting dose 1.5 to 2 times recommended starting dose . Total starting dose should not exceed 0.3mg/kg/day. Use therapeutic drug monitoring to guide dose adjustments & Strong  \\  Intermediate metabolizer (CYP3A5 expresser) & An individual carrying one functional allele and one non-functional allele & *1/*3, *1/*6, *1/*7& Lower dose-adjusted trough concentrations of tacrolimus and decreased chance of achieving target tacrolimus concentrations & Increase starting dose 1.5 to 2 times recommended starting dose . Total starting dose should not exceed 0.3mg/kg/day. Use therapeutic drug monitoring to guide dose adjustments & Strong  \\  Poor metabolizer (CYP3A5 non-expresser) & An individual carrying two non-functional alleles & *3/*3, *6/*6, *7/*7, *3/*6, *3/*7, *6/*7& Higher (“normal”) dose-adjusted trough concentrations of tacrolimus and increased chance of achieving target tacrolimus concentrations & Initiate therapy with standard recommended dose. Use therapeutic drug monitoring to guide dose adjustments & Strong  \\ 
       \end{tabularx}
       
+      \newpage
       \normalsize
 
 
@@ -978,7 +1013,7 @@ Patients with the GG genotype who are being treated with methadone for heroin ad
 \section{Appendix 1: Top 3 haplotypes per gene}
 \scriptsize
 
-\begin{tabularx}{\textwidth}{ X|XXXX }
+\begin{tabularx}{\textwidth}{ X | XXXX }
 \toprule
 \textbf{Gene} & \textbf{Allele 1 (Tree) } & \textbf{Allele 2 (Tree)} & \textbf{Allele 1 (Set) } & \textbf{Allele 2 (Set)} \\
 \midrule
@@ -987,298 +1022,297 @@ ABCB1
 & *2 (PMID: 11503014) & *1 & *1 & *1  \\
 & *2 (PMID: 12893986) & *2 (PMID: 11503014) & *2 (PMID: 11503014) & *2 (PMID: 11503014) \\
 \midrule
- ABCC2
+ABCC2
 & H1 & H2 & H1 & H2 \\
 & H2 & H13 & H2 & H13  \\
 & H13 & H1 & H1 & H1 \\
 \midrule
- ADRB1
+ADRB1
 & H1 & H1 & H1 & H1 \\
 & H2 & H2 & H2 & H2  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- ADRB2
+ADRB2
 & 1 & 1 & 1 & 1 \\
 & 2 & 2 & 2 & 2  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- APOE
+APOE
 & E3 & E2 & E3 & E2 \\
 & E2 & E3 & E2 & E3  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- CDA
+CDA
 & *1A & *1A & *1A & *1B \\
 & *1B & *1B & *1B & *1A  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- CFTR
+CFTR
 & Reference & Reference & Reference & Reference \\
 & F508del(TCT) & F508del(TCT) & F508del(TCT) & F508del(TCT)  \\
 & S549N & S549N & Reference & Reference \\
 \midrule
- CHRNA5
+CHRNA5
 & haplotype 1 & haplotype 1 & haplotype 1 & haplotype 1 \\
 & haplotype 2 & haplotype 2 & haplotype 2 & haplotype 2  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- COMT
+COMT
 & Haplotype low activity & Haplotype high activity & Haplotype low activity & Haplotype high activity \\
 & Haplotype high activity & Haplotype low activity & Haplotype high activity & Haplotype low activity  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- CYP1A1
+CYP1A1
 & *1 & *1 & *1 & *1 \\
 & *13 & *13 & *2B & *2B  \\
 & *6 & *6 & *1 & *1 \\
 \midrule
- CYP1A2
+CYP1A2
 & *1M & *1M & *1M & *1M \\
 & *17 & *17 & *1F & *1F  \\
 & *1F & *1F & *17 & *17 \\
 \midrule
- CYP1B1
+CYP1B1
 & *1 & *6 & *1 & *6 \\
 & *18 & *7 & *7 & *5  \\
 & *19 & *5 & *1 & *7 \\
 \midrule
- CYP2A6
+CYP2A6
 & *1A & *2 & *1A & *2 \\
 & *41 & *1A & *37 & *4A  \\
 & *17 & *17 & *1A & *1A \\
 \midrule
- CYP2B6
+CYP2B6
 & *1 & *1 & *1 & *1 \\
 & *8 & *8 & *28 & *28  \\
 & *1D & *1D & *1 & *1 \\
 \midrule
- CYP2C19
+CYP2C19
 & *1A & *3B & *1A & *3B \\
 & *6 & *18 & *2D & *18  \\
 & *9 & *19 & *1A & *19 \\
 \midrule
- CYP2C8
+CYP2C8
 & *1A & *1A & *1A & *1A \\
 & *12 & *12 & *3 & *3  \\
 & *6 & *6 & *1A & *1A \\
 \midrule
- CYP2C9
+CYP2C9
 & *1 & *18 & *1 & *3 \\
 & *26 & *3 & *18 & *18  \\
 & *8 & *1 & *1 & *1 \\
 \midrule
- CYP2D6
+CYP2D6
 & *1 & *1E & *1 & *1E \\
 & *56 & *1C & *52 & *1B  \\
 & *33 & *1B & *1 & *56B \\
 \midrule
- CYP2E1
+CYP2E1
 & *1A & *1A & *1A & *1A \\
 & *5A & *5A & *5A & *5A  \\
 & *2 & *2 & *1A & *1A \\
 \midrule
- CYP3A4
+CYP3A4
 & *1 & *1 & *1 & *1 \\
 & *20 & *20 & *23 & *23  \\
 & *14 & *14 & *1 & *1 \\
 \midrule
- CYP3A43
+CYP3A43
 & *1A & *1A & *1A & *1A \\
 & *2A & *2A & *2B & *2B  \\
 & *2B & *2B & *1A & *1A \\
 \midrule
- CYP3A5
+CYP3A5
 & *1A & *1A & *1A & *1A \\
 & *3B & *3B & *3B & *3B  \\
 & *3L & *3L & *1A & *1A \\
 \midrule
- CYP4B1
+CYP4B1
 & *1 & *1 & *1 & *1 \\
 & *3 & *3 & *2A & *2A  \\
 & *4 & *4 & *1 & *1 \\
 \midrule
- CYP4F2
+CYP4F2
 & *1 & *1 & *1 & *1 \\
 & *3 & *3 & *3 & *3  \\
 & *2 & *2 & *1 & *1 \\
 \midrule
- DDC
+DDC
 & \#1 & \#1 & \#1 & \#1 \\
 & \#2 & \#2 & \#2 & \#2  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- DPYD
+DPYD
 & *1 & *1 & *1 & *1 \\
 & *2A & *2A & *9B & *9B  \\
 & *8 & *8 & *1 & *1 \\
 \midrule
- G6PD
+G6PD
 & B (wildtype) & B (wildtype) & B (wildtype) & B (wildtype) \\
 & Santiago de Cuba, Morioka & Santiago de Cuba, Morioka & Vancouver & Vancouver  \\
 & Andalus & Andalus & B (wildtype) & B (wildtype) \\
 \midrule
- HMGCR
+HMGCR
 & H2 & H2 & H7 & H7 \\
 & H7 & H7 & H2 & H2  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- HNF4A
+HNF4A
 & TATTT & TGCGC & TATTT & TGCGC \\
 & TGCGC & TATTT & TGCGC & TATTT  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- HTR2C
+HTR2C
 & 1--2--1 & 1--2--1 & 1--2--1 & 1--2--1 \\
 & 2--1--1 & 2--1--1 & 2--1--1 & 2--1--1  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- IFNL3
+IFNL3
 & rs12979860C & rs12979860T & rs12979860C & rs12979860T \\
 & rs12979860T & rs12979860C & rs12979860T & rs12979860C  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- IGFBP3
+IGFBP3
 & 1 & 1 & 1 & 1 \\
 & n/a & n/a & n/a & n/a  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- LDLR
+LDLR
 & L5 & L1 & L5 & L1 \\
 & L1 & L5 & L1 & L5  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- NAT1
+NAT1
 & *4 & *4 & *4 & *4 \\
 & *20 & *20 & *11A & *11A  \\
 & *24 & *24 & *4 & *4 \\
 \midrule
- NAT2
+NAT2
 & *6A & *6A & *6A & *6A \\
 & *6M & *6M & *12B & *12B  \\
 & *6D & *6D & *6B & *6B \\
 \midrule
- NUDT15
+NUDT15
 & *1 & *1 & *1 & *1 \\
 & *6 & *6 & *2 & *2  \\
 & *2 & *2 & *1 & *1 \\
 \midrule
- P2RY12
+P2RY12
 & B & B & B & B \\
 & H1 & H1 & H1 & H1  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- PIK3CA
+PIK3CA
 & H1 & H2 & H1 & H2 \\
 & H2 & H1 & H2 & H1  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- RXRA
+RXRA
 & AG & AG & AG & AG \\
 & GA & GA & GA & GA  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- RYR1
+RYR1
 & 571I;3366R;3933Y & 571I;3366R;3933Y & 571I;3366R;3933Y & 571I;3366R;3933Y \\
 & 571V;3366H;3933C & 571V;3366H;3933C & 571V;3366H;3933C & 571V;3366H;3933C  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- SCN1A
+SCN1A
 & \#1 & \#1 & \#1 & \#2 \\
 & \#2 & \#2 & \#2 & \#1  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- SCNN1B
+SCNN1B
 & 11 & 11 & 11 & 11 \\
 & 12 & 12 & 12 & 12  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- SLC22A1
+SLC22A1
 & *1 & *1 & *1 & *1 \\
 & *2 & *2 & *2 & *2  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- SLCO1B1
+SLCO1B1
 & *1A & *20 & *1A & *20 \\
 & *7 & *35 & *18 & *35  \\
 & *6 & *22 & *1A & *22 \\
 \midrule
- STAT3
+STAT3
 & TTG & CCG & TTG & CCG \\
 & CCG & TTG & CCG & TTG  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- SULT1A1
+SULT1A1
 & *1 & *2 & *1 & *2 \\
 & *5 & *1 & *2 & *1  \\
 & *2 & *5 & *1 & *5 \\
 \midrule
- SULT1A2
+SULT1A2
 & *1 & *2 & *1 & *2 \\
 & *3 & *1 & *2 & *1  \\
 & *2 & *3 & *1 & *3 \\
 \midrule
- TPMT
+TPMT
 & *1 & *1 & *1 & *3E \\
 & *30 & *3B & *3E & *1  \\
 & *38 & *3E & *1 & *3D \\
 \midrule
- UGT1A1
+UGT1A1
 & *1 & *60 & *1 & *60 \\
 & *80 & *1 & *88 & *93  \\
 & *7 & *80 & *1 & *80 \\
 \midrule
- UGT1A10
+UGT1A10
 & *1a & *1a & *1a & *1a \\
 & *2a & *2a & *4c & *4c  \\
 & *1b & *1b & *1a & *1a \\
 \midrule
- UGT1A3
+UGT1A3
 & *1 & *2a & *1 & *2a \\
 & *1c & *6a & *2a & *9a  \\
 & *10a & *2b & *1 & *3a \\
 \midrule
- UGT1A4
+UGT1A4
 & *1a & *1a & *1a & *1a \\
 & *4 & *4 & *7 & *7  \\
 & *2 & *2 & *1a & *1a \\
 \midrule
- UGT1A5
+UGT1A5
 & *1 & *1 & *1 & *1 \\
 & *3 & *3 & *7 & *7  \\
 & *2 & *2 & *1 & *1 \\
 \midrule
- UGT1A6
+UGT1A6
 & *1a & *2e & *1a & *2e \\
 & *1e & *4c & *2e & *4c  \\
 & *5 & *3b & *1a & *3b \\
 \midrule
- UGT1A7
+UGT1A7
 & *1a & *3 & *1a & *3 \\
 & *4 & *10 & *10 & *2  \\
 & *5 & *2 & *1a & *12 \\
 \midrule
- UGT1A8
+UGT1A8
 & *1a & *1a & *1a & *1a \\
 & *2 & *2 & *1b & *1b  \\
 & *1b & *1b & *1a & *1a \\
 \midrule
- UGT2B15
+UGT2B15
 & *1 & *4 & *1 & *4 \\
 & *6 & *7 & *7 & *7  \\
 & *3 & *6 & *1 & *1 \\
 \midrule
- VEGFA
+VEGFA
 & H1 & H1 & H1 & H1 \\
 & n/a & n/a & n/a & n/a  \\
 & n/a & n/a & n/a & n/a \\
 \midrule
- VKORC1
+VKORC1
 & H1 & H2 & H1 & *2 \\
 & *4 & *2 & H2 & *3  \\
 & *3 & H1 & H1 & H2 \\
 \bottomrule
 \end{tabularx}
-
 \normalsize
 \newpage
 
@@ -1286,7 +1320,9 @@ ABCB1
 \% -------------------- LOW LEVEL ANNOTATIONS --------------
 \fi
 
-\section{Appendix 3: Low level annotations}\subsection{ Antivirals for treatment of HIV infections, combinations }\subsubsection{ CYP2B6 }
+\section{Appendix 3: Low level annotations}
+
+\scriptsize\subsection{ Antivirals for treatment of HIV infections, combinations }\subsubsection{ CYP2B6 }
 \textit{ cytochrome P450, family 2, subfamily B, polypeptide 6 }
 
 \textbf{\colorbox{cyan} {Class 3}} \textbf{ rs3745274 } \textit{ GG }
@@ -2671,7 +2707,7 @@ Breast-feeding infants whose mothers have the GG genotype and are taking codeine
 
 \textbf{\colorbox{cyan} {Class 3}} \textbf{ rs1045642 } \textit{ GG }
 Patients with the GG genotype who are undergoing organ transplantation may have increased clearance and dose requirements of tacrolimus, as compared to patients with the AA or AG genotype. However, the vast majority of studies find no association between this SNP and clearance or dose of tacrolimus. Other genetic and clinical factors, such as CYP3A5*3, may also influence clearance and dose of tacrolimus. \newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs1045642 } \textit{ GG }
-Patients with the GG genotype and ulcerative colitis may have a poorer chance at achieving remission when treated with tacrolimus as compared to patients with the AA genotype. Other genetic and clinical factors may also influence likelihood of ulcerative colitis remission.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs1045642 } \textit{ GG }
+Patients with the GG genotype and ulcerative colitis may have a poorer chance at achieving remission when treated with tacrolimus as compared to patients with the AA genotype. However, a different study contradicts this finding. Other genetic and clinical factors may also influence likelihood of ulcerative colitis remission.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs1045642 } \textit{ GG }
 Patients with the GG genotype who are undergoing kidney transplantation and are treated with tacrolimus may have decreased risk of experiencing transplant rejection as compared to patients with the AG genotype. However, the majority of studies find no association between this polymorphism and risk for transplant rejection. Other genetic and clinical factors may also influence risk of transplant rejection.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs1045642 } \textit{ GG }
 Patients with the GG genotype who are undergoing kidney transplantation may have a decreased risk of hypokalemia when treated with tacrolimus as compared to patients with the AG genotype. Other genetic and clinical factors may also influence risk of hypokalemia.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs1045642 } \textit{ GG }
 Patients who receive a kidney with the GG genotype may have increased estimated glomerular filtration rate (eGFR) when treated with tacrolimus as compared to patients with the AA or AG genotype. No significant results were seen when recipient genotype was considered. Other genetic and clinical factors may also influence eGFR. \newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs1045642 } \textit{ GG }
@@ -2679,7 +2715,7 @@ Patients with the GG genotype who are CYP2C19 extensive metabolizers and are rec
 Pediatric patients with the GG genotype who are treated with prednisone and tacrolimus may have an increased risk of remaining on steroids 1 year after heart transplantation compared to patients with the AA or AG genotype. Other genetic and clinical factors may also influence risk of remaining on steroids 1 year after transplantation.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs1128503 } \textit{ GG }
 Patients with the GG genotype who are undergoing organ transplantation may have decreased concentrations of tacrolimus as compared to patients with the AA or AG genotype. However, the majority of the literature evidence shows no association between this variant and tacrolimus concentrations, clearance or dose. Other genetic and clinical factors may also influence concentrations of tacrolimus. \newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs2032582 } \textit{ CC }
 Patients with the CC genotype who are undergoing organ transplantation may have increased metabolism and dose requirements of tacrolimus, as compared to patients with the AA, AC, CT or TT genotypes. However, the majority of studies have found no association between this polymorphism and metabolism or dose of tacrolimus. Other genetic and clinical factors, such as CYP3A5*3, may also influence metabolism and dose of tacrolimus.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs2032582 } \textit{ CC }
-Patients with CC genotype may have lower success rate in achieving short-term remission when treated with tacrolimus in people with Colitis, Ulcerative as compared to patients with the AA genotype. The majority of studies find no association with dose of tacrolimus in people with transplantations as compared and genotypes of this SNP. Other genetic or clinical factors may influence response and dose of tacrolimus.\newline\subsubsection{ CYP3A5 }
+Patients with CC genotype may have lower success rate in achieving short-term remission when treated with tacrolimus in people with ulcerative colitis as compared to patients with the AA genotype. However, a different study contradicts this finding. Other genetic or clinical factors may influence response to tacrolimus.\newline\subsubsection{ CYP3A5 }
 \textit{ cytochrome P450, family 3, subfamily A, polypeptide 5 }
 
 \textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
@@ -2687,7 +2723,7 @@ Patients with the CC genotype (CYP3A5 *3/*3) undergoing liver transplantation ma
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing organ transplantation may have a decreased risk for neurotoxicity when treated with tacrolimus as compared to patients with the CT (*1/*3) genotype. Other genetic and clinical factors may also influence risk for neurotoxicity in patients receiving tacrolimus. \newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing kidney transplantation may have decreased systolic and diastolic blood pressure when treated with tacrolimus as compared to patients with the CT or TT (*1/*3 or *1/*1) genotype. However, the majority of studies show no association between the CC genotype and blood pressure. Other genetic and clinical factors may also influence changes in blood pressure in patients receiving tacrolimus.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing organ transplantation may have a decreased risk for infections when treated with tacrolimus as compared to patients with the CT or TT (*1/*3 or *1/*1) genotype. Other genetic and clinical factors may also influence risk for infections in patients receiving tacrolimus.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
-Patients with the CC genotype (CYP3A5 *3/*3) and ulcerative colitis may have an increased chance of achieving remission when treated with tacrolimus as compared to patients with the CT (*1/*3) genotype. Other genetic and clinical factors may also influence chance of remission from ulcerative colitis. \newline\subsubsection{ ZSCAN25 }
+Patients with the CC genotype (CYP3A5 *3/*3) and ulcerative colitis may have an increased chance of achieving remission when treated with tacrolimus as compared to patients with the CT (*1/*3) or TT (*1/*1) genotype. However, a couple studies have found no association with remission or response. Other genetic and clinical factors may also influence chance of remission from ulcerative colitis. \newline\subsubsection{ ZSCAN25 }
 \textit{ zinc finger and SCAN domain containing 25 }
 
 \textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
@@ -2695,7 +2731,7 @@ Patients with the CC genotype (CYP3A5 *3/*3) undergoing liver transplantation ma
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing organ transplantation may have a decreased risk for neurotoxicity when treated with tacrolimus as compared to patients with the CT (*1/*3) genotype. Other genetic and clinical factors may also influence risk for neurotoxicity in patients receiving tacrolimus. \newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing kidney transplantation may have decreased systolic and diastolic blood pressure when treated with tacrolimus as compared to patients with the CT or TT (*1/*3 or *1/*1) genotype. However, the majority of studies show no association between the CC genotype and blood pressure. Other genetic and clinical factors may also influence changes in blood pressure in patients receiving tacrolimus.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing organ transplantation may have a decreased risk for infections when treated with tacrolimus as compared to patients with the CT or TT (*1/*3 or *1/*1) genotype. Other genetic and clinical factors may also influence risk for infections in patients receiving tacrolimus.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
-Patients with the CC genotype (CYP3A5 *3/*3) and ulcerative colitis may have an increased chance of achieving remission when treated with tacrolimus as compared to patients with the CT (*1/*3) genotype. Other genetic and clinical factors may also influence chance of remission from ulcerative colitis. \newline\subsubsection{ CYP3A }
+Patients with the CC genotype (CYP3A5 *3/*3) and ulcerative colitis may have an increased chance of achieving remission when treated with tacrolimus as compared to patients with the CT (*1/*3) or TT (*1/*1) genotype. However, a couple studies have found no association with remission or response. Other genetic and clinical factors may also influence chance of remission from ulcerative colitis. \newline\subsubsection{ CYP3A }
 \textit{ cytochrome P450, family 3, subfamily A }
 
 \textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
@@ -2703,7 +2739,7 @@ Patients with the CC genotype (CYP3A5 *3/*3) undergoing liver transplantation ma
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing organ transplantation may have a decreased risk for neurotoxicity when treated with tacrolimus as compared to patients with the CT (*1/*3) genotype. Other genetic and clinical factors may also influence risk for neurotoxicity in patients receiving tacrolimus. \newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing kidney transplantation may have decreased systolic and diastolic blood pressure when treated with tacrolimus as compared to patients with the CT or TT (*1/*3 or *1/*1) genotype. However, the majority of studies show no association between the CC genotype and blood pressure. Other genetic and clinical factors may also influence changes in blood pressure in patients receiving tacrolimus.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
 Patients with the CC genotype (CYP3A5 *3/*3) undergoing organ transplantation may have a decreased risk for infections when treated with tacrolimus as compared to patients with the CT or TT (*1/*3 or *1/*1) genotype. Other genetic and clinical factors may also influence risk for infections in patients receiving tacrolimus.\newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs776746 } \textit{ CC }
-Patients with the CC genotype (CYP3A5 *3/*3) and ulcerative colitis may have an increased chance of achieving remission when treated with tacrolimus as compared to patients with the CT (*1/*3) genotype. Other genetic and clinical factors may also influence chance of remission from ulcerative colitis. \newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs35599367 } \textit{ GG }
+Patients with the CC genotype (CYP3A5 *3/*3) and ulcerative colitis may have an increased chance of achieving remission when treated with tacrolimus as compared to patients with the CT (*1/*3) or TT (*1/*1) genotype. However, a couple studies have found no association with remission or response. Other genetic and clinical factors may also influence chance of remission from ulcerative colitis. \newline\textbf{\colorbox{cyan} {Class 3}} \textbf{ rs35599367 } \textit{ GG }
 Transplant recipients with the GG genotype (also known as CYP3A4 *1/*1) may have increased metabolism of tacrolimus, resulting in decreased exposure and a higher dose requirement (among other pharmacokinetic parameters), as compared to patients with the AG or AA genotype (CYP3A4 *22/*1 and *22/*22). Around half of studies report an association, and half report no association. One study found an association with liver transplant donor genotype but not recipient genotype. Other genetic and clinical factors, such as CYP3A5 *3 (rs776746), may also influence metabolism of tacrolimus.\newline\textbf{\colorbox{teal} {Class 4}} \textbf{ rs4986910 } \textit{ AA }
 Patients with the AA genotype who are undergoing kidney transplantation may require an increased dose of tacrolimus as compared to patients with the GG genotype. Other genetic and clinical factors, such as CYP3A5*3, may also influence dose of tacrolimus.\newline\subsubsection{ CYP3A4 }
 \textit{ cytochrome P450, family 3, subfamily A, polypeptide 4 }

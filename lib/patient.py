@@ -41,7 +41,9 @@ class Patient(Database):
 		Database.__init__(self, dbpath)
 
 		self.fname = os.path.basename(f).rstrip(".g.vcf.gz")
-		self.sql.execute("attach '{}.db' as pat".format(self.fname))
+		self.patDb = f.replace(".g.vcf.gz", ".db")
+		print self.patDb
+		self.sql.execute("attach '{}' as pat".format(self.patDb))
 
 # -------------------------------------------------------------
 
@@ -128,8 +130,8 @@ class Patient(Database):
 					a.AltPGKB as AltPGKB,
 					locv.RefAllele as RefVCF,
 					a.AltVCF as AltVCF,
-					pat.RefAllele as PatRef,
-					pat.AltAllele as PatAlt,
+					p.RefAllele as PatRef,
+					p.AltAllele as PatAlt,
 					CallNum,
 					locv.start as start
 
@@ -139,7 +141,7 @@ class Patient(Database):
 					   JOIN
 					   locvcf locv ON locv.varid = v.varid
 					   JOIN
-					   pat.Variants pat ON pat.start = locv.start
+					   pat.Variants p ON pat.start = locv.start
 					   JOIN
 					   haplotypes hap ON hap.hapid = h.HapID
 					   JOIN

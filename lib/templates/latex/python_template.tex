@@ -5,30 +5,23 @@
 \fi
 
 \documentclass{report}
-\usepackage{pstricks, pst-node,pst-tree}
-\usepackage{newicktree}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
-\usepackage{multirow}
 \usepackage{xcolor}
-\usepackage{hyperref}
 \usepackage{ltablex}
 \usepackage[a4paper,inner=2cm,outer=2cm]{geometry}
-\hypersetup{
-    colorlinks,
-    linkcolor=black,
-    citecolor=red,
-    urlcolor=cyan
-}
 
 \newcolumntype{b}{X}
 \newcolumntype{s}{>{\hsize=.5\hsize}X}
-
 \iffalse
-%----------------------------------------------------------------------------------------
-%					TITLE PAGE
-%----------------------------------------------------------------------------------------
+\%----------------------------------------------------------------------------------------
+\%					TITLE PAGE
+\%----------------------------------------------------------------------------------------
 \fi
 
 \newcommand*{\titleGM}{\begingroup
@@ -41,27 +34,29 @@
 {\noindent\Huge\bfseries Pharmacogenetic Passport}\\[2\baselineskip]
 {\large \textit{Pharmacogenetic guidelines and clinical annotations connected to influential DNA changes}}\\[4\baselineskip]
 {\large \textsc{ {{json.samplename}} }}\\
-{\normalsize \textsc{Creation date: \today}}
-
-\vspace{0.3\textheight}
+{\normalsize \textsc{Creation date: \today}}\vspace{0.3\textheight}\\
 {\noindent \includegraphics{pilldna}}\\[\baselineskip]
 }}
 \endgroup}
 
+\newpage
+
 \iffalse
-%----------------------------------------------------------------------------------------
-%				BLANK DOCUMENT
-%----------------------------------------------------------------------------------------
+\%----------------------------------------------------------------------------------------
+\%				BLANK DOCUMENT
+\%----------------------------------------------------------------------------------------
 \fi
+
+\DeclareUnicodeCharacter{00A0}{ }
 
 \begin{document}
 
+\begin{titlepage}
 \titleGM
-
+\end{titlepage}
 \iffalse
-% ------------- TABLE OF CONTENTS -------------------
+\% ------------- TABLE OF CONTENTS -------------------
 \fi
-
 \tableofcontents
 
 \newpage
@@ -126,6 +121,7 @@
       {% for line in table %}{{line}} \\ {% endfor %}
       \end{tabularx}
       {% endfor %}
+      \newpage
       \normalsize
       {%- endif -%}
     {%- endfor -%}
@@ -189,8 +185,8 @@
 \begin{tabularx}{\textwidth}{ X | XXXX }
 \toprule
 \textbf{Gene} & \textbf{Allele 1 (Tree) } & \textbf{Allele 2 (Tree)} & \textbf{Allele 1 (Set) } & \textbf{Allele 2 (Set)} \\
-\midrule
 {%- for gene in json.haplotable %}
+\midrule
 {{gene.symbol}}
 & {{gene.new1['1']}} & {{gene.new2['1']}} & {{gene.old1['1']}} & {{gene.old2['1']}} \\
 & {{gene.new1['2']}} & {{gene.new2['2']}} & {{gene.old1['2']}} & {{gene.old2['2']}}  \\
